@@ -249,7 +249,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>xapilibd.lib;d3d9d.lib;d3dx9d.lib;xgraphicsd.lib;xboxkrnl.lib;xnetd.lib;xactd3.lib;x3daudiod.lib;xmcored.lib;xbdm.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
       <AdditionalOptions>/ignore:4006 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
