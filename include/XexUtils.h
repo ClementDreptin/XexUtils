@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <xtl.h>
+
 namespace XexUtils
 {
 
