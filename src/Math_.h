@@ -13,6 +13,8 @@ namespace Math
 		float y;
 
 		bool operator==(const vec2& other) const { return x == other.x && y == other.y; }
+
+		vec2 operator+(const vec2& other);
 	};
 	
 	struct vec3
@@ -25,6 +27,8 @@ namespace Math
 		float z;
 
 		bool operator==(const vec3& other) const { return x == other.x && y == other.y && z == other.z; }
+
+		vec3 operator+(const vec3& other);
 	};
 
 	double Radians(double degrees);
