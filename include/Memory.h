@@ -17,9 +17,9 @@ namespace Memory
 	template<typename T>
 	void Write(DWORD address, T data)
 	{
-		if (!MmIsAddressValid((DWORD*)address))
+		if (!Kernel::MmIsAddressValid((DWORD*)address))
 		{
-			DbgPrint("Invalid address: %#010x\n", address);
+			Kernel::DbgPrint("Invalid address: %#010x\n", address);
 			return;
 		}
 
@@ -29,9 +29,9 @@ namespace Memory
 	template<typename T>
 	T Read(DWORD address)
 	{
-		if (!MmIsAddressValid((DWORD*)address))
+		if (!Kernel::MmIsAddressValid((DWORD*)address))
 		{
-			DbgPrint("Invalid address: %#010x\n", address);
+			Kernel::DbgPrint("Invalid address: %#010x\n", address);
 			return 0;
 		}
 

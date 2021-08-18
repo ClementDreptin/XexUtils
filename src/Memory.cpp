@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Memory.h"
 
+#include "Kernel.h"
+
 namespace XexUtils
 {
 namespace Memory
@@ -14,18 +16,14 @@ namespace Memory
 
 	void Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
 	{
-		HANDLE hThread;
-		DWORD dwThreadId;
-		ExCreateThread(&hThread, 0, &dwThreadId, (PVOID)XapiThreadStartup , lpStartAddress, lpParameters, 2);
-		ResumeThread(hThread);
-		CloseHandle(hThread);
+		Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, 2);
 	}
 
 	void PatchInJump(DWORD* address, DWORD destination, BOOL linked)
 	{
 		DWORD writeBuffer;
 
-		if(destination & 0x8000)
+		if (destination & 0x8000)
 			writeBuffer = 0x3D600000 + (((destination >> 16) & 0xFFFF) + 1);
 		else
 			writeBuffer = 0x3D600000 + ((destination >> 16) & 0xFFFF);
@@ -56,7 +54,7 @@ namespace Memory
 			DWORD addrReloc = (DWORD)(&address[4]);
 			DWORD writeBuffer;
 
-			if(addrReloc & 0x8000)
+			if (addrReloc & 0x8000)
 				writeBuffer = 0x3D600000 + (((addrReloc >> 16) & 0xFFFF) + 1);
 			else
 				writeBuffer = 0x3D600000 + ((addrReloc >> 16) & 0xFFFF);
@@ -126,7 +124,7 @@ namespace Memory
 		PDWORD saver = (PDWORD)GLPR_FUN;
 
 		if (offset & 0x2000000)
-			offset = offset|0xFC000000;
+			offset = offset | 0xFC000000;
 
 		repl = orgAddr[offset / 4];
 
@@ -134,8 +132,8 @@ namespace Memory
 		{
 			if (repl == saver[i])
 			{
-				int newOffset = (int)&saver[i]-(int)saveStubAddr;
-				inst = 0x48000001|(newOffset&0x3FFFFFC);
+				int newOffset = (int)&saver[i] - (int)saveStubAddr;
+				inst = 0x48000001 | (newOffset & 0x3FFFFFC);
 			}
 		}
 

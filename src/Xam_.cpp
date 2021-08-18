@@ -23,7 +23,7 @@ namespace Xam
 
 	void XNotify(const std::string& text, XNOTIFYQUEUEUI_TYPE type)
 	{
-		XNotifyQueueUI(type, 0xFF, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(text).c_str()), 0);
+		XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(text).c_str()), nullptr);
 	}
 
 	std::string ShowKeyboard(const std::string& title, const std::string& description, const std::string& defaultValue, size_t maxLength, DWORD keyboardType)
