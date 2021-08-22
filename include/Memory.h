@@ -6,14 +6,14 @@ namespace Memory
 {
     DWORD ResolveFunction(const std::string& moduleName, DWORD ordinal);
 
-    void Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = 0);
+    VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = nullptr);
 
-    void HookFunctionStart(DWORD* address, DWORD* saveStub, DWORD destination);
+    VOID HookFunctionStart(LPDWORD address, LPDWORD saveStub, DWORD destination);
 
     template<typename T>
-    void Write(DWORD address, T data)
+    VOID Write(DWORD address, T data)
     {
-        if (!Kernel::MmIsAddressValid((DWORD*)address))
+        if (!Kernel::MmIsAddressValid((LPDWORD)address))
         {
             Kernel::DbgPrint("Invalid address: %#010x\n", address);
             return;
@@ -25,7 +25,7 @@ namespace Memory
     template<typename T>
     T Read(DWORD address)
     {
-        if (!Kernel::MmIsAddressValid((DWORD*)address))
+        if (!Kernel::MmIsAddressValid((LPDWORD)address))
         {
             Kernel::DbgPrint("Invalid address: %#010x\n", address);
             return 0;

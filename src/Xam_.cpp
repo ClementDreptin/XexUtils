@@ -8,10 +8,10 @@ namespace XexUtils
 {
 namespace Xam
 {
-    typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE exnq, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR displayText, PVOID contextData);
+    typedef VOID (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE exnq, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR displayText, LPVOID contextData);
     XNOTIFYQUEUEUI XNotifyQueueUI = (XNOTIFYQUEUEUI)Memory::ResolveFunction("xam.xex", 656);
 
-    void XNotify(const std::string& text, XNOTIFYQUEUEUI_TYPE type)
+    VOID XNotify(const std::string& text, XNOTIFYQUEUEUI_TYPE type)
     {
         XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(text).c_str()), nullptr);
     }
@@ -21,8 +21,8 @@ namespace Xam
         // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
         size_t realMaxLength = maxLength + 1;
         XOVERLAPPED overlapped;
-        wchar_t* wideBuffer = new wchar_t[realMaxLength];
-        char* buffer = new char[realMaxLength];
+        PWCHAR wideBuffer = new WCHAR[realMaxLength];
+        LPSTR buffer = new CHAR[realMaxLength];
 
         ZeroMemory(&overlapped, sizeof(overlapped));
         XShowKeyboardUI(0, keyboardType, Formatter::ToWide(defaultValue).c_str(), Formatter::ToWide(title).c_str(), Formatter::ToWide(description).c_str(), wideBuffer, realMaxLength, &overlapped);

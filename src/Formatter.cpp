@@ -5,7 +5,7 @@ namespace XexUtils
 {
 namespace Formatter
 {
-    std::string Format(const char* format, ...)
+    std::string Format(LPCSTR format, ...)
     {
         char buffer[200];
         va_list args;

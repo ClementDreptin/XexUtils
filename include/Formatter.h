@@ -4,7 +4,7 @@ namespace XexUtils
 {
 namespace Formatter
 {
-    std::string Format(const char* format, ...);
+    std::string Format(LPCSTR format, ...);
 
     std::wstring ToWide(const std::string& narrowString);
 }

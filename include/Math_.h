@@ -7,10 +7,10 @@ namespace Math
     struct vec2
     {
         vec2() : x(0.0f), y(0.0f) {}
-        vec2(float x, float y) : x(x), y(y) {}
+        vec2(FLOAT x, FLOAT y) : x(x), y(y) {}
 
-        float x;
-        float y;
+        FLOAT x;
+        FLOAT y;
 
         bool operator==(const vec2& other) const { return x == other.x && y == other.y; }
 
@@ -20,19 +20,19 @@ namespace Math
     struct vec3
     {
         vec3() : x(0.0f), y(0.0f), z(0.0f) {}
-        vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+        vec3(FLOAT x, FLOAT y, FLOAT z) : x(x), y(y), z(z) {}
 
-        float x;
-        float y;
-        float z;
+        FLOAT x;
+        FLOAT y;
+        FLOAT z;
 
         bool operator==(const vec3& other) const { return x == other.x && y == other.y && z == other.z; }
 
         vec3 operator+(const vec3& other);
     };
 
-    double Radians(double degrees);
+    DOUBLE Radians(DOUBLE degrees);
 
-    vec3 ToFront(const vec3& origin, float viewY, float distance);
+    vec3 ToFront(const vec3& origin, FLOAT viewY, FLOAT distance);
 }
 }

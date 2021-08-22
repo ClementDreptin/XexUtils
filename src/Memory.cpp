@@ -7,9 +7,9 @@ namespace XexUtils
 {
 namespace Memory
 {
-    DWORD RelinkGPLR(int offset, DWORD* saveStubAddr, DWORD* orgAddr);
+    DWORD RelinkGPLR(INT offset, LPDWORD saveStubAddr, LPDWORD orgAddr);
 
-    void PatchInJump(DWORD* address, DWORD destination, BOOL linked);
+    VOID PatchInJump(LPDWORD address, DWORD destination, BOOL linked);
 
     DWORD ResolveFunction(const std::string& moduleName, DWORD ordinal)
     {
@@ -18,16 +18,16 @@ namespace Memory
         return (mHandle == NULL) ? NULL : (DWORD)GetProcAddress(mHandle, (LPCSTR)ordinal);
     }
 
-    void Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
+    VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
     {
         Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, 2);
     }
 
-    void HookFunctionStart(DWORD* address, DWORD* saveStub, DWORD destination)
+    VOID HookFunctionStart(LPDWORD address, LPDWORD saveStub, DWORD destination)
     {
         if (saveStub != NULL && address != NULL)
         {
-            int i;
+            INT i;
             DWORD addrReloc = (DWORD)(&address[4]);
             DWORD writeBuffer;
 
@@ -67,7 +67,7 @@ namespace Memory
         }
     }
 
-    void PatchInJump(DWORD* address, DWORD destination, BOOL linked)
+    VOID PatchInJump(LPDWORD address, DWORD destination, BOOL linked)
     {
         DWORD writeBuffer;
 
@@ -94,7 +94,7 @@ namespace Memory
         __isync();
     }
 
-    VOID __declspec(naked) GLPR(VOID)
+    VOID __declspec(naked) GLPR()
     {
         __asm
         {
@@ -121,11 +121,11 @@ namespace Memory
         }
     }
 
-    DWORD RelinkGPLR(int offset, DWORD* saveStubAddr, DWORD* orgAddr)
+    DWORD RelinkGPLR(INT offset, LPDWORD saveStubAddr, LPDWORD orgAddr)
     {
         DWORD inst = 0, repl;
-        int i;
-        PDWORD saver = (PDWORD)GLPR;
+        INT i;
+        LPDWORD saver = (LPDWORD)GLPR;
 
         if (offset & 0x2000000)
             offset = offset | 0xFC000000;
@@ -136,7 +136,7 @@ namespace Memory
         {
             if (repl == saver[i])
             {
-                int newOffset = (int)&saver[i] - (int)saveStubAddr;
+                INT newOffset = (INT)&saver[i] - (INT)saveStubAddr;
                 inst = 0x48000001 | (newOffset & 0x3FFFFFC);
             }
         }
