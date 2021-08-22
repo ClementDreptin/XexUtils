@@ -7,6 +7,10 @@ namespace XexUtils
 {
 namespace Memory
 {
+    DWORD RelinkGPLR(int offset, DWORD* saveStubAddr, DWORD* orgAddr);
+
+    void PatchInJump(DWORD* address, DWORD destination, BOOL linked);
+
     DWORD ResolveFunction(const std::string& moduleName, DWORD ordinal)
     {
         HMODULE mHandle = GetModuleHandle(moduleName.c_str());
@@ -17,33 +21,6 @@ namespace Memory
     void Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
     {
         Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, 2);
-    }
-
-    void PatchInJump(DWORD* address, DWORD destination, BOOL linked)
-    {
-        DWORD writeBuffer;
-
-        if (destination & 0x8000)
-            writeBuffer = 0x3D600000 + (((destination >> 16) & 0xFFFF) + 1);
-        else
-            writeBuffer = 0x3D600000 + ((destination >> 16) & 0xFFFF);
-
-        address[0] = writeBuffer;
-        writeBuffer = 0x396B0000 + (destination & 0xFFFF);
-        address[1] = writeBuffer;
-        writeBuffer = 0x7D6903A6;
-        address[2] = writeBuffer;
-
-        if (linked)
-            writeBuffer = 0x4E800421;
-        else
-            writeBuffer = 0x4E800420;
-
-        address[3] = writeBuffer;
-
-        __dcbst(0, address);
-        __sync();
-        __isync();
     }
 
     void HookFunctionStart(DWORD* address, DWORD* saveStub, DWORD destination)
@@ -90,7 +67,34 @@ namespace Memory
         }
     }
 
-    VOID __declspec(naked) GLPR_FUN(VOID)
+    void PatchInJump(DWORD* address, DWORD destination, BOOL linked)
+    {
+        DWORD writeBuffer;
+
+        if (destination & 0x8000)
+            writeBuffer = 0x3D600000 + (((destination >> 16) & 0xFFFF) + 1);
+        else
+            writeBuffer = 0x3D600000 + ((destination >> 16) & 0xFFFF);
+
+        address[0] = writeBuffer;
+        writeBuffer = 0x396B0000 + (destination & 0xFFFF);
+        address[1] = writeBuffer;
+        writeBuffer = 0x7D6903A6;
+        address[2] = writeBuffer;
+
+        if (linked)
+            writeBuffer = 0x4E800421;
+        else
+            writeBuffer = 0x4E800420;
+
+        address[3] = writeBuffer;
+
+        __dcbst(0, address);
+        __sync();
+        __isync();
+    }
+
+    VOID __declspec(naked) GLPR(VOID)
     {
         __asm
         {
@@ -121,7 +125,7 @@ namespace Memory
     {
         DWORD inst = 0, repl;
         int i;
-        PDWORD saver = (PDWORD)GLPR_FUN;
+        PDWORD saver = (PDWORD)GLPR;
 
         if (offset & 0x2000000)
             offset = offset | 0xFC000000;

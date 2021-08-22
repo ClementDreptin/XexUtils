@@ -80,8 +80,6 @@ namespace Xam
         XNOTIFYUI_TYPE_SMARTGLASSAVAILABLE = 77
     } XNOTIFYQUEUEUI_TYPE;
 
-    void XNotifyQueueUI(XNOTIFYQUEUEUI_TYPE exnq, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR displayText, PVOID contextData);
-
     void XNotify(const std::string& text, XNOTIFYQUEUEUI_TYPE type = Xam::XNOTIFYUI_TYPE_PREFERRED_REVIEW);
 
     std::string ShowKeyboard(const std::string& title, const std::string& description, const std::string& defaultValue, size_t maxLength = 15, DWORD keyboardType = VKBD_DEFAULT);

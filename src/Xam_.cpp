@@ -8,18 +8,8 @@ namespace XexUtils
 {
 namespace Xam
 {
-    void XNotifyQueueUI(XNOTIFYQUEUEUI_TYPE exnq, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR displayText, PVOID contextData)
-    {
-        void(__cdecl* TmpFunc)(
-            XNOTIFYQUEUEUI_TYPE exnq,
-            DWORD dwUserIndex,
-            ULONGLONG qwAreas,
-            PWCHAR displayText,
-            PVOID contextData
-        ) = (void(__cdecl*)(XNOTIFYQUEUEUI_TYPE, DWORD, ULONGLONG, PWCHAR, PVOID))Memory::ResolveFunction("xam.xex", 656);
-
-        TmpFunc(exnq, dwUserIndex, qwAreas, displayText, contextData);
-    }
+    typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE exnq, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR displayText, PVOID contextData);
+    XNOTIFYQUEUEUI XNotifyQueueUI = (XNOTIFYQUEUEUI)Memory::ResolveFunction("xam.xex", 656);
 
     void XNotify(const std::string& text, XNOTIFYQUEUEUI_TYPE type)
     {

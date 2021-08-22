@@ -8,11 +8,7 @@ namespace Memory
 
     void Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = 0);
 
-    void PatchInJump(DWORD* address, DWORD destination, BOOL linked);
-
     void HookFunctionStart(DWORD* address, DWORD* saveStub, DWORD destination);
-
-    DWORD RelinkGPLR(int offset, DWORD* saveStubAddr, DWORD* orgAddr);
 
     template<typename T>
     void Write(DWORD address, T data)
