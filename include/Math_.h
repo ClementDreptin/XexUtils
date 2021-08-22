@@ -12,9 +12,9 @@ namespace Math
         FLOAT x;
         FLOAT y;
 
-        bool operator==(const vec2& other) const { return x == other.x && y == other.y; }
+        bool operator==(CONST vec2& other) CONST { return x == other.x && y == other.y; }
 
-        vec2 operator+(const vec2& other);
+        vec2 operator+(CONST vec2& other);
     };
     
     struct vec3
@@ -26,13 +26,13 @@ namespace Math
         FLOAT y;
         FLOAT z;
 
-        bool operator==(const vec3& other) const { return x == other.x && y == other.y && z == other.z; }
+        bool operator==(CONST vec3& other) CONST { return x == other.x && y == other.y && z == other.z; }
 
-        vec3 operator+(const vec3& other);
+        vec3 operator+(CONST vec3& other);
     };
 
     DOUBLE Radians(DOUBLE degrees);
 
-    vec3 ToFront(const vec3& origin, FLOAT viewY, FLOAT distance);
+    vec3 ToFront(CONST vec3& origin, FLOAT viewY, FLOAT distance);
 }
 }

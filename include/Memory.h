@@ -4,7 +4,7 @@ namespace XexUtils
 {
 namespace Memory
 {
-    DWORD ResolveFunction(const std::string& moduleName, DWORD ordinal);
+    DWORD ResolveFunction(CONST std::string& moduleName, DWORD ordinal);
 
     VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = nullptr);
 

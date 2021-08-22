@@ -11,12 +11,12 @@ namespace Xam
     typedef VOID (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE exnq, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR displayText, LPVOID contextData);
     XNOTIFYQUEUEUI XNotifyQueueUI = (XNOTIFYQUEUEUI)Memory::ResolveFunction("xam.xex", 656);
 
-    VOID XNotify(const std::string& text, XNOTIFYQUEUEUI_TYPE type)
+    VOID XNotify(CONST std::string& text, XNOTIFYQUEUEUI_TYPE type)
     {
         XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(text).c_str()), nullptr);
     }
 
-    std::string ShowKeyboard(const std::string& title, const std::string& description, const std::string& defaultValue, size_t maxLength, DWORD keyboardType)
+    std::string ShowKeyboard(CONST std::string& title, CONST std::string& description, CONST std::string& defaultValue, size_t maxLength, DWORD keyboardType)
     {
         // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
         size_t realMaxLength = maxLength + 1;

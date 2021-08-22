@@ -11,7 +11,7 @@ namespace Math
         return (degrees * (pi / 180));
     }
 
-    vec2 vec2::operator+(const vec2& other)
+    vec2 vec2::operator+(CONST vec2& other)
     {
         vec2 vec(x, y);
         vec.x += other.x;
@@ -20,7 +20,7 @@ namespace Math
         return vec;
     }
 
-    vec3 vec3::operator+(const vec3& other)
+    vec3 vec3::operator+(CONST vec3& other)
     {
         vec3 vec(x, y, z);
         vec.x += other.x;
@@ -30,7 +30,7 @@ namespace Math
         return vec;
     }
 
-    vec3 ToFront(const vec3& origin, FLOAT viewY, FLOAT distance)
+    vec3 ToFront(CONST vec3& origin, FLOAT viewY, FLOAT distance)
     {
         vec3 result;
 

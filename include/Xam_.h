@@ -80,8 +80,8 @@ namespace Xam
         XNOTIFYUI_TYPE_SMARTGLASSAVAILABLE = 77
     } XNOTIFYQUEUEUI_TYPE;
 
-    VOID XNotify(const std::string& text, XNOTIFYQUEUEUI_TYPE type = Xam::XNOTIFYUI_TYPE_PREFERRED_REVIEW);
+    VOID XNotify(CONST std::string& text, XNOTIFYQUEUEUI_TYPE type = Xam::XNOTIFYUI_TYPE_PREFERRED_REVIEW);
 
-    std::string ShowKeyboard(const std::string& title, const std::string& description, const std::string& defaultValue, size_t maxLength = 15, DWORD keyboardType = VKBD_DEFAULT);
+    std::string ShowKeyboard(CONST std::string& title, CONST std::string& description, CONST std::string& defaultValue, size_t maxLength = 15, DWORD keyboardType = VKBD_DEFAULT);
 }
 }

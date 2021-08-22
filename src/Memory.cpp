@@ -11,7 +11,7 @@ namespace Memory
 
     VOID PatchInJump(LPDWORD address, DWORD destination, BOOL linked);
 
-    DWORD ResolveFunction(const std::string& moduleName, DWORD ordinal)
+    DWORD ResolveFunction(CONST std::string& moduleName, DWORD ordinal)
     {
         HMODULE mHandle = GetModuleHandle(moduleName.c_str());
 
