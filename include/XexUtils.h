@@ -12,3 +12,4 @@
 #include "Math_.h"
 #include "Memory.h"
 #include "Xam_.h"
+#include "Log.h"

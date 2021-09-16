@@ -5,3 +5,4 @@
 #include <math.h>
 #include "Xam_.h"
 #include "Kernel.h"
+#include "Log.h"

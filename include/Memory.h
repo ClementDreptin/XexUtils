@@ -15,7 +15,7 @@ namespace Memory
     {
         if (!Kernel::MmIsAddressValid((LPDWORD)address))
         {
-            Kernel::DbgPrint("Invalid address: %#010x\n", address);
+            Log::Error("Invalid address: %#010x", address);
             return;
         }
 
@@ -27,7 +27,7 @@ namespace Memory
     {
         if (!Kernel::MmIsAddressValid((LPDWORD)address))
         {
-            Kernel::DbgPrint("Invalid address: %#010x\n", address);
+            Log::Error("Invalid address: %#010x", address);
             return 0;
         }
 

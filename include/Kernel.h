@@ -18,8 +18,6 @@ namespace Kernel
 
         DWORD XamGetCurrentTitleId();
 
-        VOID DbgPrint(LPCSTR s, ...);
-
         BOOL MmIsAddressValid(LPVOID address);
 
         #define __isync() __emit(0x4C00012C)
