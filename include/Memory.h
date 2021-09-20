@@ -1,37 +1,47 @@
 #pragma once
 
+
 namespace XexUtils
 {
-namespace Memory
+
+//--------------------------------------------------------------------------------------
+// Name: class Memory
+// Desc: Utility static class with different memory manipulation functions.
+//--------------------------------------------------------------------------------------
+class Memory
 {
-    DWORD ResolveFunction(CONST std::string& moduleName, DWORD ordinal);
-
-    VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = nullptr);
-
-    VOID HookFunctionStart(LPDWORD address, LPDWORD saveStub, DWORD destination);
+public:
+    static DWORD ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal);
+    static VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = nullptr);
+    static VOID HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD dwDestination);
 
     template<typename T>
-    VOID Write(DWORD address, T data)
+    static VOID Write(DWORD dwAddress, T data)
     {
-        if (!Kernel::MmIsAddressValid((LPDWORD)address))
+        if (!Kernel::MmIsAddressValid((LPDWORD)dwAddress))
         {
-            Log::Error("Invalid address: %#010x", address);
+            Log::Error("Invalid address: %#010x", dwAddress);
             return;
         }
 
-        *(T*)address = data;
+        *(T*)dwAddress = data;
     }
 
     template<typename T>
-    T Read(DWORD address)
+    static T Read(DWORD dwAddress)
     {
-        if (!Kernel::MmIsAddressValid((LPDWORD)address))
+        if (!Kernel::MmIsAddressValid((LPDWORD)dwAddress))
         {
-            Log::Error("Invalid address: %#010x", address);
+            Log::Error("Invalid address: %#010x", dwAddress);
             return 0;
         }
 
-        return *(T*)address;
+        return *(T*)dwAddress;
     }
-}
+private:
+    static VOID PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked);
+    static VOID GLPR();
+    static DWORD RelinkGPLR(INT nOffset, LPDWORD lpdwSaveStubAddr, LPDWORD lpdwOrgAddr);
+};
+
 }

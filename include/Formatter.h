@@ -1,11 +1,18 @@
 #pragma once
 
+
 namespace XexUtils
 {
-namespace Formatter
-{
-    std::string Format(LPCSTR format, ...);
 
-    std::wstring ToWide(CONST std::string& narrowString);
-}
+//--------------------------------------------------------------------------------------
+// Name: class Formatter
+// Desc: Utility static class to do string operations.
+//--------------------------------------------------------------------------------------
+class Formatter
+{
+public:
+    static std::string Format(CONST std::string& strFormat, ...);
+    static std::wstring ToWide(CONST std::string& strNarrowString);
+};
+
 }

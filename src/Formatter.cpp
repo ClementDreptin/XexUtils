@@ -1,26 +1,46 @@
 #include "pch.h"
 #include "Formatter.h"
 
+
 namespace XexUtils
 {
-namespace Formatter
+
+//--------------------------------------------------------------------------------------
+// Name: Format()
+// Desc: Format a string in with a printf-like format.
+//--------------------------------------------------------------------------------------
+std::string Formatter::Format(CONST std::string& strMessage, ...)
 {
-    std::string Format(LPCSTR format, ...)
-    {
-        CHAR buffer[200];
-        va_list args;
-        va_start(args, format);
-        vsprintf_s(buffer, 200, format, args);
-        va_end(args);
-        return std::string(buffer);
-    }
+    // Get the variadic arguments
+    va_list pArgList;
+    va_start(pArgList, strMessage);
 
-    std::wstring ToWide(CONST std::string& narrowString)
-    {
-        std::wstring wideString;
-        wideString.assign(narrowString.begin(), narrowString.end());
+    CONST INT MAX_SIZE = 2048;
 
-        return wideString;
-    }
+    // Build the string with the format
+    CHAR szBuffer[MAX_SIZE] = { 0 };
+    vsnprintf_s(szBuffer, _TRUNCATE, strMessage.c_str(), pArgList);
+
+    // Free the variadic arguments
+    va_end(pArgList);
+
+    return std::string(szBuffer);
 }
+
+
+//--------------------------------------------------------------------------------------
+// Name: ToWide()
+// Desc: Create a wide string from a narrow string.
+//--------------------------------------------------------------------------------------
+std::wstring Formatter::ToWide(CONST std::string& strNarrowString)
+{
+    // Create the wide string
+    std::wstring wstrWideString;
+
+    // Copy the narrow string into the wide string from start to end
+    wstrWideString.assign(strNarrowString.begin(), strNarrowString.end());
+
+    return wstrWideString;
+}
+
 }

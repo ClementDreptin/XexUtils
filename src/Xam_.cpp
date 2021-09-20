@@ -4,40 +4,61 @@
 #include "Memory.h"
 #include "Formatter.h"
 
+
 namespace XexUtils
 {
-namespace Xam
+
+// Create a pointer to XNotifyQueueUI in xam.xex
+typedef VOID (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE dwType, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR wszDisplayText, LPVOID pContextData);
+XNOTIFYQUEUEUI XNotifyQueueUI = (XNOTIFYQUEUEUI)Memory::ResolveFunction("xam.xex", 656);
+
+//--------------------------------------------------------------------------------------
+// Name: XNotify()
+// Desc: Show an Xbox notification.
+//--------------------------------------------------------------------------------------
+VOID Xam::XNotify(CONST std::string& strText, XNOTIFYQUEUEUI_TYPE dwType)
 {
-    typedef VOID (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE exnq, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR displayText, LPVOID contextData);
-    XNOTIFYQUEUEUI XNotifyQueueUI = (XNOTIFYQUEUEUI)Memory::ResolveFunction("xam.xex", 656);
-
-    VOID XNotify(CONST std::string& text, XNOTIFYQUEUEUI_TYPE type)
-    {
-        XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(text).c_str()), nullptr);
-    }
-
-    std::string ShowKeyboard(CONST std::string& title, CONST std::string& description, CONST std::string& defaultValue, size_t maxLength, DWORD keyboardType)
-    {
-        // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
-        size_t realMaxLength = maxLength + 1;
-        XOVERLAPPED overlapped;
-        PWCHAR wideBuffer = new WCHAR[realMaxLength];
-        LPSTR buffer = new CHAR[realMaxLength];
-
-        ZeroMemory(&overlapped, sizeof(overlapped));
-        XShowKeyboardUI(0, keyboardType, Formatter::ToWide(defaultValue).c_str(), Formatter::ToWide(title).c_str(), Formatter::ToWide(description).c_str(), wideBuffer, realMaxLength, &overlapped);
-
-        while (!XHasOverlappedIoCompleted(&overlapped))
-            Sleep(100);
-
-        wcstombs(buffer, wideBuffer, realMaxLength);
-
-        std::string result = buffer;
-
-        delete[] wideBuffer;
-        delete[] buffer;
-
-        return result;
-    }
+    XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(strText).c_str()), nullptr);
 }
+
+
+//--------------------------------------------------------------------------------------
+// Name: ShowKeyboard()
+// Desc: Open a keyboard and return what the user typed as a string (needs to be
+//       threaded).
+//--------------------------------------------------------------------------------------
+std::string Xam::ShowKeyboard(CONST std::string& strTitle, CONST std::string& strDescription, CONST std::string& strDefaultValue, INT nMaxLength, DWORD dwKeyboardType)
+{
+    // nMaxLength is the amount of characters the keyboard will allow, nRealMaxLength needs to include the \0 to terminate the string
+    INT nRealMaxLength = nMaxLength + 1;
+    XOVERLAPPED overlapped;
+
+    // Create the buffers
+    PWCHAR wszBuffer = new WCHAR[nRealMaxLength];
+    LPSTR szBuffer = new CHAR[nRealMaxLength];
+
+    // Zero the buffers and structs
+    ZeroMemory(&overlapped, sizeof(XOVERLAPPED));
+    ZeroMemory(wszBuffer, sizeof(wszBuffer));
+    ZeroMemory(szBuffer, sizeof(szBuffer));
+
+    // Open the keyboard
+    XShowKeyboardUI(0, dwKeyboardType, Formatter::ToWide(strDefaultValue).c_str(), Formatter::ToWide(strTitle).c_str(), Formatter::ToWide(strDescription).c_str(), wszBuffer, nRealMaxLength, &overlapped);
+
+    // Wait until the keyboard closes
+    while (!XHasOverlappedIoCompleted(&overlapped))
+        Sleep(100);
+
+    // Convert the wide string to a narrow string
+    wcstombs(szBuffer, wszBuffer, nRealMaxLength);
+
+    std::string result = szBuffer;
+
+    // Cleanup
+    delete[] wszBuffer;
+    delete[] szBuffer;
+
+    return result;
+}
+
 }

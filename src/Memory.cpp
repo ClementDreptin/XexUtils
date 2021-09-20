@@ -3,145 +3,169 @@
 
 #include "Kernel.h"
 
+
 namespace XexUtils
 {
-namespace Memory
+
+//--------------------------------------------------------------------------------------
+// Name: ResolveFunction()
+// Desc: Get a function in strModule from its ordinal.
+//--------------------------------------------------------------------------------------
+DWORD Memory::ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal)
 {
-    DWORD RelinkGPLR(INT offset, LPDWORD saveStubAddr, LPDWORD orgAddr);
+    HMODULE mHandle = GetModuleHandle(strModuleName.c_str());
 
-    VOID PatchInJump(LPDWORD address, DWORD destination, BOOL linked);
+    return (mHandle == NULL) ? NULL : (DWORD)GetProcAddress(mHandle, (LPCSTR)dwOrdinal);
+}
 
-    DWORD ResolveFunction(CONST std::string& moduleName, DWORD ordinal)
+
+//--------------------------------------------------------------------------------------
+// Name: Thread()
+// Desc: Start a thread.
+//--------------------------------------------------------------------------------------
+VOID Memory::Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
+{
+    Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, 2);
+}
+
+
+//--------------------------------------------------------------------------------------
+// Name: HookFunctionStart()
+// Desc: Hook a function.
+//--------------------------------------------------------------------------------------
+VOID Memory::HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD dwDestination)
+{
+    if (lpdwSaveStub != NULL && lpdwAddress != NULL)
     {
-        HMODULE mHandle = GetModuleHandle(moduleName.c_str());
+        DWORD dwAddrReloc = (DWORD)(&lpdwAddress[4]);
+        DWORD dwWriteBuffer;
 
-        return (mHandle == NULL) ? NULL : (DWORD)GetProcAddress(mHandle, (LPCSTR)ordinal);
-    }
+        if (dwAddrReloc & 0x8000)
+            dwWriteBuffer = 0x3D600000 + (((dwAddrReloc >> 16) & 0xFFFF) + 1);
+        else
+            dwWriteBuffer = 0x3D600000 + ((dwAddrReloc >> 16) & 0xFFFF);
 
-    VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
-    {
-        Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, 2);
-    }
-
-    VOID HookFunctionStart(LPDWORD address, LPDWORD saveStub, DWORD destination)
-    {
-        if (saveStub != NULL && address != NULL)
+        lpdwSaveStub[0] = dwWriteBuffer;
+        dwWriteBuffer = 0x396B0000 + (dwAddrReloc & 0xFFFF);
+        lpdwSaveStub[1] = dwWriteBuffer;
+        dwWriteBuffer = 0x7D6903A6;
+        lpdwSaveStub[2] = dwWriteBuffer;
+    
+        for (INT i = 0; i < 4; i++)
         {
-            INT i;
-            DWORD addrReloc = (DWORD)(&address[4]);
-            DWORD writeBuffer;
-
-            if (addrReloc & 0x8000)
-                writeBuffer = 0x3D600000 + (((addrReloc >> 16) & 0xFFFF) + 1);
-            else
-                writeBuffer = 0x3D600000 + ((addrReloc >> 16) & 0xFFFF);
-
-            saveStub[0] = writeBuffer;
-            writeBuffer = 0x396B0000 + (addrReloc & 0xFFFF);
-            saveStub[1] = writeBuffer;
-            writeBuffer = 0x7D6903A6;
-            saveStub[2] = writeBuffer;
-        
-            for (i = 0; i < 4; i++)
+            if ((lpdwAddress[i] & 0x48000003) == 0x48000001)
             {
-                if ((address[i] & 0x48000003) == 0x48000001)
-                {
-                    writeBuffer = RelinkGPLR((address[i] &~ 0x48000003), &saveStub[i + 3], &address[i]);
-                    saveStub[i + 3] = writeBuffer;
-                }
-                else
-                {
-                    writeBuffer = address[i];
-                    saveStub[i + 3] = writeBuffer;
-                }
+                dwWriteBuffer = RelinkGPLR((lpdwAddress[i] &~ 0x48000003), &lpdwSaveStub[i + 3], &lpdwAddress[i]);
+                lpdwSaveStub[i + 3] = dwWriteBuffer;
             }
-
-            writeBuffer = 0x4E800420; // bctr
-            saveStub[7] = writeBuffer;
-
-            __dcbst(0, saveStub);
-            __sync();
-            __isync();
-
-            PatchInJump(address, destination, FALSE);
+            else
+            {
+                dwWriteBuffer = lpdwAddress[i];
+                lpdwSaveStub[i + 3] = dwWriteBuffer;
+            }
         }
-    }
 
-    VOID PatchInJump(LPDWORD address, DWORD destination, BOOL linked)
-    {
-        DWORD writeBuffer;
+        dwWriteBuffer = 0x4E800420; // bctr
+        lpdwSaveStub[7] = dwWriteBuffer;
 
-        if (destination & 0x8000)
-            writeBuffer = 0x3D600000 + (((destination >> 16) & 0xFFFF) + 1);
-        else
-            writeBuffer = 0x3D600000 + ((destination >> 16) & 0xFFFF);
-
-        address[0] = writeBuffer;
-        writeBuffer = 0x396B0000 + (destination & 0xFFFF);
-        address[1] = writeBuffer;
-        writeBuffer = 0x7D6903A6;
-        address[2] = writeBuffer;
-
-        if (linked)
-            writeBuffer = 0x4E800421;
-        else
-            writeBuffer = 0x4E800420;
-
-        address[3] = writeBuffer;
-
-        __dcbst(0, address);
+        __dcbst(0, lpdwSaveStub);
         __sync();
         __isync();
-    }
 
-    VOID __declspec(naked) GLPR()
-    {
-        __asm
-        {
-            std     r14, -0x98(sp)
-            std     r15, -0x90(sp)
-            std     r16, -0x88(sp)
-            std     r17, -0x80(sp)
-            std     r18, -0x78(sp)
-            std     r19, -0x70(sp)
-            std     r20, -0x68(sp)
-            std     r21, -0x60(sp)
-            std     r22, -0x58(sp)
-            std     r23, -0x50(sp)
-            std     r24, -0x48(sp)
-            std     r25, -0x40(sp)
-            std     r26, -0x38(sp)
-            std     r27, -0x30(sp)
-            std     r28, -0x28(sp)
-            std     r29, -0x20(sp)
-            std     r30, -0x18(sp)
-            std     r31, -0x10(sp)
-            stw     r12, -0x8(sp)
-            blr
-        }
-    }
-
-    DWORD RelinkGPLR(INT offset, LPDWORD saveStubAddr, LPDWORD orgAddr)
-    {
-        DWORD inst = 0, repl;
-        INT i;
-        LPDWORD saver = (LPDWORD)GLPR;
-
-        if (offset & 0x2000000)
-            offset = offset | 0xFC000000;
-
-        repl = orgAddr[offset / 4];
-
-        for (i = 0; i < 20; i++)
-        {
-            if (repl == saver[i])
-            {
-                INT newOffset = (INT)&saver[i] - (INT)saveStubAddr;
-                inst = 0x48000001 | (newOffset & 0x3FFFFFC);
-            }
-        }
-
-        return inst;
+        PatchInJump(lpdwAddress, dwDestination, FALSE);
     }
 }
+
+
+//--------------------------------------------------------------------------------------
+// Name: PatchInJump()
+// Desc: Insert a jump instruction into an existing function to jump to another
+//       function.
+//--------------------------------------------------------------------------------------
+VOID Memory::PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked)
+{
+    DWORD writeBuffer;
+
+    if (dwDestination & 0x8000)
+        writeBuffer = 0x3D600000 + (((dwDestination >> 16) & 0xFFFF) + 1);
+    else
+        writeBuffer = 0x3D600000 + ((dwDestination >> 16) & 0xFFFF);
+
+    lpdwAddress[0] = writeBuffer;
+    writeBuffer = 0x396B0000 + (dwDestination & 0xFFFF);
+    lpdwAddress[1] = writeBuffer;
+    writeBuffer = 0x7D6903A6;
+    lpdwAddress[2] = writeBuffer;
+
+    if (bLinked)
+        writeBuffer = 0x4E800421;
+    else
+        writeBuffer = 0x4E800420;
+
+    lpdwAddress[3] = writeBuffer;
+
+    __dcbst(0, lpdwAddress);
+    __sync();
+    __isync();
+}
+
+
+//--------------------------------------------------------------------------------------
+// Name: GLPR()
+// Desc: Don't know.
+//--------------------------------------------------------------------------------------
+VOID __declspec(naked) Memory::GLPR()
+{
+    __asm
+    {
+        std     r14, -0x98(sp)
+        std     r15, -0x90(sp)
+        std     r16, -0x88(sp)
+        std     r17, -0x80(sp)
+        std     r18, -0x78(sp)
+        std     r19, -0x70(sp)
+        std     r20, -0x68(sp)
+        std     r21, -0x60(sp)
+        std     r22, -0x58(sp)
+        std     r23, -0x50(sp)
+        std     r24, -0x48(sp)
+        std     r25, -0x40(sp)
+        std     r26, -0x38(sp)
+        std     r27, -0x30(sp)
+        std     r28, -0x28(sp)
+        std     r29, -0x20(sp)
+        std     r30, -0x18(sp)
+        std     r31, -0x10(sp)
+        stw     r12, -0x8(sp)
+        blr
+    }
+}
+
+
+//--------------------------------------------------------------------------------------
+// Name: RelinkGLPR()
+// Desc: Don't know.
+//--------------------------------------------------------------------------------------
+DWORD Memory::RelinkGPLR(INT nOffset, LPDWORD lpdwSaveStubAddr, LPDWORD lpdwOrgAddr)
+{
+    DWORD dwInst = 0, dwRepl;
+    LPDWORD lpdwSaver = (LPDWORD)GLPR;
+
+    if (nOffset & 0x2000000)
+        nOffset = nOffset | 0xFC000000;
+
+    dwRepl = lpdwOrgAddr[nOffset / 4];
+
+    for (INT i = 0; i < 20; i++)
+    {
+        if (dwRepl == lpdwSaver[i])
+        {
+            INT nNewOffset = (INT)&lpdwSaver[i] - (INT)lpdwSaveStubAddr;
+            dwInst = 0x48000001 | (nNewOffset & 0x3FFFFFC);
+        }
+    }
+
+    return dwInst;
+}
+
 }
