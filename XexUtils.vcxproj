@@ -16,6 +16,7 @@
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <BuildLogFile>$(IntDir)$(ProjectName)\BuildLog.txt</BuildLogFile>
+    <PlatformToolset>2010-01</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
