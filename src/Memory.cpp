@@ -13,9 +13,9 @@ namespace XexUtils
 //--------------------------------------------------------------------------------------
 DWORD Memory::ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal)
 {
-    HMODULE mHandle = GetModuleHandle(strModuleName.c_str());
+    HMODULE hModule = GetModuleHandle(strModuleName.c_str());
 
-    return (mHandle == NULL) ? NULL : (DWORD)GetProcAddress(mHandle, (LPCSTR)dwOrdinal);
+    return (hModule == NULL) ? NULL : (DWORD)GetProcAddress(hModule, (LPCSTR)dwOrdinal);
 }
 
 
@@ -84,25 +84,25 @@ VOID Memory::HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD 
 //--------------------------------------------------------------------------------------
 VOID Memory::PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked)
 {
-    DWORD writeBuffer;
+    DWORD dwWriteBuffer;
 
     if (dwDestination & 0x8000)
-        writeBuffer = 0x3D600000 + (((dwDestination >> 16) & 0xFFFF) + 1);
+        dwWriteBuffer = 0x3D600000 + (((dwDestination >> 16) & 0xFFFF) + 1);
     else
-        writeBuffer = 0x3D600000 + ((dwDestination >> 16) & 0xFFFF);
+        dwWriteBuffer = 0x3D600000 + ((dwDestination >> 16) & 0xFFFF);
 
-    lpdwAddress[0] = writeBuffer;
-    writeBuffer = 0x396B0000 + (dwDestination & 0xFFFF);
-    lpdwAddress[1] = writeBuffer;
-    writeBuffer = 0x7D6903A6;
-    lpdwAddress[2] = writeBuffer;
+    lpdwAddress[0] = dwWriteBuffer;
+    dwWriteBuffer = 0x396B0000 + (dwDestination & 0xFFFF);
+    lpdwAddress[1] = dwWriteBuffer;
+    dwWriteBuffer = 0x7D6903A6;
+    lpdwAddress[2] = dwWriteBuffer;
 
     if (bLinked)
-        writeBuffer = 0x4E800421;
+        dwWriteBuffer = 0x4E800421;
     else
-        writeBuffer = 0x4E800420;
+        dwWriteBuffer = 0x4E800420;
 
-    lpdwAddress[3] = writeBuffer;
+    lpdwAddress[3] = dwWriteBuffer;
 
     __dcbst(0, lpdwAddress);
     __sync();
