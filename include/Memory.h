@@ -13,6 +13,7 @@ class Memory
 public:
     static DWORD ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal);
     static VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = nullptr);
+    static VOID ThreadEx(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters, DWORD dwCreationFlags);
     static VOID HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD dwDestination);
 
     template<typename T>

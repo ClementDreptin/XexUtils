@@ -25,7 +25,17 @@ DWORD Memory::ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal)
 //--------------------------------------------------------------------------------------
 VOID Memory::Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
 {
-    Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, 2);
+    CreateThread(nullptr, 0, lpStartAddress, lpParameters, NULL, NULL);
+}
+
+
+//--------------------------------------------------------------------------------------
+// Name: ThreadEx()
+// Desc: Start a thread with special creation flags.
+//--------------------------------------------------------------------------------------
+VOID Memory::ThreadEx(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters, DWORD dwCreationFlags)
+{
+    Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, dwCreationFlags);
 }
 
 
