@@ -7,10 +7,6 @@
 namespace XexUtils
 {
 
-//--------------------------------------------------------------------------------------
-// Name: ResolveFunction()
-// Desc: Get a function in strModule from its ordinal.
-//--------------------------------------------------------------------------------------
 DWORD Memory::ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal)
 {
     HMODULE hModule = GetModuleHandle(strModuleName.c_str());
@@ -18,31 +14,16 @@ DWORD Memory::ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal)
     return (hModule == NULL) ? NULL : (DWORD)GetProcAddress(hModule, (LPCSTR)dwOrdinal);
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: Thread()
-// Desc: Start a thread.
-//--------------------------------------------------------------------------------------
 VOID Memory::Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
 {
     CreateThread(nullptr, 0, lpStartAddress, lpParameters, NULL, NULL);
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: ThreadEx()
-// Desc: Start a thread with special creation flags.
-//--------------------------------------------------------------------------------------
 VOID Memory::ThreadEx(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters, DWORD dwCreationFlags)
 {
     Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, dwCreationFlags);
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: HookFunctionStart()
-// Desc: Hook a function.
-//--------------------------------------------------------------------------------------
 VOID Memory::HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD dwDestination)
 {
     if (lpdwSaveStub != NULL && lpdwAddress != NULL)
@@ -86,12 +67,6 @@ VOID Memory::HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD 
     }
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: PatchInJump()
-// Desc: Insert a jump instruction into an existing function to jump to another
-//       function.
-//--------------------------------------------------------------------------------------
 VOID Memory::PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked)
 {
     DWORD dwWriteBuffer;
@@ -119,11 +94,6 @@ VOID Memory::PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked)
     __isync();
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: GLPR()
-// Desc: Don't know.
-//--------------------------------------------------------------------------------------
 VOID __declspec(naked) Memory::GLPR()
 {
     __asm
@@ -151,11 +121,6 @@ VOID __declspec(naked) Memory::GLPR()
     }
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: RelinkGLPR()
-// Desc: Don't know.
-//--------------------------------------------------------------------------------------
 DWORD Memory::RelinkGPLR(INT nOffset, LPDWORD lpdwSaveStubAddr, LPDWORD lpdwOrgAddr)
 {
     DWORD dwInst = 0, dwRepl;

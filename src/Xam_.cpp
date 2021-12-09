@@ -12,21 +12,11 @@ namespace XexUtils
 typedef VOID (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE dwType, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR wszDisplayText, LPVOID pContextData);
 XNOTIFYQUEUEUI XNotifyQueueUI = (XNOTIFYQUEUEUI)Memory::ResolveFunction("xam.xex", 656);
 
-//--------------------------------------------------------------------------------------
-// Name: XNotify()
-// Desc: Show an Xbox notification.
-//--------------------------------------------------------------------------------------
 VOID Xam::XNotify(CONST std::string& strText, XNOTIFYQUEUEUI_TYPE dwType)
 {
     XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(strText).c_str()), nullptr);
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: ShowKeyboard()
-// Desc: Open a keyboard and return what the user typed as a string (needs to be
-//       threaded).
-//--------------------------------------------------------------------------------------
 std::string Xam::ShowKeyboard(CONST std::string& strTitle, CONST std::string& strDescription, CONST std::string& strDefaultValue, INT nMaxLength, DWORD dwKeyboardType)
 {
     // nMaxLength is the amount of characters the keyboard will allow, nRealMaxLength needs to include the \0 to terminate the string

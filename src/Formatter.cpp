@@ -5,10 +5,6 @@
 namespace XexUtils
 {
 
-//--------------------------------------------------------------------------------------
-// Name: Format()
-// Desc: Format a string in with a printf-like format.
-//--------------------------------------------------------------------------------------
 std::string Formatter::Format(CONST std::string& strMessage, ...)
 {
     // Get the variadic arguments
@@ -27,11 +23,6 @@ std::string Formatter::Format(CONST std::string& strMessage, ...)
     return std::string(szBuffer);
 }
 
-
-//--------------------------------------------------------------------------------------
-// Name: ToWide()
-// Desc: Create a wide string from a narrow string.
-//--------------------------------------------------------------------------------------
 std::wstring Formatter::ToWide(CONST std::string& strNarrowString)
 {
     // Create the wide string

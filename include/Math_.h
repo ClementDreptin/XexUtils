@@ -6,10 +6,7 @@ namespace XexUtils
 namespace Math
 {
 
-//--------------------------------------------------------------------------------------
-// Name: struct vec2
-// Desc: Struct to represent a two-component vector.
-//--------------------------------------------------------------------------------------
+// Struct to represent a two-component vector.
 struct vec2
 {
     vec2() : x(0.0f), y(0.0f) {}
@@ -24,10 +21,7 @@ struct vec2
 };
 
 
-//--------------------------------------------------------------------------------------
-// Name: struct vec3
-// Desc: Struct to represent a three-component vector.
-//--------------------------------------------------------------------------------------
+// Struct to represent a three-component vector.
 struct vec3
 {
     vec3() : x(0.0f), y(0.0f), z(0.0f) {}
@@ -42,10 +36,10 @@ struct vec3
     vec3 operator+(CONST vec3& other);
 };
 
-
+// Convert degree to radians.
 DOUBLE Radians(DOUBLE dbDegrees);
 
-
+// Get the position at distance unit from origin.
 vec3 ToFront(CONST vec3& origin, FLOAT fViewY, FLOAT fDistance);
 
 }
