@@ -15,9 +15,9 @@ struct vec2
     FLOAT x;
     FLOAT y;
 
-    bool operator==(CONST vec2& other) CONST { return x == other.x && y == other.y; }
+    bool operator==(CONST vec2 &other) CONST { return x == other.x && y == other.y; }
 
-    vec2 operator+(CONST vec2& other);
+    vec2 operator+(CONST vec2 &other);
 };
 
 
@@ -31,16 +31,16 @@ struct vec3
     FLOAT y;
     FLOAT z;
 
-    bool operator==(CONST vec3& other) CONST { return x == other.x && y == other.y && z == other.z; }
+    bool operator==(CONST vec3 &other) CONST { return x == other.x && y == other.y && z == other.z; }
 
-    vec3 operator+(CONST vec3& other);
+    vec3 operator+(CONST vec3 &other);
 };
 
 // Convert degree to radians.
 DOUBLE Radians(DOUBLE dbDegrees);
 
 // Get the position at distance unit from origin.
-vec3 ToFront(CONST vec3& origin, FLOAT fViewY, FLOAT fDistance);
+vec3 ToFront(CONST vec3 &origin, FLOAT fViewY, FLOAT fDistance);
 
 }
 }

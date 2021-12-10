@@ -7,7 +7,7 @@
 namespace XexUtils
 {
 
-DWORD Memory::ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal)
+DWORD Memory::ResolveFunction(CONST std::string &strModuleName, DWORD dwOrdinal)
 {
     HMODULE hModule = GetModuleHandle(strModuleName.c_str());
 

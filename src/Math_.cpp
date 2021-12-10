@@ -7,7 +7,7 @@ namespace XexUtils
 namespace Math
 {
 
-vec2 vec2::operator+(CONST vec2& other)
+vec2 vec2::operator+(CONST vec2 &other)
 {
     vec2 vec(x, y);
     vec.x += other.x;
@@ -16,7 +16,7 @@ vec2 vec2::operator+(CONST vec2& other)
     return vec;
 }
 
-vec3 vec3::operator+(CONST vec3& other)
+vec3 vec3::operator+(CONST vec3 &other)
 {
     vec3 vec(x, y, z);
     vec.x += other.x;
@@ -32,7 +32,7 @@ DOUBLE Radians(DOUBLE dbDegrees)
     return (dbDegrees * (dbPI / 180));
 }
 
-vec3 ToFront(CONST vec3& origin, FLOAT fViewY, FLOAT fDistance)
+vec3 ToFront(CONST vec3 &origin, FLOAT fViewY, FLOAT fDistance)
 {
     vec3 result;
 

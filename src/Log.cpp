@@ -5,7 +5,7 @@
 namespace XexUtils
 {
 
-VOID Log::Info(CONST std::string& strMessage, ...)
+VOID Log::Info(CONST std::string &strMessage, ...)
 {
     // Get the variadic arguments
     va_list pArgList;
@@ -18,7 +18,7 @@ VOID Log::Info(CONST std::string& strMessage, ...)
     va_end(pArgList);
 }
 
-VOID Log::Error(CONST std::string& strMessage, ...)
+VOID Log::Error(CONST std::string &strMessage, ...)
 {
     // Get the variadic arguments
     va_list pArgList;
@@ -31,7 +31,7 @@ VOID Log::Error(CONST std::string& strMessage, ...)
     va_end(pArgList);
 }
 
-VOID Log::Print(CONST std::string& strFormat, CONST va_list pArgList)
+VOID Log::Print(CONST std::string &strFormat, CONST va_list pArgList)
 {
     CONST INT MAX_SIZE = 2048;
 

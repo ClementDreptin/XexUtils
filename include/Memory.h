@@ -9,7 +9,7 @@ class Memory
 {
 public:
     // Get a function in strModuleName from its ordinal.
-    static DWORD ResolveFunction(CONST std::string& strModuleName, DWORD dwOrdinal);
+    static DWORD ResolveFunction(CONST std::string &strModuleName, DWORD dwOrdinal);
 
     // Start a thread.
     static VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = nullptr);

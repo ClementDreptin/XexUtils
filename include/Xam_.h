@@ -86,11 +86,11 @@ class Xam
 {
 public:
     // Show an Xbox notification.
-    static VOID XNotify(CONST std::string& strText, XNOTIFYQUEUEUI_TYPE dwType = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
+    static VOID XNotify(CONST std::string &strText, XNOTIFYQUEUEUI_TYPE dwType = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
 
     // Open a keyboard and return what the user typed as a string.
     // Note: Blocks the current thread while waiting for the user to finish typing.
-    static std::string ShowKeyboard(CONST std::string& strTitle, CONST std::string& strDescription, CONST std::string& strDefaultValue, INT nMaxLength = 15, DWORD dwKeyboardType = VKBD_DEFAULT);
+    static std::string ShowKeyboard(CONST std::string &strTitle, CONST std::string &strDescription, CONST std::string &strDefaultValue, INT nMaxLength = 15, DWORD dwKeyboardType = VKBD_DEFAULT);
 };
 
 }
