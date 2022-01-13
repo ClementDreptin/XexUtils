@@ -63,7 +63,7 @@ void Memory::HookFunctionStart(DWORD *pdwAddress, DWORD *pdwSaveStub, DWORD dwDe
         __sync();
         __isync();
 
-        PatchInJump(pdwAddress, dwDestination, FALSE);
+        PatchInJump(pdwAddress, dwDestination, false);
     }
 }
 
