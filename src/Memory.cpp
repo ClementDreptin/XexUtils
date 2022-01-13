@@ -11,12 +11,12 @@ DWORD Memory::ResolveFunction(CONST std::string &strModuleName, DWORD dwOrdinal)
 {
     HMODULE hModule = GetModuleHandle(strModuleName.c_str());
 
-    return (hModule == NULL) ? NULL : (DWORD)GetProcAddress(hModule, (LPCSTR)dwOrdinal);
+    return (hModule == NULL) ? NULL : reinterpret_cast<DWORD>(GetProcAddress(hModule, reinterpret_cast<LPCSTR>(dwOrdinal)));
 }
 
 VOID Memory::Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
 {
-    CreateThread(nullptr, 0, lpStartAddress, lpParameters, NULL, NULL);
+    CreateThread(nullptr, 0, lpStartAddress, lpParameters, 0, nullptr);
 }
 
 VOID Memory::ThreadEx(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters, DWORD dwCreationFlags)
@@ -28,7 +28,7 @@ VOID Memory::HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD 
 {
     if (lpdwSaveStub != NULL && lpdwAddress != NULL)
     {
-        DWORD dwAddrReloc = (DWORD)(&lpdwAddress[4]);
+        DWORD dwAddrReloc = reinterpret_cast<DWORD>(&lpdwAddress[4]);
         DWORD dwWriteBuffer;
 
         if (dwAddrReloc & 0x8000)
@@ -124,7 +124,7 @@ VOID __declspec(naked) Memory::GLPR()
 DWORD Memory::RelinkGPLR(INT nOffset, LPDWORD lpdwSaveStubAddr, LPDWORD lpdwOrgAddr)
 {
     DWORD dwInst = 0, dwRepl;
-    LPDWORD lpdwSaver = (LPDWORD)GLPR;
+    LPDWORD lpdwSaver = reinterpret_cast<LPDWORD>(GLPR);
 
     if (nOffset & 0x2000000)
         nOffset = nOffset | 0xFC000000;
@@ -135,7 +135,7 @@ DWORD Memory::RelinkGPLR(INT nOffset, LPDWORD lpdwSaveStubAddr, LPDWORD lpdwOrgA
     {
         if (dwRepl == lpdwSaver[i])
         {
-            INT nNewOffset = (INT)&lpdwSaver[i] - (INT)lpdwSaveStubAddr;
+            INT nNewOffset = reinterpret_cast<INT>(&lpdwSaver[i]) - reinterpret_cast<INT>(lpdwSaveStubAddr);
             dwInst = 0x48000001 | (nNewOffset & 0x3FFFFFC);
         }
     }

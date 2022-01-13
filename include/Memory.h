@@ -24,7 +24,7 @@ public:
     template<typename T>
     static VOID Write(DWORD dwAddress, T data)
     {
-        if (!Kernel::MmIsAddressValid((LPDWORD)dwAddress))
+        if (!Kernel::MmIsAddressValid(reinterpret_cast<LPDWORD>(dwAddress)))
         {
             Log::Error("Invalid address: %#010x", dwAddress);
             return;
@@ -37,7 +37,7 @@ public:
     template<typename T>
     static T Read(DWORD dwAddress)
     {
-        if (!Kernel::MmIsAddressValid((LPDWORD)dwAddress))
+        if (!Kernel::MmIsAddressValid(reinterpret_cast<LPDWORD>(dwAddress)))
         {
             Log::Error("Invalid address: %#010x", dwAddress);
             return 0;

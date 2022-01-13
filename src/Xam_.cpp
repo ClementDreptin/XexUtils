@@ -10,11 +10,11 @@ namespace XexUtils
 
 // Create a pointer to XNotifyQueueUI in xam.xex
 typedef VOID (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE dwType, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR wszDisplayText, LPVOID pContextData);
-XNOTIFYQUEUEUI XNotifyQueueUI = (XNOTIFYQUEUEUI)Memory::ResolveFunction("xam.xex", 656);
+XNOTIFYQUEUEUI XNotifyQueueUI = reinterpret_cast<XNOTIFYQUEUEUI>(Memory::ResolveFunction("xam.xex", 656));
 
 VOID Xam::XNotify(CONST std::string &strText, XNOTIFYQUEUEUI_TYPE dwType)
 {
-    XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, (PWCHAR)(Formatter::ToWide(strText).c_str()), nullptr);
+    XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, const_cast<PWCHAR>(Formatter::ToWide(strText).c_str()), nullptr);
 }
 
 std::string Xam::ShowKeyboard(CONST std::string &strTitle, CONST std::string &strDescription, CONST std::string &strDefaultValue, INT nMaxLength, DWORD dwKeyboardType)

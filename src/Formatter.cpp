@@ -5,7 +5,7 @@
 namespace XexUtils
 {
 
-std::string Formatter::Format(CONST std::string &strMessage, ...)
+std::string Formatter::Format(CONST std::string& strMessage, ...)
 {
     // Get the variadic arguments
     va_list pArgList;
