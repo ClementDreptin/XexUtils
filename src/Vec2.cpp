@@ -10,118 +10,118 @@ namespace Math
 vec2::vec2()
     : x(0.0f), y(0.0f) {}
 
-vec2::vec2(FLOAT x, FLOAT y)
+vec2::vec2(float x, float y)
     : x(x), y(y) {}
 
-FLOAT vec2::magnitude() CONST
+float vec2::magnitude() const
 {
     return sqrtf(x * x + y * y);
 }
 
-VOID vec2::normalize()
+void vec2::normalize()
 {
-    FLOAT mag = magnitude();
+    float mag = magnitude();
     divide(mag);
 }
 
-VOID vec2::add(CONST vec2 &other)
+void vec2::add(const vec2 &other)
 {
     x += other.x;
     y += other.y;
 }
 
-VOID vec2::substract(CONST vec2 &other)
+void vec2::substract(const vec2 &other)
 {
     x -= other.x;
     y -= other.y;
 }
 
-VOID vec2::multiply(CONST vec2 &other)
+void vec2::multiply(const vec2 &other)
 {
     x *= other.x;
     y *= other.y;
 }
 
-VOID vec2::multiply(CONST FLOAT &multiplier)
+void vec2::multiply(const float &multiplier)
 {
     x *= multiplier;
     y *= multiplier;
 }
 
-VOID vec2::divide(CONST vec2 &other)
+void vec2::divide(const vec2 &other)
 {
     x /= other.x;
     y /= other.y;
 }
 
-VOID vec2::divide(CONST FLOAT &divider)
+void vec2::divide(const float &divider)
 {
     x /= divider;
     y /= divider;
 }
 
-VOID vec2::operator-()
+void vec2::operator-()
 {
     x = -x;
     y = -y;
 }
 
-bool vec2::operator==(CONST vec2 &other) CONST
+bool vec2::operator==(const vec2 &other) const
 {
     return x == other.x && y == other.y;
 }
 
-bool vec2::operator!=(CONST vec2 &other) CONST
+bool vec2::operator!=(const vec2 &other) const
 {
     return x != other.x || y != other.y;
 }
 
-bool vec2::operator<(CONST vec2 &other) CONST
+bool vec2::operator<(const vec2 &other) const
 {
     return magnitude() < other.magnitude();
 }
 
-bool vec2::operator<=(CONST vec2 &other) CONST
+bool vec2::operator<=(const vec2 &other) const
 {
     return magnitude() <= other.magnitude();
 }
 
-bool vec2::operator>(CONST vec2 &other) CONST
+bool vec2::operator>(const vec2 &other) const
 {
     return magnitude() > other.magnitude();
 }
 
-bool vec2::operator>=(CONST vec2 &other) CONST
+bool vec2::operator>=(const vec2 &other) const
 {
     return magnitude() >= other.magnitude();
 }
 
-vec2 vec2::operator+(CONST vec2 &other) CONST
+vec2 vec2::operator+(const vec2 &other) const
 {
     return vec2(x + other.x, y + other.y);
 }
 
-vec2 vec2::operator-(CONST vec2 &other) CONST
+vec2 vec2::operator-(const vec2 &other) const
 {
     return vec2(x - other.x, y - other.y);
 }
 
-vec2 vec2::operator*(CONST vec2 &other) CONST
+vec2 vec2::operator*(const vec2 &other) const
 {
     return vec2(x * other.x, y * other.y);
 }
 
-vec2 vec2::operator*(CONST FLOAT &multiplier) CONST
+vec2 vec2::operator*(const float &multiplier) const
 {
     return vec2(x * multiplier, y * multiplier);
 }
 
-vec2 vec2::operator/(CONST vec2 &other) CONST
+vec2 vec2::operator/(const vec2 &other) const
 {
     return vec2(x / other.x, y / other.y);
 }
 
-vec2 vec2::operator/(CONST FLOAT &divider) CONST
+vec2 vec2::operator/(const float &divider) const
 {
     return vec2(x / divider, y / divider);
 }

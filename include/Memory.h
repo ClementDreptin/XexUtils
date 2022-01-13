@@ -9,49 +9,49 @@ class Memory
 {
 public:
     // Get a function in strModuleName from its ordinal.
-    static DWORD ResolveFunction(CONST std::string &strModuleName, DWORD dwOrdinal);
+    static DWORD ResolveFunction(const std::string &strModuleName, DWORD dwOrdinal);
 
     // Start a thread.
-    static VOID Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters = nullptr);
+    static void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pParameters = nullptr);
 
     // Start a thread with special creation flags.
-    static VOID ThreadEx(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters, DWORD dwCreationFlags);
+    static void ThreadEx(LPTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags);
 
     // Hook a function.
-    static VOID HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD dwDestination);
+    static void HookFunctionStart(DWORD *pdwAddress, DWORD *pdwSaveStub, DWORD dwDestination);
 
     // Write data at dwAddress.
     template<typename T>
-    static VOID Write(DWORD dwAddress, T data)
+    static void Write(DWORD dwAddress, T data)
     {
-        if (!Kernel::MmIsAddressValid(reinterpret_cast<LPDWORD>(dwAddress)))
+        if (!Kernel::MmIsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
         {
             Log::Error("Invalid address: %#010x", dwAddress);
             return;
         }
 
-        *(T*)dwAddress = data;
+        *(T *)dwAddress = data;
     }
 
     // Read memory at dwAddress.
     template<typename T>
     static T Read(DWORD dwAddress)
     {
-        if (!Kernel::MmIsAddressValid(reinterpret_cast<LPDWORD>(dwAddress)))
+        if (!Kernel::MmIsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
         {
             Log::Error("Invalid address: %#010x", dwAddress);
             return 0;
         }
 
-        return *(T*)dwAddress;
+        return *(T *)dwAddress;
     }
 private:
     // Insert a jump instruction into an existing function to jump to another function.
-    static VOID PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked);
+    static void PatchInJump(DWORD *pdwAddress, DWORD dwDestination, bool bLinked);
 
-    static VOID GLPR();
+    static void GLPR();
 
-    static DWORD RelinkGPLR(INT nOffset, LPDWORD lpdwSaveStubAddr, LPDWORD lpdwOrgAddr);
+    static DWORD RelinkGPLR(int nOffset, DWORD *pdwSaveStubAddr, DWORD *pdwOrgAddr);
 };
 
 }

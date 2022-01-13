@@ -10,37 +10,37 @@ namespace Math
 struct vec3
 {
     vec3();
-    vec3(FLOAT x, FLOAT y, FLOAT z);
+    vec3(float x, float y, float z);
 
-    FLOAT x;
-    FLOAT y;
-    FLOAT z;
+    float x;
+    float y;
+    float z;
 
-    FLOAT magnitude() CONST;
-    VOID normalize();
+    float magnitude() const;
+    void normalize();
 
-    VOID add(CONST vec3 &other);
-    VOID substract(CONST vec3 &other);
-    VOID multiply(CONST vec3 &other);
-    VOID multiply(CONST FLOAT &multiplier);
-    VOID divide(CONST vec3 &other);
-    VOID divide(CONST FLOAT &divider);
+    void add(const vec3 &other);
+    void substract(const vec3 &other);
+    void multiply(const vec3 &other);
+    void multiply(const float &multiplier);
+    void divide(const vec3 &other);
+    void divide(const float &divider);
 
-    VOID operator-();
+    void operator-();
 
-    bool operator==(CONST vec3 &other) CONST;
-    bool operator!=(CONST vec3 &other) CONST;
-    bool operator<(CONST vec3 &other) CONST;
-    bool operator<=(CONST vec3 &other) CONST;
-    bool operator>(CONST vec3 &other) CONST;
-    bool operator>=(CONST vec3 &other) CONST;
+    bool operator==(const vec3 &other) const;
+    bool operator!=(const vec3 &other) const;
+    bool operator<(const vec3 &other) const;
+    bool operator<=(const vec3 &other) const;
+    bool operator>(const vec3 &other) const;
+    bool operator>=(const vec3 &other) const;
 
-    vec3 operator+(CONST vec3 &other) CONST;
-    vec3 operator-(CONST vec3 &other) CONST;
-    vec3 operator*(CONST vec3 &other) CONST;
-    vec3 operator*(CONST FLOAT &multiplier) CONST;
-    vec3 operator/(CONST vec3 &other) CONST;
-    vec3 operator/(CONST FLOAT &divider) CONST;
+    vec3 operator+(const vec3 &other) const;
+    vec3 operator-(const vec3 &other) const;
+    vec3 operator*(const vec3 &other) const;
+    vec3 operator*(const float &multiplier) const;
+    vec3 operator/(const vec3 &other) const;
+    vec3 operator/(const float &divider) const;
 };
 
 }

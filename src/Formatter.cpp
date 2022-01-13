@@ -5,16 +5,16 @@
 namespace XexUtils
 {
 
-std::string Formatter::Format(CONST std::string& strMessage, ...)
+std::string Formatter::Format(const std::string& strMessage, ...)
 {
     // Get the variadic arguments
     va_list pArgList;
     va_start(pArgList, strMessage);
 
-    CONST INT MAX_SIZE = 2048;
+    const int MAX_SIZE = 2048;
 
     // Build the string with the format
-    CHAR szBuffer[MAX_SIZE] = { 0 };
+    char szBuffer[MAX_SIZE] = { 0 };
     vsnprintf_s(szBuffer, _TRUNCATE, strMessage.c_str(), pArgList);
 
     // Free the variadic arguments
@@ -23,7 +23,7 @@ std::string Formatter::Format(CONST std::string& strMessage, ...)
     return std::string(szBuffer);
 }
 
-std::wstring Formatter::ToWide(CONST std::string &strNarrowString)
+std::wstring Formatter::ToWide(const std::string &strNarrowString)
 {
     // Create the wide string
     std::wstring wstrWideString;

@@ -5,7 +5,7 @@
 namespace XexUtils
 {
 
-VOID Log::Info(CONST std::string &strMessage, ...)
+void Log::Info(const std::string &strMessage, ...)
 {
     // Get the variadic arguments
     va_list pArgList;
@@ -18,7 +18,7 @@ VOID Log::Info(CONST std::string &strMessage, ...)
     va_end(pArgList);
 }
 
-VOID Log::Error(CONST std::string &strMessage, ...)
+void Log::Error(const std::string &strMessage, ...)
 {
     // Get the variadic arguments
     va_list pArgList;
@@ -31,12 +31,12 @@ VOID Log::Error(CONST std::string &strMessage, ...)
     va_end(pArgList);
 }
 
-VOID Log::Print(CONST std::string &strFormat, CONST va_list pArgList)
+void Log::Print(const std::string &strFormat, const va_list pArgList)
 {
-    CONST INT MAX_SIZE = 2048;
+    const int MAX_SIZE = 2048;
 
     // Build the string with the format
-    CHAR szBuffer[MAX_SIZE] = { 0 };
+    char szBuffer[MAX_SIZE] = { 0 };
     vsnprintf_s(szBuffer, _TRUNCATE, strFormat.c_str(), pArgList);
 
     // Append \n to the string

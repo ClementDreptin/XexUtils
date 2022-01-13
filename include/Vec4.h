@@ -10,38 +10,38 @@ namespace Math
 struct vec4
 {
     vec4();
-    vec4(FLOAT x, FLOAT y, FLOAT z, FLOAT w);
+    vec4(float x, float y, float z, float w);
 
-    FLOAT x;
-    FLOAT y;
-    FLOAT z;
-    FLOAT w;
+    float x;
+    float y;
+    float z;
+    float w;
 
-    FLOAT magnitude() CONST;
-    VOID normalize();
+    float magnitude() const;
+    void normalize();
 
-    VOID add(CONST vec4 &other);
-    VOID substract(CONST vec4 &other);
-    VOID multiply(CONST vec4 &other);
-    VOID multiply(CONST FLOAT &multiplier);
-    VOID divide(CONST vec4 &other);
-    VOID divide(CONST FLOAT &divider);
+    void add(const vec4 &other);
+    void substract(const vec4 &other);
+    void multiply(const vec4 &other);
+    void multiply(const float &multiplier);
+    void divide(const vec4 &other);
+    void divide(const float &divider);
 
-    VOID operator-();
+    void operator-();
 
-    bool operator==(CONST vec4 &other) CONST;
-    bool operator!=(CONST vec4 &other) CONST;
-    bool operator<(CONST vec4 &other) CONST;
-    bool operator<=(CONST vec4 &other) CONST;
-    bool operator>(CONST vec4 &other) CONST;
-    bool operator>=(CONST vec4 &other) CONST;
+    bool operator==(const vec4 &other) const;
+    bool operator!=(const vec4 &other) const;
+    bool operator<(const vec4 &other) const;
+    bool operator<=(const vec4 &other) const;
+    bool operator>(const vec4 &other) const;
+    bool operator>=(const vec4 &other) const;
 
-    vec4 operator+(CONST vec4 &other) CONST;
-    vec4 operator-(CONST vec4 &other) CONST;
-    vec4 operator*(CONST vec4 &other) CONST;
-    vec4 operator*(CONST FLOAT &multiplier) CONST;
-    vec4 operator/(CONST vec4 &other) CONST;
-    vec4 operator/(CONST FLOAT &divider) CONST;
+    vec4 operator+(const vec4 &other) const;
+    vec4 operator-(const vec4 &other) const;
+    vec4 operator*(const vec4 &other) const;
+    vec4 operator*(const float &multiplier) const;
+    vec4 operator/(const vec4 &other) const;
+    vec4 operator/(const float &divider) const;
 };
 
 }

@@ -9,13 +9,13 @@ class Log
 {
 public:
     // Print an info message to the console.
-    static VOID Info(CONST std::string &strMessage, ...);
+    static void Info(const std::string &strMessage, ...);
 
     // Print an error message to the console.
-    static VOID Error(CONST std::string &strMessage, ...);
+    static void Error(const std::string &strMessage, ...);
 private:
     // Print a formatted message to the console.
-    static VOID Print(CONST std::string &strFormat, CONST va_list pArgList);
+    static void Print(const std::string &strFormat, const va_list pArgList);
 };
 
 }

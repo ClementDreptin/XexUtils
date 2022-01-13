@@ -9,23 +9,24 @@ namespace XexUtils
 {
 
 // Create a pointer to XNotifyQueueUI in xam.xex
-typedef VOID (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE dwType, DWORD dwUserIndex, ULONGLONG qwAreas, PWCHAR wszDisplayText, LPVOID pContextData);
+
+typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE dwType, DWORD dwUserIndex, unsigned long long qwAreas, const wchar_t *wszDisplayText, void *pContextData);
 XNOTIFYQUEUEUI XNotifyQueueUI = reinterpret_cast<XNOTIFYQUEUEUI>(Memory::ResolveFunction("xam.xex", 656));
 
-VOID Xam::XNotify(CONST std::string &strText, XNOTIFYQUEUEUI_TYPE dwType)
+void Xam::XNotify(const std::string &strText, XNOTIFYQUEUEUI_TYPE dwType)
 {
-    XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, const_cast<PWCHAR>(Formatter::ToWide(strText).c_str()), nullptr);
+    XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, Formatter::ToWide(strText).c_str(), nullptr);
 }
 
-std::string Xam::ShowKeyboard(CONST std::string &strTitle, CONST std::string &strDescription, CONST std::string &strDefaultValue, INT nMaxLength, DWORD dwKeyboardType)
+std::string Xam::ShowKeyboard(const std::string &strTitle, const std::string &strDescription, const std::string &strDefaultValue, int nMaxLength, DWORD dwKeyboardType)
 {
     // nMaxLength is the amount of characters the keyboard will allow, nRealMaxLength needs to include the \0 to terminate the string
-    INT nRealMaxLength = nMaxLength + 1;
+    int nRealMaxLength = nMaxLength + 1;
     XOVERLAPPED Overlapped;
 
     // Create the buffers
-    PWCHAR wszBuffer = new WCHAR[nRealMaxLength];
-    LPSTR szBuffer = new CHAR[nRealMaxLength];
+    wchar_t *wszBuffer = new wchar_t[nRealMaxLength];
+    char *szBuffer = new char[nRealMaxLength];
 
     // Zero the buffers and structs
     ZeroMemory(&Overlapped, sizeof(XOVERLAPPED));
@@ -42,13 +43,13 @@ std::string Xam::ShowKeyboard(CONST std::string &strTitle, CONST std::string &st
     // Convert the wide string to a narrow string
     wcstombs(szBuffer, wszBuffer, nRealMaxLength);
 
-    std::string result = szBuffer;
+    std::string strResult = szBuffer;
 
     // Cleanup
     delete[] wszBuffer;
     delete[] szBuffer;
 
-    return result;
+    return strResult;
 }
 
 }

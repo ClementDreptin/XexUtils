@@ -10,125 +10,125 @@ namespace Math
 vec3::vec3()
     : x(0.0f), y(0.0f), z(0.0f) {}
 
-vec3::vec3(FLOAT x, FLOAT y, FLOAT z)
+vec3::vec3(float x, float y, float z)
     : x(x), y(y), z(z) {}
 
-FLOAT vec3::magnitude() CONST
+float vec3::magnitude() const
 {
     return sqrtf(x * x + y * y + z * z);
 }
 
-VOID vec3::normalize()
+void vec3::normalize()
 {
-    FLOAT mag = magnitude();
+    float mag = magnitude();
     divide(mag);
 }
 
-VOID vec3::add(CONST vec3 &other)
+void vec3::add(const vec3 &other)
 {
     x += other.x;
     y += other.y;
     z += other.z;
 }
 
-VOID vec3::substract(CONST vec3 &other)
+void vec3::substract(const vec3 &other)
 {
     x -= other.x;
     y -= other.y;
     z -= other.z;
 }
 
-VOID vec3::multiply(CONST vec3 &other)
+void vec3::multiply(const vec3 &other)
 {
     x *= other.x;
     y *= other.y;
     z *= other.z;
 }
 
-VOID vec3::multiply(CONST FLOAT &multiplier)
+void vec3::multiply(const float &multiplier)
 {
     x *= multiplier;
     y *= multiplier;
     z *= multiplier;
 }
 
-VOID vec3::divide(CONST vec3 &other)
+void vec3::divide(const vec3 &other)
 {
     x /= other.x;
     y /= other.y;
     z /= other.z;
 }
 
-VOID vec3::divide(CONST FLOAT &divider)
+void vec3::divide(const float &divider)
 {
     x /= divider;
     y /= divider;
     z /= divider;
 }
 
-VOID vec3::operator-()
+void vec3::operator-()
 {
     x = -x;
     y = -y;
     z = -z;
 }
 
-bool vec3::operator==(CONST vec3 &other) CONST
+bool vec3::operator==(const vec3 &other) const
 {
     return x == other.x && y == other.y && z == other.z;
 }
 
-bool vec3::operator!=(CONST vec3 &other) CONST
+bool vec3::operator!=(const vec3 &other) const
 {
     return x != other.x || y != other.y || z != other.z;
 }
 
-bool vec3::operator<(CONST vec3 &other) CONST
+bool vec3::operator<(const vec3 &other) const
 {
     return magnitude() < other.magnitude();
 }
 
-bool vec3::operator<=(CONST vec3 &other) CONST
+bool vec3::operator<=(const vec3 &other) const
 {
     return magnitude() <= other.magnitude();
 }
 
-bool vec3::operator>(CONST vec3 &other) CONST
+bool vec3::operator>(const vec3 &other) const
 {
     return magnitude() > other.magnitude();
 }
 
-bool vec3::operator>=(CONST vec3 &other) CONST
+bool vec3::operator>=(const vec3 &other) const
 {
     return magnitude() >= other.magnitude();
 }
 
-vec3 vec3::operator+(CONST vec3 &other) CONST
+vec3 vec3::operator+(const vec3 &other) const
 {
     return vec3(x + other.x, y + other.y, z + other.z);
 }
 
-vec3 vec3::operator-(CONST vec3 &other) CONST
+vec3 vec3::operator-(const vec3 &other) const
 {
     return vec3(x - other.x, y - other.y, z - other.z);
 }
 
-vec3 vec3::operator*(CONST vec3 &other) CONST
+vec3 vec3::operator*(const vec3 &other) const
 {
     return vec3(x * other.x, y * other.y, z * other.z);
 }
 
-vec3 vec3::operator*(CONST FLOAT &multiplier) CONST
+vec3 vec3::operator*(const float &multiplier) const
 {
     return vec3(x * multiplier, y * multiplier, z * multiplier);
 }
 
-vec3 vec3::operator/(CONST vec3 &other) CONST
+vec3 vec3::operator/(const vec3 &other) const
 {
     return vec3(x / other.x, y / other.y, z / other.z);
 }
 
-vec3 vec3::operator/(CONST FLOAT &divider) CONST
+vec3 vec3::operator/(const float &divider) const
 {
     return vec3(x / divider, y / divider, z / divider);
 }

@@ -10,36 +10,36 @@ namespace Math
 struct vec2
 {
     vec2();
-    vec2(FLOAT x, FLOAT y);
+    vec2(float x, float y);
 
-    FLOAT x;
-    FLOAT y;
+    float x;
+    float y;
 
-    FLOAT magnitude() CONST;
-    VOID normalize();
+    float magnitude() const;
+    void normalize();
 
-    VOID add(CONST vec2 &other);
-    VOID substract(CONST vec2 &other);
-    VOID multiply(CONST vec2 &other);
-    VOID multiply(CONST FLOAT &multiplier);
-    VOID divide(CONST vec2 &other);
-    VOID divide(CONST FLOAT &divider);
+    void add(const vec2 &other);
+    void substract(const vec2 &other);
+    void multiply(const vec2 &other);
+    void multiply(const float &multiplier);
+    void divide(const vec2 &other);
+    void divide(const float &divider);
 
-    VOID operator-();
+    void operator-();
 
-    bool operator==(CONST vec2 &other) CONST;
-    bool operator!=(CONST vec2 &other) CONST;
-    bool operator<(CONST vec2 &other) CONST;
-    bool operator<=(CONST vec2 &other) CONST;
-    bool operator>(CONST vec2 &other) CONST;
-    bool operator>=(CONST vec2 &other) CONST;
+    bool operator==(const vec2 &other) const;
+    bool operator!=(const vec2 &other) const;
+    bool operator<(const vec2 &other) const;
+    bool operator<=(const vec2 &other) const;
+    bool operator>(const vec2 &other) const;
+    bool operator>=(const vec2 &other) const;
 
-    vec2 operator+(CONST vec2 &other) CONST;
-    vec2 operator-(CONST vec2 &other) CONST;
-    vec2 operator*(CONST vec2 &other) CONST;
-    vec2 operator*(CONST FLOAT &multiplier) CONST;
-    vec2 operator/(CONST vec2 &other) CONST;
-    vec2 operator/(CONST FLOAT &divider) CONST;
+    vec2 operator+(const vec2 &other) const;
+    vec2 operator-(const vec2 &other) const;
+    vec2 operator*(const vec2 &other) const;
+    vec2 operator*(const float &multiplier) const;
+    vec2 operator/(const vec2 &other) const;
+    vec2 operator/(const float &divider) const;
 };
 
 }

@@ -15,12 +15,12 @@ extern "C"
 {
     // Extended version of CreateThread from winbase.h.
     DWORD __stdcall ExCreateThread(
-        LPHANDLE pHandle,
+        HANDLE *pHandle,
         DWORD dwStackSize,
-        LPDWORD lpThreadId,
-        LPVOID apiThreadStartup,
-        LPTHREAD_START_ROUTINE lpStartAddress,
-        LPVOID lpParameter,
+        DWORD *pThreadId,
+        void *apiThreadStartup,
+        PTHREAD_START_ROUTINE pStartAddress,
+        void *pParameter,
         DWORD dwCreationFlagsMod
     );
 
@@ -28,7 +28,7 @@ extern "C"
     DWORD XamGetCurrentTitleId();
 
     // Check if an address is accessible and writable.
-    BOOL MmIsAddressValid(LPVOID address);
+    bool MmIsAddressValid(void *pAddress);
 }
 
 }

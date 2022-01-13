@@ -7,28 +7,28 @@
 namespace XexUtils
 {
 
-DWORD Memory::ResolveFunction(CONST std::string &strModuleName, DWORD dwOrdinal)
+DWORD Memory::ResolveFunction(const std::string &strModuleName, DWORD dwOrdinal)
 {
     HMODULE hModule = GetModuleHandle(strModuleName.c_str());
 
-    return (hModule == NULL) ? NULL : reinterpret_cast<DWORD>(GetProcAddress(hModule, reinterpret_cast<LPCSTR>(dwOrdinal)));
+    return (hModule == NULL) ? NULL : reinterpret_cast<DWORD>(GetProcAddress(hModule, reinterpret_cast<const char *>(dwOrdinal)));
 }
 
-VOID Memory::Thread(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters)
+void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pParameters)
 {
-    CreateThread(nullptr, 0, lpStartAddress, lpParameters, 0, nullptr);
+    CreateThread(nullptr, 0, pStartAddress, pParameters, 0, nullptr);
 }
 
-VOID Memory::ThreadEx(LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameters, DWORD dwCreationFlags)
+void Memory::ThreadEx(LPTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags)
 {
-    Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, lpStartAddress, lpParameters, dwCreationFlags);
+    Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pParameters, dwCreationFlags);
 }
 
-VOID Memory::HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD dwDestination)
+void Memory::HookFunctionStart(DWORD *pdwAddress, DWORD *pdwSaveStub, DWORD dwDestination)
 {
-    if (lpdwSaveStub != NULL && lpdwAddress != NULL)
+    if (pdwSaveStub != NULL && pdwAddress != NULL)
     {
-        DWORD dwAddrReloc = reinterpret_cast<DWORD>(&lpdwAddress[4]);
+        DWORD dwAddrReloc = reinterpret_cast<DWORD>(&pdwAddress[4]);
         DWORD dwWriteBuffer;
 
         if (dwAddrReloc & 0x8000)
@@ -36,38 +36,38 @@ VOID Memory::HookFunctionStart(LPDWORD lpdwAddress, LPDWORD lpdwSaveStub, DWORD 
         else
             dwWriteBuffer = 0x3D600000 + ((dwAddrReloc >> 16) & 0xFFFF);
 
-        lpdwSaveStub[0] = dwWriteBuffer;
+        pdwSaveStub[0] = dwWriteBuffer;
         dwWriteBuffer = 0x396B0000 + (dwAddrReloc & 0xFFFF);
-        lpdwSaveStub[1] = dwWriteBuffer;
+        pdwSaveStub[1] = dwWriteBuffer;
         dwWriteBuffer = 0x7D6903A6;
-        lpdwSaveStub[2] = dwWriteBuffer;
+        pdwSaveStub[2] = dwWriteBuffer;
     
-        for (INT i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if ((lpdwAddress[i] & 0x48000003) == 0x48000001)
+            if ((pdwAddress[i] & 0x48000003) == 0x48000001)
             {
-                dwWriteBuffer = RelinkGPLR((lpdwAddress[i] &~ 0x48000003), &lpdwSaveStub[i + 3], &lpdwAddress[i]);
-                lpdwSaveStub[i + 3] = dwWriteBuffer;
+                dwWriteBuffer = RelinkGPLR((pdwAddress[i] &~ 0x48000003), &pdwSaveStub[i + 3], &pdwAddress[i]);
+                pdwSaveStub[i + 3] = dwWriteBuffer;
             }
             else
             {
-                dwWriteBuffer = lpdwAddress[i];
-                lpdwSaveStub[i + 3] = dwWriteBuffer;
+                dwWriteBuffer = pdwAddress[i];
+                pdwSaveStub[i + 3] = dwWriteBuffer;
             }
         }
 
         dwWriteBuffer = 0x4E800420; // bctr
-        lpdwSaveStub[7] = dwWriteBuffer;
+        pdwSaveStub[7] = dwWriteBuffer;
 
-        __dcbst(0, lpdwSaveStub);
+        __dcbst(0, pdwSaveStub);
         __sync();
         __isync();
 
-        PatchInJump(lpdwAddress, dwDestination, FALSE);
+        PatchInJump(pdwAddress, dwDestination, FALSE);
     }
 }
 
-VOID Memory::PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked)
+void Memory::PatchInJump(DWORD *pdwAddress, DWORD dwDestination, bool bLinked)
 {
     DWORD dwWriteBuffer;
 
@@ -76,25 +76,25 @@ VOID Memory::PatchInJump(LPDWORD lpdwAddress, DWORD dwDestination, BOOL bLinked)
     else
         dwWriteBuffer = 0x3D600000 + ((dwDestination >> 16) & 0xFFFF);
 
-    lpdwAddress[0] = dwWriteBuffer;
+    pdwAddress[0] = dwWriteBuffer;
     dwWriteBuffer = 0x396B0000 + (dwDestination & 0xFFFF);
-    lpdwAddress[1] = dwWriteBuffer;
+    pdwAddress[1] = dwWriteBuffer;
     dwWriteBuffer = 0x7D6903A6;
-    lpdwAddress[2] = dwWriteBuffer;
+    pdwAddress[2] = dwWriteBuffer;
 
     if (bLinked)
         dwWriteBuffer = 0x4E800421;
     else
         dwWriteBuffer = 0x4E800420;
 
-    lpdwAddress[3] = dwWriteBuffer;
+    pdwAddress[3] = dwWriteBuffer;
 
-    __dcbst(0, lpdwAddress);
+    __dcbst(0, pdwAddress);
     __sync();
     __isync();
 }
 
-VOID __declspec(naked) Memory::GLPR()
+void __declspec(naked) Memory::GLPR()
 {
     __asm
     {
@@ -121,21 +121,21 @@ VOID __declspec(naked) Memory::GLPR()
     }
 }
 
-DWORD Memory::RelinkGPLR(INT nOffset, LPDWORD lpdwSaveStubAddr, LPDWORD lpdwOrgAddr)
+DWORD Memory::RelinkGPLR(int nOffset, DWORD *pdwSaveStubAddr, DWORD *pdwOrgAddr)
 {
     DWORD dwInst = 0, dwRepl;
-    LPDWORD lpdwSaver = reinterpret_cast<LPDWORD>(GLPR);
+    DWORD *pdwSaver = reinterpret_cast<DWORD *>(GLPR);
 
     if (nOffset & 0x2000000)
         nOffset = nOffset | 0xFC000000;
 
-    dwRepl = lpdwOrgAddr[nOffset / 4];
+    dwRepl = pdwOrgAddr[nOffset / 4];
 
-    for (INT i = 0; i < 20; i++)
+    for (int i = 0; i < 20; i++)
     {
-        if (dwRepl == lpdwSaver[i])
+        if (dwRepl == pdwSaver[i])
         {
-            INT nNewOffset = reinterpret_cast<INT>(&lpdwSaver[i]) - reinterpret_cast<INT>(lpdwSaveStubAddr);
+            int nNewOffset = reinterpret_cast<int>(&pdwSaver[i]) - reinterpret_cast<int>(pdwSaveStubAddr);
             dwInst = 0x48000001 | (nNewOffset & 0x3FFFFFC);
         }
     }
