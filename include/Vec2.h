@@ -25,6 +25,8 @@ struct vec2
     void divide(const vec2 &other);
     void divide(const float &divider);
 
+    bool isNull() const;
+
     void operator-();
 
     bool operator==(const vec2 &other) const;

@@ -27,6 +27,8 @@ struct vec4
     void divide(const vec4 &other);
     void divide(const float &divider);
 
+    bool isNull() const;
+
     void operator-();
 
     bool operator==(const vec4 &other) const;

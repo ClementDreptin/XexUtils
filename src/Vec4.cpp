@@ -72,6 +72,11 @@ void vec4::divide(const float &divider)
     w /= divider;
 }
 
+bool vec4::isNull() const
+{
+    return x == 0.0f && y == 0.0f && z == 0.0f && w == 0.0f;
+}
+
 void vec4::operator-()
 {
     x = -x;

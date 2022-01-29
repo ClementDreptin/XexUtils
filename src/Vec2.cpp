@@ -60,6 +60,11 @@ void vec2::divide(const float &divider)
     y /= divider;
 }
 
+bool vec2::isNull() const
+{
+    return x == 0.0f && y == 0.0f;
+}
+
 void vec2::operator-()
 {
     x = -x;
