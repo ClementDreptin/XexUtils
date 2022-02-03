@@ -12,6 +12,9 @@ struct vec2
     vec2();
     vec2(float x, float y);
 
+// Disable the C4201 warning for nameless union/struct
+#pragma warning(push)
+#pragma warning(disable: 4201)
     union
     {
         struct
@@ -25,6 +28,7 @@ struct vec2
             float g;
         };
     };
+#pragma warning(pop)
 
     float magnitude() const;
     void normalize();

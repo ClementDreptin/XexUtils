@@ -12,6 +12,9 @@ struct vec3
     vec3();
     vec3(float x, float y, float z);
 
+// Disable the C4201 warning for nameless union/struct
+#pragma warning(push)
+#pragma warning(disable: 4201)
     union
     {
         struct
@@ -27,6 +30,7 @@ struct vec3
             float b;
         };
     };
+#pragma warning(pop)
 
     float magnitude() const;
     void normalize();
