@@ -12,9 +12,21 @@ struct vec3
     vec3();
     vec3(float x, float y, float z);
 
-    float x;
-    float y;
-    float z;
+    union
+    {
+        struct
+        {
+            float x;
+            float y;
+            float z;
+        };
+        struct
+        {
+            float r;
+            float g;
+            float b;
+        };
+    };
 
     float magnitude() const;
     void normalize();

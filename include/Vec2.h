@@ -12,8 +12,19 @@ struct vec2
     vec2();
     vec2(float x, float y);
 
-    float x;
-    float y;
+    union
+    {
+        struct
+        {
+            float x;
+            float y;
+        };
+        struct
+        {
+            float r;
+            float g;
+        };
+    };
 
     float magnitude() const;
     void normalize();

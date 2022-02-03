@@ -12,10 +12,23 @@ struct vec4
     vec4();
     vec4(float x, float y, float z, float w);
 
-    float x;
-    float y;
-    float z;
-    float w;
+    union
+    {
+        struct
+        {
+            float x;
+            float y;
+            float z;
+            float w;
+        };
+        struct
+        {
+            float r;
+            float g;
+            float b;
+            float a;
+        };
+    };
 
     float magnitude() const;
     void normalize();
