@@ -90,7 +90,7 @@ public:
 
     // Open a keyboard and return what the user typed as a string.
     // Note: Blocks the current thread while waiting for the user to finish typing.
-    static std::string ShowKeyboard(const std::string &strTitle, const std::string &strDescription, const std::string &strDefaultValue, int nMaxLength = 15, DWORD dwKeyboardType = VKBD_DEFAULT);
+    static DWORD ShowKeyboard(const std::string &strTitle, const std::string &strDescription, const std::string &strDefaultValue, std::string &strResult, int nMaxLength = 15, DWORD dwKeyboardType = VKBD_DEFAULT);
 };
 
 }

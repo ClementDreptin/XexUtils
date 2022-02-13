@@ -18,18 +18,17 @@ void Xam::XNotify(const std::string &strText, XNOTIFYQUEUEUI_TYPE dwType)
     XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, Formatter::ToWide(strText).c_str(), nullptr);
 }
 
-std::string Xam::ShowKeyboard(const std::string &strTitle, const std::string &strDescription, const std::string &strDefaultValue, int nMaxLength, DWORD dwKeyboardType)
+DWORD Xam::ShowKeyboard(const std::string &strTitle, const std::string &strDescription, const std::string &strDefaultValue, std::string &strResult, int nMaxLength, DWORD dwKeyboardType)
 {
     // nMaxLength is the amount of characters the keyboard will allow, nRealMaxLength needs to include the \0 to terminate the string
     int nRealMaxLength = nMaxLength + 1;
-    XOVERLAPPED Overlapped;
+    XOVERLAPPED Overlapped = {};
 
     // Create the buffers
     wchar_t *wszBuffer = new wchar_t[nRealMaxLength];
     char *szBuffer = new char[nRealMaxLength];
 
-    // Zero the buffers and structs
-    ZeroMemory(&Overlapped, sizeof(XOVERLAPPED));
+    // Zero the buffers
     ZeroMemory(wszBuffer, sizeof(wszBuffer));
     ZeroMemory(szBuffer, sizeof(szBuffer));
 
@@ -40,16 +39,22 @@ std::string Xam::ShowKeyboard(const std::string &strTitle, const std::string &st
     while (!XHasOverlappedIoCompleted(&Overlapped))
         Sleep(100);
 
-    // Convert the wide string to a narrow string
-    wcstombs(szBuffer, wszBuffer, nRealMaxLength);
+    // Get how the keyboard was closed (success, canceled or internal error)
+    DWORD dwResult = XGetOverlappedResult(&Overlapped, nullptr, TRUE);
+    if (dwResult == ERROR_SUCCESS)
+    {
+        // Convert the wide string to a narrow string
+        wcstombs(szBuffer, wszBuffer, nRealMaxLength);
 
-    std::string strResult = szBuffer;
+        // Populate the out string with the narrow string
+        strResult = szBuffer;
+    }
 
     // Cleanup
     delete[] wszBuffer;
     delete[] szBuffer;
 
-    return strResult;
+    return dwResult;
 }
 
 }
