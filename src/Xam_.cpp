@@ -18,7 +18,7 @@ void Xam::XNotify(const std::string &strText, XNOTIFYQUEUEUI_TYPE dwType)
     XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, Formatter::ToWide(strText).c_str(), nullptr);
 }
 
-DWORD Xam::ShowKeyboard(const std::string &strTitle, const std::string &strDescription, const std::string &strDefaultValue, std::string &strResult, int nMaxLength, DWORD dwKeyboardType)
+DWORD Xam::ShowKeyboard(const wchar_t *wszTitle, const wchar_t *wszDescription, const wchar_t *wszDefaultText, std::string &strResult, int nMaxLength, DWORD dwKeyboardType)
 {
     // nMaxLength is the amount of characters the keyboard will allow, nRealMaxLength needs to include the \0 to terminate the string
     int nRealMaxLength = nMaxLength + 1;
@@ -33,7 +33,16 @@ DWORD Xam::ShowKeyboard(const std::string &strTitle, const std::string &strDescr
     ZeroMemory(szBuffer, sizeof(szBuffer));
 
     // Open the keyboard
-    XShowKeyboardUI(0, dwKeyboardType, Formatter::ToWide(strDefaultValue).c_str(), Formatter::ToWide(strTitle).c_str(), Formatter::ToWide(strDescription).c_str(), wszBuffer, nRealMaxLength, &Overlapped);
+    XShowKeyboardUI(
+        0,
+        dwKeyboardType,
+        wszDefaultText,
+        wszTitle,
+        wszDescription,
+        wszBuffer,
+        nRealMaxLength,
+        &Overlapped
+    );
 
     // Wait until the keyboard closes
     while (!XHasOverlappedIoCompleted(&Overlapped))
