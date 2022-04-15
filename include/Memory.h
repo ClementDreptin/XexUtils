@@ -17,9 +17,6 @@ public:
     // Start a thread with special creation flags.
     static void ThreadEx(LPTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags);
 
-    // Hook a function.
-    static void HookFunctionStart(DWORD *pdwAddress, DWORD *pdwSaveStub, DWORD dwDestination);
-
     // Write data at dwAddress.
     template<typename T>
     static void Write(DWORD dwAddress, T data)
@@ -45,13 +42,6 @@ public:
 
         return *(T *)dwAddress;
     }
-private:
-    // Insert a jump instruction into an existing function to jump to another function.
-    static void PatchInJump(DWORD *pdwAddress, DWORD dwDestination, bool bLinked);
-
-    static void GLPR();
-
-    static DWORD RelinkGPLR(int nOffset, DWORD *pdwSaveStubAddr, DWORD *pdwOrgAddr);
 };
 
 }

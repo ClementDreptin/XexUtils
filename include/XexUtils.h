@@ -11,5 +11,6 @@
 #include "Kernel.h"
 #include "Math_.h"
 #include "Memory.h"
+#include "Detour.h"
 #include "Xam_.h"
 #include "Log.h"

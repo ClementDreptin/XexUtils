@@ -61,6 +61,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Detour.h" />
     <ClInclude Include="include\Log.h" />
     <ClInclude Include="include\Vec2.h" />
     <ClInclude Include="include\Vec3.h" />
@@ -74,6 +75,7 @@
     <ClInclude Include="include\Xam_.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Detour.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math_.cpp" />
     <ClCompile Include="src\Memory.cpp" />
