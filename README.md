@@ -1,5 +1,5 @@
 # XexUtils
-XexUtils is a library to make XEX applications and/or libaries.
+XexUtils is a library to make XEX applications and/or libraries.
 
 ## Installation
 
