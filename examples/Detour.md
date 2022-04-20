@@ -1,5 +1,6 @@
 # Detouring
 
+Detouring a function:
 ```C++
 XexUtils::Detour *FunctionDetour = nullptr;
 
