@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Detour.h"
 
+#include "Xam_.h"
+
 
 namespace XexUtils
 {
@@ -59,7 +61,7 @@ bool Detour::Remove()
     {
         // Trying to remove a hook from a game function after the game has been closed could cause a segfault so we
         // make sure the hook function is still loaded in memory
-        bool bIsHookSourceAddressValid = Kernel::MmIsAddressValid(reinterpret_cast<void *>(m_dwHookSourceAddress));
+        bool bIsHookSourceAddressValid = Xam::IsAddressValid(reinterpret_cast<void *>(m_dwHookSourceAddress));
         if (bIsHookSourceAddressValid)
             memcpy(reinterpret_cast<void *>(m_dwHookSourceAddress), m_pOriginalInstructions, m_uiOriginalLength);
 

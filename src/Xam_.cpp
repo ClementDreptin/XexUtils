@@ -5,6 +5,15 @@
 #include "Formatter.h"
 
 
+// Imports from xboxkrnl.exe and xam.xex
+extern "C"
+{
+    DWORD XamGetCurrentTitleId();
+
+    bool MmIsAddressValid(void *pAddress);
+}
+
+
 namespace XexUtils
 {
 
@@ -64,6 +73,16 @@ DWORD Xam::ShowKeyboard(const wchar_t *wszTitle, const wchar_t *wszDescription, 
     delete[] szBuffer;
 
     return dwResult;
+}
+
+DWORD Xam::GetCurrentTitleId()
+{
+    return XamGetCurrentTitleId();
+}
+
+bool Xam::IsAddressValid()
+{
+    return MmIsAddressValid();
 }
 
 }

@@ -8,7 +8,6 @@
 
 // XexUtils headers
 #include "Formatter.h"
-#include "Kernel.h"
 #include "Math_.h"
 #include "Memory.h"
 #include "Detour.h"

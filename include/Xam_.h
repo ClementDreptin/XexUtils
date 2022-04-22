@@ -91,6 +91,12 @@ public:
     // Open a keyboard and return what the user typed as a string.
     // Note: Blocks the current thread while waiting for the user to finish typing.
     static DWORD ShowKeyboard(const wchar_t *wszTitle, const wchar_t *wszDescription, const wchar_t *wszDefaultText, std::string &strResult, int nMaxLength = 15, DWORD dwKeyboardType = VKBD_DEFAULT);
+
+    // Get the current title ID as a DWORD.
+    static DWORD GetCurrentTitleId();
+
+    // Check if an address is accessible and writable.
+    static bool IsAddressValid(void *pAddress);
 };
 
 }

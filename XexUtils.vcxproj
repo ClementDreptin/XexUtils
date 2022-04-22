@@ -71,7 +71,6 @@
     <ClInclude Include="include\Memory.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="include\Formatter.h" />
-    <ClInclude Include="include\Kernel.h" />
     <ClInclude Include="include\Xam_.h" />
   </ItemGroup>
   <ItemGroup>

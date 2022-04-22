@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Xam_.h"
+
 
 namespace XexUtils
 {
@@ -21,7 +23,7 @@ public:
     template<typename T>
     static void Write(DWORD dwAddress, T data)
     {
-        if (!Kernel::MmIsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
+        if (!Xam::IsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
         {
             Log::Error("Invalid address: %#010x", dwAddress);
             return;
@@ -34,7 +36,7 @@ public:
     template<typename T>
     static T Read(DWORD dwAddress)
     {
-        if (!Kernel::MmIsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
+        if (!Xam::IsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
         {
             Log::Error("Invalid address: %#010x", dwAddress);
             return 0;

@@ -1,7 +1,20 @@
 #include "pch.h"
 #include "Memory.h"
 
-#include "Kernel.h"
+
+extern "C"
+{
+    // Extended version of CreateThread from winbase.h.
+    DWORD __stdcall ExCreateThread(
+        HANDLE *pHandle,
+        DWORD dwStackSize,
+        DWORD *pThreadId,
+        void *apiThreadStartup,
+        PTHREAD_START_ROUTINE pStartAddress,
+        void *pParameter,
+        DWORD dwCreationFlagsMod
+    );
+}
 
 
 namespace XexUtils
@@ -21,7 +34,7 @@ void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pParameters)
 
 void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags)
 {
-    Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pParameters, dwCreationFlags);
+    ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pParameters, dwCreationFlags);
 }
 
 }

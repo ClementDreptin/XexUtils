@@ -61,9 +61,6 @@
     <ClInclude Include="include\Xam_.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Kernel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
