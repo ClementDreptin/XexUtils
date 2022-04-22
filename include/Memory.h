@@ -27,7 +27,7 @@ public:
             return;
         }
 
-        *(T *)dwAddress = data;
+        *reinterpret_cast<T *>(dwAddress) = data;
     }
 
     // Read memory at dwAddress.
@@ -40,7 +40,7 @@ public:
             return 0;
         }
 
-        return *(T *)dwAddress;
+        return *reinterpret_cast<T *>(dwAddress);
     }
 };
 
