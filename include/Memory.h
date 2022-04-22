@@ -15,7 +15,7 @@ public:
     static void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pParameters = nullptr);
 
     // Start a thread with special creation flags.
-    static void ThreadEx(LPTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags);
+    static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags);
 
     // Write data at dwAddress.
     template<typename T>

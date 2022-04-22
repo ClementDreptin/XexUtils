@@ -19,7 +19,7 @@ void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pParameters)
     CreateThread(nullptr, 0, pStartAddress, pParameters, 0, nullptr);
 }
 
-void Memory::ThreadEx(LPTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags)
+void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags)
 {
     Kernel::ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pParameters, dwCreationFlags);
 }
