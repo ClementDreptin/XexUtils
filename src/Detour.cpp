@@ -7,12 +7,26 @@
 namespace XexUtils
 {
 
-byte Detour::s_pTrampolineBuffer[200 * 20] = {};
+byte Detour::s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
 size_t Detour::s_uiTrampolineSize = 0;
 
 Detour::Detour(DWORD dwHookSourceAddress, const void *pHookTarget)
-    : m_dwHookSourceAddress(dwHookSourceAddress), m_pHookTarget(pHookTarget), m_pbTrampolineAddress(nullptr), m_uiOriginalLength(0)
 {
+    Init(reinterpret_cast<void *>(dwHookSourceAddress), pHookTarget);
+}
+
+Detour::Detour(void *pHookSource, const void *pHookTarget)
+{
+    Init(pHookSource, pHookTarget);
+}
+
+void Detour::Init(void *pHookSource, const void *pHookTarget)
+{
+    m_pHookSource = pHookSource;
+    m_pHookTarget = pHookTarget;
+    m_pTrampolineDestination = nullptr;
+    m_uiOriginalLength = 0;
+
     Install();
 }
 
@@ -27,46 +41,46 @@ bool Detour::Install()
     if (m_uiOriginalLength != 0)
         return false;
 
-    const size_t HookSize = WriteFarBranch(nullptr, m_pHookTarget, false, false);
+    const size_t uiHookSize = WriteFarBranch(nullptr, m_pHookTarget);
 
     // Save the original instructions for unhooking later on
-    memcpy(m_pOriginalInstructions, reinterpret_cast<void *>(m_dwHookSourceAddress), HookSize);
+    memcpy(m_pbOriginalInstructions, m_pHookSource, uiHookSize);
 
-    m_uiOriginalLength = HookSize;
+    m_uiOriginalLength = uiHookSize;
 
     // Create trampoline and copy and fix instructions to the trampoline
-    m_pbTrampolineAddress = &s_pTrampolineBuffer[s_uiTrampolineSize];
+    m_pTrampolineDestination = &s_pTrampolineBuffer[s_uiTrampolineSize];
 
-    for (size_t i = 0; i < (HookSize / 4); i++)
+    for (size_t i = 0; i < (uiHookSize / 4); i++)
     {
-        const auto pdwInstruction = reinterpret_cast<DWORD *>(m_dwHookSourceAddress + (i * 4));
+        const void *pInstruction = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
 
-        s_uiTrampolineSize += CopyInstruction(reinterpret_cast<DWORD *>(&s_pTrampolineBuffer[s_uiTrampolineSize]), pdwInstruction);
+        s_uiTrampolineSize += CopyInstruction(reinterpret_cast<void *>(&s_pTrampolineBuffer[s_uiTrampolineSize]), pInstruction);
     }
 
     // Trampoline branches back to the original function after the branch we used to hook
-    const void *pAfterBranchAddress = reinterpret_cast<void *>(m_dwHookSourceAddress + HookSize);
+    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + uiHookSize);
 
     s_uiTrampolineSize += WriteFarBranch(&s_pTrampolineBuffer[s_uiTrampolineSize], pAfterBranchAddress, false, true);
 
     // Finally write the branch to the function that we are hooking
-    WriteFarBranch(reinterpret_cast<void *>(m_dwHookSourceAddress), m_pHookTarget, false, false);
+    WriteFarBranch(m_pHookSource, m_pHookTarget);
 
     return true;
 }
 
 bool Detour::Remove()
 {
-    if (m_dwHookSourceAddress && m_uiOriginalLength)
+    if (m_pHookSource && m_uiOriginalLength)
     {
         // Trying to remove a hook from a game function after the game has been closed could cause a segfault so we
         // make sure the hook function is still loaded in memory
-        bool bIsHookSourceAddressValid = Xam::IsAddressValid(reinterpret_cast<void *>(m_dwHookSourceAddress));
+        bool bIsHookSourceAddressValid = Xam::IsAddressValid(m_pHookSource);
         if (bIsHookSourceAddressValid)
-            memcpy(reinterpret_cast<void *>(m_dwHookSourceAddress), m_pOriginalInstructions, m_uiOriginalLength);
+            memcpy(m_pHookSource, m_pbOriginalInstructions, m_uiOriginalLength);
 
         m_uiOriginalLength = 0;
-        m_dwHookSourceAddress = 0;
+        m_pHookSource = nullptr;
 
         return true;
     }
@@ -74,14 +88,9 @@ bool Detour::Remove()
     return false;
 }
 
-size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister)
+size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister, DWORD dwBranchOptions, byte bConditionRegisterBit, byte bRegisterIndex)
 {
-    return WriteFarBranchEx(pDestination, pBranchTarget, bLinked, bPreserveRegister);
-}
-
-size_t Detour::WriteFarBranchEx(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister, DWORD dwBranchOptions, byte bConditionRegisterBit, byte bRegisterIndex)
-{
-    const DWORD pBranchFarAsm[] =
+    const DWORD pdwBranchFarAsm[] =
     {
         POWERPC_LIS(bRegisterIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                   // lis   %rX, BranchTarget@hi
         POWERPC_ORI(bRegisterIndex, bRegisterIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))),   // ori   %rX, %rX, BranchTarget@lo
@@ -89,7 +98,7 @@ size_t Detour::WriteFarBranchEx(void *pDestination, const void *pBranchTarget, b
         POWERPC_BCCTR(dwBranchOptions, bConditionRegisterBit, bLinked)                                     // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD pBranchFarAsmPreserve[] =
+    const DWORD pdwBranchFarAsmPreserve[] =
     {
         POWERPC_STD(bRegisterIndex, -0x30, 1),                                                             // std   %rX, -0x30(%r1)
         POWERPC_LIS(bRegisterIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                   // lis   %rX, BranchTarget@hi
@@ -99,24 +108,24 @@ size_t Detour::WriteFarBranchEx(void *pDestination, const void *pBranchTarget, b
         POWERPC_BCCTR(dwBranchOptions, bConditionRegisterBit, bLinked)                                     // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD *pBranchAsm = bPreserveRegister ? pBranchFarAsmPreserve : pBranchFarAsm;
-    const DWORD dwBranchAsmSize = bPreserveRegister ? sizeof(pBranchFarAsmPreserve) : sizeof(pBranchFarAsm);
+    const DWORD *pdwBranchAsm = bPreserveRegister ? pdwBranchFarAsmPreserve : pdwBranchFarAsm;
+    const DWORD dwBranchAsmSize = bPreserveRegister ? sizeof(pdwBranchFarAsmPreserve) : sizeof(pdwBranchFarAsm);
 
     if (pDestination)
-        memcpy(pDestination, pBranchAsm, dwBranchAsmSize);
+        memcpy(pDestination, pdwBranchAsm, dwBranchAsmSize);
 
     return dwBranchAsmSize;
 }
 
-size_t Detour::RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource)
+size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
 {
-    const DWORD dwInstruction = *pdwSource;
-    const DWORD dwInstructionAddress = reinterpret_cast<DWORD>(pdwSource);
+    const DWORD dwInstruction = *reinterpret_cast<const DWORD *>(pSource);
+    const DWORD dwInstructionAddress = reinterpret_cast<DWORD>(pSource);
 
     // Absolute branches don't need to be handled
     if (dwInstruction & POWERPC_BRANCH_ABSOLUTE)
     {
-        *pdwDestination = dwInstruction;
+        *reinterpret_cast<DWORD *>(pDestination) = dwInstruction;
 
         return 4;
     }
@@ -170,20 +179,20 @@ size_t Detour::RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource)
 
     const void *pBranchAddress = reinterpret_cast<void *>(dwInstructionAddress + dwBranchOffset);
 
-    return WriteFarBranchEx(pdwDestination, pBranchAddress, dwInstruction & POWERPC_BRANCH_LINKED, true, dwBranchOptions, bConditionRegisterBit);
+    return WriteFarBranch(pDestination, pBranchAddress, dwInstruction & POWERPC_BRANCH_LINKED, true, dwBranchOptions, bConditionRegisterBit);
 }
 
-size_t Detour::CopyInstruction(DWORD *pdwDestination, const DWORD *pdwSource)
+size_t Detour::CopyInstruction(void *pDestination, const void *pSource)
 {
-    const DWORD dwInstruction = *pdwSource;
+    const DWORD dwInstruction = *reinterpret_cast<const DWORD *>(pSource);
 
     switch (dwInstruction & POWERPC_OPCODE_MASK)
     {
     case POWERPC_OPCODE_B:  // B BL BA BLA
     case POWERPC_OPCODE_BC: // BEQ BNE BLT BGE
-        return RelocateBranch(pdwDestination, pdwSource);
+        return RelocateBranch(pDestination, pSource);
     default:
-        *pdwDestination = dwInstruction;
+        *reinterpret_cast<DWORD *>(pDestination) = dwInstruction;
         return 4;
     }
 }
