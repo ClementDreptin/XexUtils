@@ -41,25 +41,25 @@ bool Detour::Install()
     if (m_uiOriginalLength != 0)
         return false;
 
-    const size_t HookSize = WriteFarBranch(nullptr, m_pHookTarget, false, false);
+    const size_t uiHookSize = WriteFarBranch(nullptr, m_pHookTarget, false, false);
 
     // Save the original instructions for unhooking later on
-    memcpy(m_pOriginalInstructions, m_pHookSource, HookSize);
+    memcpy(m_pbOriginalInstructions, m_pHookSource, uiHookSize);
 
-    m_uiOriginalLength = HookSize;
+    m_uiOriginalLength = uiHookSize;
 
     // Create trampoline and copy and fix instructions to the trampoline
     m_pTrampolineDestination = &s_pTrampolineBuffer[s_uiTrampolineSize];
 
-    for (size_t i = 0; i < (HookSize / 4); i++)
+    for (size_t i = 0; i < (uiHookSize / 4); i++)
     {
-        const auto pdwInstruction = reinterpret_cast<DWORD *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
+        const DWORD *pdwInstruction = reinterpret_cast<DWORD *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
 
         s_uiTrampolineSize += CopyInstruction(reinterpret_cast<DWORD *>(&s_pTrampolineBuffer[s_uiTrampolineSize]), pdwInstruction);
     }
 
     // Trampoline branches back to the original function after the branch we used to hook
-    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + HookSize);
+    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + uiHookSize);
 
     s_uiTrampolineSize += WriteFarBranch(&s_pTrampolineBuffer[s_uiTrampolineSize], pAfterBranchAddress, false, true);
 
@@ -77,7 +77,7 @@ bool Detour::Remove()
         // make sure the hook function is still loaded in memory
         bool bIsHookSourceAddressValid = Xam::IsAddressValid(m_pHookSource);
         if (bIsHookSourceAddressValid)
-            memcpy(m_pHookSource, m_pOriginalInstructions, m_uiOriginalLength);
+            memcpy(m_pHookSource, m_pbOriginalInstructions, m_uiOriginalLength);
 
         m_uiOriginalLength = 0;
         m_pHookSource = nullptr;
@@ -90,7 +90,7 @@ bool Detour::Remove()
 
 size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister, DWORD dwBranchOptions, byte bConditionRegisterBit, byte bRegisterIndex)
 {
-    const DWORD pBranchFarAsm[] =
+    const DWORD pdwBranchFarAsm[] =
     {
         POWERPC_LIS(bRegisterIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                   // lis   %rX, BranchTarget@hi
         POWERPC_ORI(bRegisterIndex, bRegisterIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))),   // ori   %rX, %rX, BranchTarget@lo
@@ -98,7 +98,7 @@ size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, boo
         POWERPC_BCCTR(dwBranchOptions, bConditionRegisterBit, bLinked)                                     // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD pBranchFarAsmPreserve[] =
+    const DWORD pdwBranchFarAsmPreserve[] =
     {
         POWERPC_STD(bRegisterIndex, -0x30, 1),                                                             // std   %rX, -0x30(%r1)
         POWERPC_LIS(bRegisterIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                   // lis   %rX, BranchTarget@hi
@@ -108,11 +108,11 @@ size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, boo
         POWERPC_BCCTR(dwBranchOptions, bConditionRegisterBit, bLinked)                                     // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD *pBranchAsm = bPreserveRegister ? pBranchFarAsmPreserve : pBranchFarAsm;
-    const DWORD dwBranchAsmSize = bPreserveRegister ? sizeof(pBranchFarAsmPreserve) : sizeof(pBranchFarAsm);
+    const DWORD *pdwBranchAsm = bPreserveRegister ? pdwBranchFarAsmPreserve : pdwBranchFarAsm;
+    const DWORD dwBranchAsmSize = bPreserveRegister ? sizeof(pdwBranchFarAsmPreserve) : sizeof(pdwBranchFarAsm);
 
     if (pDestination)
-        memcpy(pDestination, pBranchAsm, dwBranchAsmSize);
+        memcpy(pDestination, pdwBranchAsm, dwBranchAsmSize);
 
     return dwBranchAsmSize;
 }

@@ -96,7 +96,7 @@ private:
     void *m_pTrampolineDestination;
 
     // Any bytes overwritten by the hook.
-    byte m_pOriginalInstructions[30];
+    byte m_pbOriginalInstructions[30];
 
     // The amount of bytes overwritten by the hook.
     size_t m_uiOriginalLength;
