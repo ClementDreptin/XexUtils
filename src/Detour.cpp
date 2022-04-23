@@ -11,8 +11,22 @@ byte Detour::s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
 size_t Detour::s_uiTrampolineSize = 0;
 
 Detour::Detour(DWORD dwHookSourceAddress, const void *pHookTarget)
-    : m_dwHookSourceAddress(dwHookSourceAddress), m_pHookTarget(pHookTarget), m_pbTrampolineAddress(nullptr), m_uiOriginalLength(0)
 {
+    Init(reinterpret_cast<void *>(dwHookSourceAddress), pHookTarget);
+}
+
+Detour::Detour(void *pHookSource, const void *pHookTarget)
+{
+    Init(pHookSource, pHookTarget);
+}
+
+void Detour::Init(void *pHookSource, const void *pHookTarget)
+{
+    m_pHookSource = pHookSource;
+    m_pHookTarget = pHookTarget;
+    m_pbTrampolineAddress = nullptr;
+    m_uiOriginalLength = 0;
+
     Install();
 }
 
@@ -30,7 +44,7 @@ bool Detour::Install()
     const size_t HookSize = WriteFarBranch(nullptr, m_pHookTarget, false, false);
 
     // Save the original instructions for unhooking later on
-    memcpy(m_pOriginalInstructions, reinterpret_cast<void *>(m_dwHookSourceAddress), HookSize);
+    memcpy(m_pOriginalInstructions, m_pHookSource, HookSize);
 
     m_uiOriginalLength = HookSize;
 
@@ -39,34 +53,34 @@ bool Detour::Install()
 
     for (size_t i = 0; i < (HookSize / 4); i++)
     {
-        const auto pdwInstruction = reinterpret_cast<DWORD *>(m_dwHookSourceAddress + (i * 4));
+        const auto pdwInstruction = reinterpret_cast<DWORD *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
 
         s_uiTrampolineSize += CopyInstruction(reinterpret_cast<DWORD *>(&s_pTrampolineBuffer[s_uiTrampolineSize]), pdwInstruction);
     }
 
     // Trampoline branches back to the original function after the branch we used to hook
-    const void *pAfterBranchAddress = reinterpret_cast<void *>(m_dwHookSourceAddress + HookSize);
+    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + HookSize);
 
     s_uiTrampolineSize += WriteFarBranch(&s_pTrampolineBuffer[s_uiTrampolineSize], pAfterBranchAddress, false, true);
 
     // Finally write the branch to the function that we are hooking
-    WriteFarBranch(reinterpret_cast<void *>(m_dwHookSourceAddress), m_pHookTarget, false, false);
+    WriteFarBranch(m_pHookSource, m_pHookTarget, false, false);
 
     return true;
 }
 
 bool Detour::Remove()
 {
-    if (m_dwHookSourceAddress && m_uiOriginalLength)
+    if (m_pHookSource && m_uiOriginalLength)
     {
         // Trying to remove a hook from a game function after the game has been closed could cause a segfault so we
         // make sure the hook function is still loaded in memory
-        bool bIsHookSourceAddressValid = Xam::IsAddressValid(reinterpret_cast<void *>(m_dwHookSourceAddress));
+        bool bIsHookSourceAddressValid = Xam::IsAddressValid(m_pHookSource);
         if (bIsHookSourceAddressValid)
-            memcpy(reinterpret_cast<void *>(m_dwHookSourceAddress), m_pOriginalInstructions, m_uiOriginalLength);
+            memcpy(m_pHookSource, m_pOriginalInstructions, m_uiOriginalLength);
 
         m_uiOriginalLength = 0;
-        m_dwHookSourceAddress = 0;
+        m_pHookSource = nullptr;
 
         return true;
     }

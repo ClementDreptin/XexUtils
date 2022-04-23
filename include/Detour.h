@@ -69,6 +69,7 @@ class Detour
 {
 public:
     Detour(DWORD dwHookSourceAddress, const void *pHookTarget);
+    Detour(void *pHookSource, const void *pHookTarget);
 
     ~Detour();
 
@@ -89,7 +90,7 @@ private:
     const void *m_pHookTarget;
 
     // The function we are hooking.
-    DWORD m_dwHookSourceAddress;
+    void *m_pHookSource;
 
     // Pointer to the trampoline for this detour.
     byte *m_pbTrampolineAddress;
@@ -103,6 +104,10 @@ private:
     // Shared
     static byte s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
     static size_t s_uiTrampolineSize;
+
+    // Function that contains to constructor logic, it's meant to share the same logic for multiple constructors.
+    // This is necessary because C++0x doesn't support calling one constructor from another constructor.
+    void Init(void *pHookSource, const void *pHookTarget);
 
     // Write an unconditional branch to the destination address that will branch to the target address.
     static size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked = true, bool bPreserveRegister = false);
