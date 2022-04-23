@@ -83,7 +83,7 @@ public:
     template<typename T>
     T GetOriginal() const
     {
-        return reinterpret_cast<T>(m_pbTrampolineAddress);
+        return reinterpret_cast<T>(m_pTrampolineDestination);
     }
 private:
     // The funtion we are pointing the hook to.
@@ -93,7 +93,7 @@ private:
     void *m_pHookSource;
 
     // Pointer to the trampoline for this detour.
-    byte *m_pbTrampolineAddress;
+    void *m_pTrampolineDestination;
 
     // Any bytes overwritten by the hook.
     byte m_pOriginalInstructions[30];

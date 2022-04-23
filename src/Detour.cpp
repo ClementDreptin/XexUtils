@@ -24,7 +24,7 @@ void Detour::Init(void *pHookSource, const void *pHookTarget)
 {
     m_pHookSource = pHookSource;
     m_pHookTarget = pHookTarget;
-    m_pbTrampolineAddress = nullptr;
+    m_pTrampolineDestination = nullptr;
     m_uiOriginalLength = 0;
 
     Install();
@@ -49,7 +49,7 @@ bool Detour::Install()
     m_uiOriginalLength = HookSize;
 
     // Create trampoline and copy and fix instructions to the trampoline
-    m_pbTrampolineAddress = &s_pTrampolineBuffer[s_uiTrampolineSize];
+    m_pTrampolineDestination = &s_pTrampolineBuffer[s_uiTrampolineSize];
 
     for (size_t i = 0; i < (HookSize / 4); i++)
     {
