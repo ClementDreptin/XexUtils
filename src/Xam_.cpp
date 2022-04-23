@@ -80,9 +80,9 @@ DWORD Xam::GetCurrentTitleId()
     return XamGetCurrentTitleId();
 }
 
-bool Xam::IsAddressValid()
+bool Xam::IsAddressValid(void *pAddress)
 {
-    return MmIsAddressValid();
+    return MmIsAddressValid(pAddress);
 }
 
 }
