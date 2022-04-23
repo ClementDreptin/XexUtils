@@ -7,7 +7,7 @@
 namespace XexUtils
 {
 
-byte Detour::s_pTrampolineBuffer[200 * 20] = {};
+byte Detour::s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
 size_t Detour::s_uiTrampolineSize = 0;
 
 Detour::Detour(DWORD dwHookSourceAddress, const void *pHookTarget)

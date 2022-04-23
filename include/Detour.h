@@ -11,7 +11,7 @@
 // PowerPC most significant bit is addressed as bit 0 in documentation.
 #define POWERPC_BIT32(N) (31 - N)
 
-// Opcode is bits 0-5. 
+// Opcode is bits 0-5.
 // Allowing for op codes ranging from 0-63.
 #define POWERPC_OPCODE(OP)       (OP << 26)
 #define POWERPC_OPCODE_ADDI      POWERPC_OPCODE(14)
@@ -59,6 +59,8 @@
 
 #define POWERPC_BRANCH_OPTIONS_ALWAYS (20)
 
+#define TRAMPOLINE_BUFFER_MAX_SIZE 0x1000
+
 
 namespace XexUtils
 {
@@ -66,41 +68,22 @@ namespace XexUtils
 class Detour
 {
 public:
-    /**
-     * Constructor
-     * 
-     * @param pHookSource - The function that will be hooked.
-     * @param pHookTarget - The function that the hook will be redirected to.
-     */
     Detour(DWORD dwHookSourceAddress, const void *pHookTarget);
 
-    /**
-     * Destructor
-     */
     ~Detour();
 
-    /**
-     * Sets up the detour.
-     * @return true if the detour was set up successfully, false otherwise.
-     */
+    // Set up the detour.
     bool Install();
 
-    /**
-     * Removes the detour.
-     * @return true if the detour was removed successfully, false otherwise.
-     */
+    // Remove the detour.
     bool Remove();
 
-    /**
-     * Get a pointer to the original function.
-     * @return A pointer to the original function.
-     */
+    // Get a pointer to the original function.
     template<typename T>
     T GetOriginal() const
     {
         return reinterpret_cast<T>(m_pbTrampolineAddress);
     }
-
 private:
     // The funtion we are pointing the hook to.
     const void *m_pHookTarget;
@@ -109,59 +92,28 @@ private:
     DWORD m_dwHookSourceAddress;
 
     // Pointer to the trampoline for this detour.
-    byte *m_pbTrampolineAddress;        
+    byte *m_pbTrampolineAddress;
 
     // Any bytes overwritten by the hook.
-    byte m_pOriginalInstructions[30];  
+    byte m_pOriginalInstructions[30];
 
     // The amount of bytes overwritten by the hook.
-    size_t m_uiOriginalLength;          
+    size_t m_uiOriginalLength;
 
     // Shared
-    static byte s_pTrampolineBuffer[200 * 20];
+    static byte s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
     static size_t s_uiTrampolineSize;
 
-    /**
-     * Writes an unconditional branch to the destination address that will branch to the target address.
-     *
-     * @param Destination - Where the branch will be written to.
-     * @param BranchTarget - The address the branch will jump to.
-     * @param Linked - Branch is a call or a jump? aka bl or b
-     * @param PreserveRegister - Preserve the register clobbered after loading the branch address.
-     * @return The size of the branch in bytes.
-     */
+    // Write an unconditional branch to the destination address that will branch to the target address.
     static size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked = true, bool bPreserveRegister = false);
 
-    /**
-     * Writes both conditional and unconditional branches using the count register to the destination address that will branch to the target address.
-     *
-     * @param Destination - Where the branch will be written to.
-     * @param BranchTarget - The address the branch will jump to.
-     * @param Linked - Branch is a call or a jump? aka bl or b
-     * @param PreserveRegister - Preserve the register clobbered after loading the branch address.
-     * @param BranchOptions - Options for determining when a branch to be followed.
-     * @param ConditionRegisterBit - The bit of the condition register to compare.
-     * @param RegisterIndex - Register to use when loading the destination address into the count register.
-     * @return The size of the branch in bytes.
-     */
+    // Write both conditional and unconditional branches using the count register to the destination address that will branch to the target address.
     static size_t WriteFarBranchEx(void *pDestination, const void *pBranchTarget, bool bLinked = false, bool bPreserveRegister = false, DWORD dwBranchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, byte bConditionRegisterBit = 0, byte bRegisterIndex = 0);
 
-    /**
-     * Copies and fixes relative branch instructions to a new location.
-     *
-     * @param Destination - Where to write the new branch.
-     * @param Source - Address to the instruction that is being relocated.
-     * @return The size of the branch in bytes.
-     */
+    // Copy and fix relative branch instructions to a new location.
     static size_t RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource);
 
-    /**
-     * Copies an instruction enusuring things such as PC relative offsets are fixed.
-     *
-     * @param Destination - Where to write the new instruction(s).
-     * @param Source - Address to the instruction that is being copied.
-     * @return The size of the instruction in bytes.
-     */
+    // Copy an instruction enusuring things such as PC relative offsets are fixed.
     static size_t CopyInstruction(DWORD *pdwDestination, const DWORD *pdwSource);
 };
 
