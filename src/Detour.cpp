@@ -41,7 +41,7 @@ bool Detour::Install()
     if (m_uiOriginalLength != 0)
         return false;
 
-    const size_t uiHookSize = WriteFarBranch(nullptr, m_pHookTarget, false, false);
+    const size_t uiHookSize = WriteFarBranch(nullptr, m_pHookTarget);
 
     // Save the original instructions for unhooking later on
     memcpy(m_pbOriginalInstructions, m_pHookSource, uiHookSize);
@@ -53,9 +53,9 @@ bool Detour::Install()
 
     for (size_t i = 0; i < (uiHookSize / 4); i++)
     {
-        const DWORD *pdwInstruction = reinterpret_cast<DWORD *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
+        const void *pInstruction = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
 
-        s_uiTrampolineSize += CopyInstruction(reinterpret_cast<DWORD *>(&s_pTrampolineBuffer[s_uiTrampolineSize]), pdwInstruction);
+        s_uiTrampolineSize += CopyInstruction(reinterpret_cast<void *>(&s_pTrampolineBuffer[s_uiTrampolineSize]), pInstruction);
     }
 
     // Trampoline branches back to the original function after the branch we used to hook
@@ -64,7 +64,7 @@ bool Detour::Install()
     s_uiTrampolineSize += WriteFarBranch(&s_pTrampolineBuffer[s_uiTrampolineSize], pAfterBranchAddress, false, true);
 
     // Finally write the branch to the function that we are hooking
-    WriteFarBranch(m_pHookSource, m_pHookTarget, false, false);
+    WriteFarBranch(m_pHookSource, m_pHookTarget);
 
     return true;
 }
