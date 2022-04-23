@@ -111,11 +111,8 @@ private:
     // This is necessary because C++0x doesn't support calling one constructor from another constructor.
     void Init(void *pHookSource, const void *pHookTarget);
 
-    // Write an unconditional branch to the destination address that will branch to the target address.
-    static size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked = true, bool bPreserveRegister = false);
-
     // Write both conditional and unconditional branches using the count register to the destination address that will branch to the target address.
-    static size_t WriteFarBranchEx(void *pDestination, const void *pBranchTarget, bool bLinked = false, bool bPreserveRegister = false, DWORD dwBranchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, byte bConditionRegisterBit = 0, byte bRegisterIndex = 0);
+    static size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked = false, bool bPreserveRegister = false, DWORD dwBranchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, byte bConditionRegisterBit = 0, byte bRegisterIndex = 0);
 
     // Copy and fix relative branch instructions to a new location.
     static size_t RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource);

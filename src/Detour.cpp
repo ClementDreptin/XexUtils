@@ -88,12 +88,7 @@ bool Detour::Remove()
     return false;
 }
 
-size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister)
-{
-    return WriteFarBranchEx(pDestination, pBranchTarget, bLinked, bPreserveRegister);
-}
-
-size_t Detour::WriteFarBranchEx(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister, DWORD dwBranchOptions, byte bConditionRegisterBit, byte bRegisterIndex)
+size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister, DWORD dwBranchOptions, byte bConditionRegisterBit, byte bRegisterIndex)
 {
     const DWORD pBranchFarAsm[] =
     {
@@ -184,7 +179,7 @@ size_t Detour::RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource)
 
     const void *pBranchAddress = reinterpret_cast<void *>(dwInstructionAddress + dwBranchOffset);
 
-    return WriteFarBranchEx(pdwDestination, pBranchAddress, dwInstruction & POWERPC_BRANCH_LINKED, true, dwBranchOptions, bConditionRegisterBit);
+    return WriteFarBranch(pdwDestination, pBranchAddress, dwInstruction & POWERPC_BRANCH_LINKED, true, dwBranchOptions, bConditionRegisterBit);
 }
 
 size_t Detour::CopyInstruction(DWORD *pdwDestination, const DWORD *pdwSource)
