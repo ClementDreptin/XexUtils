@@ -101,8 +101,10 @@ private:
     // The amount of bytes overwritten by the hook.
     size_t m_uiOriginalLength;
 
-    // Shared
+    // Buffer containing the trampoline bytes.
     static byte s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
+
+    // The current trampoline size.
     static size_t s_uiTrampolineSize;
 
     // Function that contains to constructor logic, it's meant to share the same logic for multiple constructors.
