@@ -87,6 +87,9 @@
     <ClCompile Include="src\Vec4.cpp" />
     <ClCompile Include="src\Xam_.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
