@@ -115,10 +115,10 @@ private:
     static size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked = false, bool bPreserveRegister = false, DWORD dwBranchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, byte bConditionRegisterBit = 0, byte bRegisterIndex = 0);
 
     // Copy and fix relative branch instructions to a new location.
-    static size_t RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource);
+    static size_t RelocateBranch(void *pDestination, const void *pSource);
 
     // Copy an instruction enusuring things such as PC relative offsets are fixed.
-    static size_t CopyInstruction(DWORD *pdwDestination, const DWORD *pdwSource);
+    static size_t CopyInstruction(void *pDestination, const void *pSource);
 };
 
 }

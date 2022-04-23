@@ -117,15 +117,15 @@ size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, boo
     return dwBranchAsmSize;
 }
 
-size_t Detour::RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource)
+size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
 {
-    const DWORD dwInstruction = *pdwSource;
-    const DWORD dwInstructionAddress = reinterpret_cast<DWORD>(pdwSource);
+    const DWORD dwInstruction = *reinterpret_cast<const DWORD *>(pSource);
+    const DWORD dwInstructionAddress = reinterpret_cast<DWORD>(pSource);
 
     // Absolute branches don't need to be handled
     if (dwInstruction & POWERPC_BRANCH_ABSOLUTE)
     {
-        *pdwDestination = dwInstruction;
+        *reinterpret_cast<DWORD *>(pDestination) = dwInstruction;
 
         return 4;
     }
@@ -179,20 +179,20 @@ size_t Detour::RelocateBranch(DWORD *pdwDestination, const DWORD *pdwSource)
 
     const void *pBranchAddress = reinterpret_cast<void *>(dwInstructionAddress + dwBranchOffset);
 
-    return WriteFarBranch(pdwDestination, pBranchAddress, dwInstruction & POWERPC_BRANCH_LINKED, true, dwBranchOptions, bConditionRegisterBit);
+    return WriteFarBranch(pDestination, pBranchAddress, dwInstruction & POWERPC_BRANCH_LINKED, true, dwBranchOptions, bConditionRegisterBit);
 }
 
-size_t Detour::CopyInstruction(DWORD *pdwDestination, const DWORD *pdwSource)
+size_t Detour::CopyInstruction(void *pDestination, const void *pSource)
 {
-    const DWORD dwInstruction = *pdwSource;
+    const DWORD dwInstruction = *reinterpret_cast<const DWORD *>(pSource);
 
     switch (dwInstruction & POWERPC_OPCODE_MASK)
     {
     case POWERPC_OPCODE_B:  // B BL BA BLA
     case POWERPC_OPCODE_BC: // BEQ BNE BLT BGE
-        return RelocateBranch(pdwDestination, pdwSource);
+        return RelocateBranch(pDestination, pSource);
     default:
-        *pdwDestination = dwInstruction;
+        *reinterpret_cast<DWORD *>(pDestination) = dwInstruction;
         return 4;
     }
 }
