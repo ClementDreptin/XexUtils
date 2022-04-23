@@ -2,9 +2,9 @@
 #include "Memory.h"
 
 
+// Import from xboxkrnl.exe
 extern "C"
 {
-    // Extended version of CreateThread from winbase.h.
     DWORD __stdcall ExCreateThread(
         HANDLE *pHandle,
         DWORD dwStackSize,
