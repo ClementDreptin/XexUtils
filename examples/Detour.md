@@ -2,18 +2,18 @@
 
 Detouring a function:
 ```C++
-XexUtils::Detour *FunctionDetour = nullptr;
+XexUtils::Detour *pFunctionDetour = nullptr;
 
 void FunctionHook(int iParam1, int iParam2)
 {
     // Do some extra stuff...
 
-    FunctionDetour->GetOriginal<decltype(&FunctionHook)>()(iParam1, iParam2);
+    pFunctionDetour->GetOriginal<decltype(&FunctionHook)>()(iParam1, iParam2);
 }
 
 void Init()
 {
-    FunctionDetour = new XexUtils::Detour(0x12345678, FunctionHook);
+    pFunctionDetour = new XexUtils::Detour(0x12345678, FunctionHook);
 }
 ```
 
@@ -33,17 +33,17 @@ public:
     }
 };
 
-XexUtils::Detour *FunctionDetour = nullptr;
+XexUtils::Detour *pFunctionDetour = nullptr;
 
 void FunctionHook(int iParam1, int iParam2)
 {
     // Do some extra stuff...
 
-    FunctionDetour->Original(iParam1, iParam2);
+    pFunctionDetour->Original(iParam1, iParam2);
 }
 
 void Init()
 {
-    FunctionDetour = new XexUtils::Detour(0x12345678, FunctionHook);
+    pFunctionDetour = new XexUtils::Detour(0x12345678, FunctionHook);
 }
 ```
