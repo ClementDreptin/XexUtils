@@ -27,7 +27,7 @@ public:
     template<typename T = void, typename... Args>
     T Original(Args... Params)
     {
-        T(*OriginalFn)(Args...) = reinterpret_cast<T(*)(Params...)>(pOriginalInstructions);
+        T(*OriginalFn)(Args...) = reinterpret_cast<T(*)(Args...)>(pOriginalInstructions);
 
         return OriginalFn(Params...);
     }
