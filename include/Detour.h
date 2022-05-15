@@ -3,62 +3,7 @@
 #pragma once
 
 
-#define MASK_N_BITS(N) ((1 << (N)) - 1)
-
-#define POWERPC_HI(X) ((X >> 16) & 0xFFFF)
-#define POWERPC_LO(X) (X & 0xFFFF)
-
-// PowerPC most significant bit is addressed as bit 0 in documentation.
-#define POWERPC_BIT32(N) (31 - N)
-
-// Opcode is bits 0-5.
-// Allowing for op codes ranging from 0-63.
-#define POWERPC_OPCODE(OP)       (OP << 26)
-#define POWERPC_OPCODE_ADDI      POWERPC_OPCODE(14)
-#define POWERPC_OPCODE_ADDIS     POWERPC_OPCODE(15)
-#define POWERPC_OPCODE_BC        POWERPC_OPCODE(16)
-#define POWERPC_OPCODE_B         POWERPC_OPCODE(18)
-#define POWERPC_OPCODE_BCCTR     POWERPC_OPCODE(19)
-#define POWERPC_OPCODE_ORI       POWERPC_OPCODE(24)
-#define POWERPC_OPCODE_EXTENDED  POWERPC_OPCODE(31) // Use extended opcodes.
-#define POWERPC_OPCODE_STW       POWERPC_OPCODE(36)
-#define POWERPC_OPCODE_LWZ       POWERPC_OPCODE(32)
-#define POWERPC_OPCODE_LD        POWERPC_OPCODE(58)
-#define POWERPC_OPCODE_STD       POWERPC_OPCODE(62)
-#define POWERPC_OPCODE_MASK      POWERPC_OPCODE(63)
-
-#define POWERPC_EXOPCODE(OP)     (OP << 1)
-#define POWERPC_EXOPCODE_BCCTR   POWERPC_EXOPCODE(528)
-#define POWERPC_EXOPCODE_MTSPR   POWERPC_EXOPCODE(467)
-
-// SPR field is encoded as two 5 bit bitfields.
-#define POWERPC_SPR(SPR) static_cast<DWORD>(((SPR & 0x1F) << 5) | ((SPR >> 5) & 0x1F))
-
-// Instruction helpers.
-//
-// rD - Destination register.
-// rS - Source register.
-// rA/rB - Register inputs.
-// SPR - Special purpose register.
-// UIMM/SIMM - Unsigned/signed immediate.
-#define POWERPC_ADDI(rD, rA, SIMM)  static_cast<DWORD>(POWERPC_OPCODE_ADDI | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
-#define POWERPC_ADDIS(rD, rA, SIMM) static_cast<DWORD>(POWERPC_OPCODE_ADDIS | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
-#define POWERPC_LIS(rD, SIMM)       POWERPC_ADDIS(rD, 0, SIMM) // Mnemonic for addis %rD, 0, SIMM
-#define POWERPC_LI(rD, SIMM)        POWERPC_ADDIrD, 0, SIMM)   // Mnemonic for addi %rD, 0, SIMM
-#define POWERPC_MTSPR(SPR, rS)      static_cast<DWORD>(POWERPC_OPCODE_EXTENDED | (rS << POWERPC_BIT32(10)) | (POWERPC_SPR(SPR) << POWERPC_BIT32(20)) | POWERPC_EXOPCODE_MTSPR)
-#define POWERPC_MTCTR(rS)           POWERPC_MTSPR(9, rS) // Mnemonic for mtspr 9, rS
-#define POWERPC_ORI(rS, rA, UIMM)   static_cast<DWORD>(POWERPC_OPCODE_ORI | (rS << POWERPC_BIT32(10)) |  (rA << POWERPC_BIT32(15)) | UIMM)
-#define POWERPC_BCCTR(BO, BI, LK)   static_cast<DWORD>(POWERPC_OPCODE_BCCTR | (BO << POWERPC_BIT32(10)) | (BI << POWERPC_BIT32(15) | LK & 1) | POWERPC_EXOPCODE_BCCTR)
-#define POWERPC_STD(rS, DS, rA)     static_cast<DWORD>(POWERPC_OPCODE_STD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<WORD>(DS) & 0xFFFF))
-#define POWERPC_LD(rS, DS, rA)      static_cast<DWORD>(POWERPC_OPCODE_LD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<DWORD>(DS) & 0xFFFF))
-
-// Branch related fields.
-#define POWERPC_BRANCH_LINKED    1
-#define POWERPC_BRANCH_ABSOLUTE  2
-#define POWERPC_BRANCH_TYPE_MASK (POWERPC_BRANCH_LINKED | POWERPC_BRANCH_ABSOLUTE)
-
 #define POWERPC_BRANCH_OPTIONS_ALWAYS (20)
-
 #define TRAMPOLINE_BUFFER_MAX_SIZE 0x1000
 
 
