@@ -2,7 +2,6 @@
 
 #include "Xam_.h"
 
-
 namespace XexUtils
 {
 

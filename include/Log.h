@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace XexUtils
 {
 
@@ -13,6 +12,7 @@ public:
 
     // Print an error message to stderr.
     static void Error(const char *szMessage, ...);
+
 private:
     // Print a formatted message to an output stream.
     static void Print(const char *szFormat, const va_list pArgList, std::ostream &OutputStream);

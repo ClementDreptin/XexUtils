@@ -4,7 +4,6 @@
 #include "Memory.h"
 #include "Formatter.h"
 
-
 // Imports from xboxkrnl.exe and xam.xex
 extern "C"
 {
@@ -12,7 +11,6 @@ extern "C"
 
     bool MmIsAddressValid(void *pAddress);
 }
-
 
 namespace XexUtils
 {

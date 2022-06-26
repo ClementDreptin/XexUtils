@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace XexUtils
 {
 namespace Math
@@ -14,20 +13,22 @@ struct vec2
 
 // Disable the C4201 warning for nameless union/struct
 #pragma warning(push)
-#pragma warning(disable: 4201)
-    union
-    {
+#pragma warning(disable : 4201)
+
+    union {
         struct
         {
             float x;
             float y;
         };
+
         struct
         {
             float r;
             float g;
         };
     };
+
 #pragma warning(pop)
 
     float magnitude() const;

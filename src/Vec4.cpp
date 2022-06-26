@@ -1,17 +1,20 @@
 #include "pch.h"
 #include "Vec4.h"
 
-
 namespace XexUtils
 {
 namespace Math
 {
 
 vec4::vec4()
-    : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
+    : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
+{
+}
 
 vec4::vec4(float x, float y, float z, float w)
-    : x(x), y(y), z(z), w(0.0f) {}
+    : x(x), y(y), z(z), w(0.0f)
+{
+}
 
 float vec4::magnitude() const
 {

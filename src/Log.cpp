@@ -1,12 +1,10 @@
 #include "pch.h"
 #include "Log.h"
 
-
 namespace XexUtils
 {
 
 static const int MAX_SIZE = 2048;
-
 
 void Log::Info(const char *szMessage, ...)
 {

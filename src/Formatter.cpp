@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Formatter.h"
 
-
 namespace XexUtils
 {
 

@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Memory.h"
 
-
 // Import from xboxkrnl.exe
 extern "C"
 {
@@ -15,7 +14,6 @@ extern "C"
         DWORD dwCreationFlagsMod
     );
 }
-
 
 namespace XexUtils
 {

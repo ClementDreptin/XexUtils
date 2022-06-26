@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Math_.h"
 
-
 namespace XexUtils
 {
 namespace Math

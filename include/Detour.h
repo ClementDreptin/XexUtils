@@ -2,10 +2,8 @@
 
 #pragma once
 
-
 #define POWERPC_BRANCH_OPTIONS_ALWAYS (20)
 #define TRAMPOLINE_BUFFER_MAX_SIZE 0x1000
-
 
 namespace XexUtils
 {
@@ -30,6 +28,7 @@ public:
     {
         return reinterpret_cast<T>(m_pTrampolineDestination);
     }
+
 private:
     // The funtion we are pointing the hook to.
     const void *m_pHookTarget;
