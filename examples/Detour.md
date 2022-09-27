@@ -1,14 +1,14 @@
 # Detouring
 
-Detouring a function:
+Detour a function:
 ```C++
 XexUtils::Detour *pFunctionDetour = nullptr;
 
-void FunctionHook(int iParam1, int iParam2)
+void FunctionHook(int param1, int param2)
 {
     // Do some extra stuff...
 
-    pFunctionDetour->GetOriginal<decltype(&FunctionHook)>()(iParam1, iParam2);
+    pFunctionDetour->GetOriginal<decltype(&FunctionHook)>()(param1, param2);
 }
 
 void Init()
@@ -35,11 +35,11 @@ public:
 
 XexUtils::Detour *pFunctionDetour = nullptr;
 
-void FunctionHook(int iParam1, int iParam2)
+void FunctionHook(int param1, int param2)
 {
     // Do some extra stuff...
 
-    pFunctionDetour->Original(iParam1, iParam2);
+    pFunctionDetour->Original(param1, param2);
 }
 
 void Init()

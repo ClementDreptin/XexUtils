@@ -4,12 +4,12 @@ namespace XexUtils
 {
 
 // Enum for XNotifyQueueUI types
-typedef enum
+typedef enum _XNOTIFYQUEUEUI_TYPE
 {
     XNOTIFYUI_TYPE_FRIENDONLINE = 0,
     XNOTIFYUI_TYPE_GAMEINVITE = 1,
     XNOTIFYUI_TYPE_FRIENDREQUEST = 2,
-    XNOTIFYUI_TYPE_GENERIC = 3, // mail icon
+    XNOTIFYUI_TYPE_GENERIC = 3,
     XNOTIFYUI_TYPE_MULTIPENDING = 4,
     XNOTIFYUI_TYPE_PERSONALMESSAGE = 5,
     XNOTIFYUI_TYPE_SIGNEDOUT = 6,
@@ -19,10 +19,10 @@ typedef enum
     XNOTIFYUI_TYPE_CHATREQUEST = 10,
     XNOTIFYUI_TYPE_CONNECTIONLOST = 11,
     XNOTIFYUI_TYPE_DOWNLOADCOMPLETE = 12,
-    XNOTIFYUI_TYPE_SONGPLAYING = 13,      // music icon
-    XNOTIFYUI_TYPE_PREFERRED_REVIEW = 14, // happy face icon
-    XNOTIFYUI_TYPE_AVOID_REVIEW = 15,     // sad face icon
-    XNOTIFYUI_TYPE_COMPLAINT = 16,        // hammer icon
+    XNOTIFYUI_TYPE_SONGPLAYING = 13,
+    XNOTIFYUI_TYPE_PREFERRED_REVIEW = 14,
+    XNOTIFYUI_TYPE_AVOID_REVIEW = 15,
+    XNOTIFYUI_TYPE_COMPLAINT = 16,
     XNOTIFYUI_TYPE_CHATCALLBACK = 17,
     XNOTIFYUI_TYPE_REMOVEDMU = 18,
     XNOTIFYUI_TYPE_REMOVEDGAMEPAD = 19,
@@ -35,7 +35,7 @@ typedef enum
     XNOTIFYUI_TYPE_ONEFRIENDONLINE = 26,
     XNOTIFYUI_TYPE_ACHIEVEMENT = 27,
     XNOTIFYUI_TYPE_HYBRIDDISC = 28,
-    XNOTIFYUI_TYPE_MAILBOX = 29, // mailbox icon
+    XNOTIFYUI_TYPE_MAILBOX = 29,
     XNOTIFYUI_TYPE_VIDEOCHATINVITE = 30,
     XNOTIFYUI_TYPE_DOWNLOADCOMPLETEDREADYTOPLAY = 31,
     XNOTIFYUI_TYPE_CANNOTDOWNLOAD = 32,
@@ -80,16 +80,16 @@ typedef enum
     XNOTIFYUI_TYPE_SMARTGLASSAVAILABLE = 77,
 } XNOTIFYQUEUEUI_TYPE;
 
-// Static class with functions to use the Xbox UI.
+// Static class with functions to ease the use of the Xbox library.
 class Xam
 {
 public:
     // Show an Xbox notification.
-    static void XNotify(const std::string &strText, XNOTIFYQUEUEUI_TYPE dwType = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
+    static void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
 
     // Open a keyboard and return what the user typed as a string.
     // Note: Blocks the current thread while waiting for the user to finish typing.
-    static DWORD ShowKeyboard(const wchar_t *wszTitle, const wchar_t *wszDescription, const wchar_t *wszDefaultText, std::string &strResult, int nMaxLength = 15, DWORD dwKeyboardType = VKBD_DEFAULT);
+    static DWORD ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength = 15, DWORD keyboardType = VKBD_DEFAULT);
 
     // Get the current title ID as a DWORD.
     static DWORD GetCurrentTitleId();

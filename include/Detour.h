@@ -11,7 +11,7 @@ namespace XexUtils
 class Detour
 {
 public:
-    Detour(DWORD dwHookSourceAddress, const void *pHookTarget);
+    Detour(DWORD hookSourceAddress, const void *pHookTarget);
     Detour(void *pHookSource, const void *pHookTarget);
 
     ~Detour();
@@ -40,23 +40,23 @@ private:
     void *m_pTrampolineDestination;
 
     // Any bytes overwritten by the hook.
-    byte m_pbOriginalInstructions[30];
+    byte m_OriginalInstructions[30];
 
     // The amount of bytes overwritten by the hook.
-    size_t m_uiOriginalLength;
+    size_t m_OriginalLength;
 
     // Buffer containing the trampoline bytes.
-    static byte s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
+    static byte s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
 
     // The current trampoline size.
-    static size_t s_uiTrampolineSize;
+    static size_t s_TrampolineSize;
 
     // Function that contains to constructor logic, it's meant to share the same logic for multiple constructors.
     // This is necessary because C++0x doesn't support calling one constructor from another constructor.
     void Init(void *pHookSource, const void *pHookTarget);
 
     // Write both conditional and unconditional branches using the count register to the destination address that will branch to the target address.
-    size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked = false, bool bPreserveRegister = false, DWORD dwBranchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, byte bConditionRegisterBit = 0, byte bRegisterIndex = 0);
+    size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked = false, bool preserveRegister = false, DWORD branchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, byte conditionRegisterBit = 0, byte registerIndex = 0);
 
     // Copy and fix relative branch instructions to a new location.
     size_t RelocateBranch(void *pDestination, const void *pSource);

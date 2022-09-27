@@ -9,39 +9,53 @@ namespace XexUtils
 class Memory
 {
 public:
-    // Get a function in strModuleName from its ordinal.
-    static DWORD ResolveFunction(const std::string &strModuleName, DWORD dwOrdinal);
+    // Get a function in moduleName from its ordinal.
+    static void *ResolveFunction(const std::string &moduleName, DWORD ordinal);
 
     // Start a thread.
-    static void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pParameters = nullptr);
+    static void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs = nullptr);
 
     // Start a thread with special creation flags.
-    static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags);
+    static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, DWORD creationFlags);
 
-    // Write data at dwAddress.
+    // Write data at pDestination
     template<typename T>
-    static void Write(DWORD dwAddress, T data)
+    static void Write(void *pDestination, T data)
     {
-        if (!Xam::IsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
+        if (!Xam::IsAddressValid(pDestination))
         {
-            Log::Error("Invalid address: %#010x", dwAddress);
+            Log::Error("Invalid address: %p", pDestination);
             return;
         }
 
-        *reinterpret_cast<T *>(dwAddress) = data;
+        *static_cast<T *>(pDestination) = data;
     }
 
-    // Read memory at dwAddress.
+    // Write data at address.
     template<typename T>
-    static T Read(DWORD dwAddress)
+    static void Write(DWORD address, T data)
     {
-        if (!Xam::IsAddressValid(reinterpret_cast<DWORD *>(dwAddress)))
+        Write(reinterpret_cast<void *>(address));
+    }
+
+    // Read memory at pSource.
+    template<typename T>
+    static T Read(void *pSource)
+    {
+        if (!Xam::IsAddressValid(pSource))
         {
-            Log::Error("Invalid address: %#010x", dwAddress);
+            Log::Error("Invalid address: %p", pSource);
             return 0;
         }
 
-        return *reinterpret_cast<T *>(dwAddress);
+        return *static_cast<T *>(pSource);
+    }
+
+    // Read memory at address.
+    template<typename T>
+    static T Read(DWORD address)
+    {
+        Read(reinterpret_cast<void *>(address));
     }
 };
 

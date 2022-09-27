@@ -1,6 +1,6 @@
 # Logging
 
-Logging messages to stdout and stderr:
+Log messages to stdout and stderr:
 ```C++
 void Init()
 {

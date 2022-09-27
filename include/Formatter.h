@@ -8,10 +8,10 @@ class Formatter
 {
 public:
     // Format a string in with a printf-like format.
-    static std::string Format(const char *szFormat, ...);
+    static std::string Format(const char *format, ...);
 
     // Create a wide string from a narrow string.
-    static std::wstring ToWide(const std::string &strNarrowString);
+    static std::wstring ToWide(const std::string &narrowString);
 };
 
 }

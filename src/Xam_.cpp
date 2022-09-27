@@ -17,60 +17,60 @@ namespace XexUtils
 
 // Create a pointer to XNotifyQueueUI in xam.xex
 
-typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE dwType, DWORD dwUserIndex, unsigned long long qwAreas, const wchar_t *wszDisplayText, void *pContextData);
-XNOTIFYQUEUEUI XNotifyQueueUI = reinterpret_cast<XNOTIFYQUEUEUI>(Memory::ResolveFunction("xam.xex", 656));
+typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE type, DWORD userIndex, unsigned long long areas, const wchar_t *displayText, void *pContextData);
+static XNOTIFYQUEUEUI XNotifyQueueUI = static_cast<XNOTIFYQUEUEUI>(Memory::ResolveFunction("xam.xex", 656));
 
-void Xam::XNotify(const std::string &strText, XNOTIFYQUEUEUI_TYPE dwType)
+void Xam::XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
 {
-    XNotifyQueueUI(dwType, 0, XNOTIFY_SYSTEM, Formatter::ToWide(strText).c_str(), nullptr);
+    XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, Formatter::ToWide(text).c_str(), nullptr);
 }
 
-DWORD Xam::ShowKeyboard(const wchar_t *wszTitle, const wchar_t *wszDescription, const wchar_t *wszDefaultText, std::string &strResult, int nMaxLength, DWORD dwKeyboardType)
+DWORD Xam::ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength, DWORD keyboardType)
 {
-    // nMaxLength is the amount of characters the keyboard will allow, nRealMaxLength needs to include the \0 to terminate the string
-    int nRealMaxLength = nMaxLength + 1;
-    XOVERLAPPED Overlapped = {};
+    // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
+    size_t realMaxLength = maxLength + 1;
+    XOVERLAPPED overlapped = {};
 
     // Create the buffers
-    wchar_t *wszBuffer = new wchar_t[nRealMaxLength];
-    char *szBuffer = new char[nRealMaxLength];
+    wchar_t *wideBuffer = new wchar_t[realMaxLength];
+    char *buffer = new char[realMaxLength];
 
     // Zero the buffers
-    ZeroMemory(wszBuffer, sizeof(wszBuffer));
-    ZeroMemory(szBuffer, sizeof(szBuffer));
+    ZeroMemory(wideBuffer, sizeof(wideBuffer));
+    ZeroMemory(buffer, sizeof(buffer));
 
     // Open the keyboard
     XShowKeyboardUI(
         0,
-        dwKeyboardType,
-        wszDefaultText,
-        wszTitle,
-        wszDescription,
-        wszBuffer,
-        nRealMaxLength,
-        &Overlapped
+        keyboardType,
+        defaultText,
+        title,
+        description,
+        wideBuffer,
+        realMaxLength,
+        &overlapped
     );
 
     // Wait until the keyboard closes
-    while (!XHasOverlappedIoCompleted(&Overlapped))
+    while (!XHasOverlappedIoCompleted(&overlapped))
         Sleep(100);
 
     // Get how the keyboard was closed (success, canceled or internal error)
-    DWORD dwResult = XGetOverlappedResult(&Overlapped, nullptr, TRUE);
-    if (dwResult == ERROR_SUCCESS)
+    DWORD overlappedResult = XGetOverlappedResult(&overlapped, nullptr, TRUE);
+    if (overlappedResult == ERROR_SUCCESS)
     {
         // Convert the wide string to a narrow string
-        wcstombs(szBuffer, wszBuffer, nRealMaxLength);
+        wcstombs(buffer, wideBuffer, realMaxLength);
 
         // Populate the out string with the narrow string
-        strResult = szBuffer;
+        result = buffer;
     }
 
     // Cleanup
-    delete[] wszBuffer;
-    delete[] szBuffer;
+    delete[] wideBuffer;
+    delete[] buffer;
 
-    return dwResult;
+    return overlappedResult;
 }
 
 DWORD Xam::GetCurrentTitleId()

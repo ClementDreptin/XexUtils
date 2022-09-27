@@ -50,7 +50,7 @@
 #define POWERPC_ORI(rS, rA, UIMM) static_cast<DWORD>(POWERPC_OPCODE_ORI | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | UIMM)
 #define POWERPC_BCCTR(BO, BI, LK) static_cast<DWORD>(POWERPC_OPCODE_BCCTR | (BO << POWERPC_BIT32(10)) | (BI << POWERPC_BIT32(15) | LK & 1) | POWERPC_EXOPCODE_BCCTR)
 #define POWERPC_STD(rS, DS, rA) static_cast<DWORD>(POWERPC_OPCODE_STD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<WORD>(DS) & 0xFFFF))
-#define POWERPC_LD(rS, DS, rA) static_cast<DWORD>(POWERPC_OPCODE_LD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<DWORD>(DS) & 0xFFFF))
+#define POWERPC_LD(rS, DS, rA) static_cast<DWORD>(POWERPC_OPCODE_LD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<WORD>(DS) & 0xFFFF))
 
 // Branch related fields.
 #define POWERPC_BRANCH_LINKED 1
@@ -60,12 +60,12 @@
 namespace XexUtils
 {
 
-byte Detour::s_pTrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
-size_t Detour::s_uiTrampolineSize = 0;
+byte Detour::s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
+size_t Detour::s_TrampolineSize = 0;
 
-Detour::Detour(DWORD dwHookSourceAddress, const void *pHookTarget)
+Detour::Detour(DWORD hookSourceAddress, const void *pHookTarget)
 {
-    Init(reinterpret_cast<void *>(dwHookSourceAddress), pHookTarget);
+    Init(reinterpret_cast<void *>(hookSourceAddress), pHookTarget);
 }
 
 Detour::Detour(void *pHookSource, const void *pHookTarget)
@@ -78,7 +78,7 @@ void Detour::Init(void *pHookSource, const void *pHookTarget)
     m_pHookSource = pHookSource;
     m_pHookTarget = pHookTarget;
     m_pTrampolineDestination = nullptr;
-    m_uiOriginalLength = 0;
+    m_OriginalLength = 0;
 
     Install();
 }
@@ -91,30 +91,30 @@ Detour::~Detour()
 bool Detour::Install()
 {
     // Check if we are already hooked
-    if (m_uiOriginalLength != 0)
+    if (m_OriginalLength != 0)
         return false;
 
-    const size_t uiHookSize = WriteFarBranch(nullptr, m_pHookTarget);
+    const size_t hookSize = WriteFarBranch(nullptr, m_pHookTarget);
 
     // Save the original instructions for unhooking later on
-    memcpy(m_pbOriginalInstructions, m_pHookSource, uiHookSize);
+    memcpy(m_OriginalInstructions, m_pHookSource, hookSize);
 
-    m_uiOriginalLength = uiHookSize;
+    m_OriginalLength = hookSize;
 
     // Create trampoline and copy and fix instructions to the trampoline
-    m_pTrampolineDestination = &s_pTrampolineBuffer[s_uiTrampolineSize];
+    m_pTrampolineDestination = &s_TrampolineBuffer[s_TrampolineSize];
 
-    for (size_t i = 0; i < (uiHookSize / 4); i++)
+    for (size_t i = 0; i < (hookSize / 4); i++)
     {
         const void *pInstruction = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
 
-        s_uiTrampolineSize += CopyInstruction(reinterpret_cast<void *>(&s_pTrampolineBuffer[s_uiTrampolineSize]), pInstruction);
+        s_TrampolineSize += CopyInstruction(reinterpret_cast<void *>(&s_TrampolineBuffer[s_TrampolineSize]), pInstruction);
     }
 
     // Trampoline branches back to the original function after the branch we used to hook
-    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + uiHookSize);
+    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + hookSize);
 
-    s_uiTrampolineSize += WriteFarBranch(&s_pTrampolineBuffer[s_uiTrampolineSize], pAfterBranchAddress, false, true);
+    s_TrampolineSize += WriteFarBranch(&s_TrampolineBuffer[s_TrampolineSize], pAfterBranchAddress, false, true);
 
     // Finally write the branch to the function that we are hooking
     WriteFarBranch(m_pHookSource, m_pHookTarget);
@@ -124,15 +124,15 @@ bool Detour::Install()
 
 bool Detour::Remove()
 {
-    if (m_pHookSource && m_uiOriginalLength)
+    if (m_pHookSource && m_OriginalLength)
     {
         // Trying to remove a hook from a game function after the game has been closed could cause a segfault so we
         // make sure the hook function is still loaded in memory
-        bool bIsHookSourceAddressValid = Xam::IsAddressValid(m_pHookSource);
-        if (bIsHookSourceAddressValid)
-            memcpy(m_pHookSource, m_pbOriginalInstructions, m_uiOriginalLength);
+        bool isHookSourceAddressValid = Xam::IsAddressValid(m_pHookSource);
+        if (isHookSourceAddressValid)
+            memcpy(m_pHookSource, m_OriginalInstructions, m_OriginalLength);
 
-        m_uiOriginalLength = 0;
+        m_OriginalLength = 0;
         m_pHookSource = nullptr;
 
         return true;
@@ -141,52 +141,52 @@ bool Detour::Remove()
     return false;
 }
 
-size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool bLinked, bool bPreserveRegister, DWORD dwBranchOptions, byte bConditionRegisterBit, byte bRegisterIndex)
+size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked, bool preserveRegister, DWORD branchOptions, byte conditionRegisterBit, byte registerIndex)
 {
-    const DWORD pdwBranchFarAsm[] = {
-        POWERPC_LIS(bRegisterIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                 // lis   %rX, BranchTarget@hi
-        POWERPC_ORI(bRegisterIndex, bRegisterIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))), // ori   %rX, %rX, BranchTarget@lo
-        POWERPC_MTCTR(bRegisterIndex),                                                                   // mtctr %rX
-        POWERPC_BCCTR(dwBranchOptions, bConditionRegisterBit, bLinked)                                   // bcctr (bcctr 20, 0 == bctr)
+    const DWORD branchFarAsm[] = {
+        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                 // lis   %rX, pBranchTarget@hi
+        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))),  // ori   %rX, %rX, pBranchTarget@lo
+        POWERPC_MTCTR(registerIndex),                                                                   // mtctr %rX
+        POWERPC_BCCTR(branchOptions, conditionRegisterBit, linked)                                      // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD pdwBranchFarAsmPreserve[] = {
-        POWERPC_STD(bRegisterIndex, -0x30, 1),                                                           // std   %rX, -0x30(%r1)
-        POWERPC_LIS(bRegisterIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                 // lis   %rX, BranchTarget@hi
-        POWERPC_ORI(bRegisterIndex, bRegisterIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))), // ori   %rX, %rX, BranchTarget@lo
-        POWERPC_MTCTR(bRegisterIndex),                                                                   // mtctr %rX
-        POWERPC_LD(bRegisterIndex, -0x30, 1),                                                            // lwz   %rX, -0x30(%r1)
-        POWERPC_BCCTR(dwBranchOptions, bConditionRegisterBit, bLinked)                                   // bcctr (bcctr 20, 0 == bctr)
+    const DWORD branchFarAsmPreserve[] = {
+        POWERPC_STD(registerIndex, -0x30, 1),                                                           // std   %rX, -0x30(%r1)
+        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                 // lis   %rX, pBranchTarget@hi
+        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))),  // ori   %rX, %rX, pBranchTarget@lo
+        POWERPC_MTCTR(registerIndex),                                                                   // mtctr %rX
+        POWERPC_LD(registerIndex, -0x30, 1),                                                            // lwz   %rX, -0x30(%r1)
+        POWERPC_BCCTR(branchOptions, conditionRegisterBit, linked)                                      // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD *pdwBranchAsm = bPreserveRegister ? pdwBranchFarAsmPreserve : pdwBranchFarAsm;
-    const DWORD dwBranchAsmSize = bPreserveRegister ? sizeof(pdwBranchFarAsmPreserve) : sizeof(pdwBranchFarAsm);
+    const DWORD *pBranchAsm = preserveRegister ? branchFarAsmPreserve : branchFarAsm;
+    const size_t branchAsmSize = preserveRegister ? sizeof(branchFarAsmPreserve) : sizeof(branchFarAsm);
 
     if (pDestination)
-        memcpy(pDestination, pdwBranchAsm, dwBranchAsmSize);
+        memcpy(pDestination, pBranchAsm, branchAsmSize);
 
-    return dwBranchAsmSize;
+    return branchAsmSize;
 }
 
 size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
 {
-    const DWORD dwInstruction = *reinterpret_cast<const DWORD *>(pSource);
-    const DWORD dwInstructionAddress = reinterpret_cast<DWORD>(pSource);
+    const DWORD instruction = *reinterpret_cast<const DWORD *>(pSource);
+    const DWORD instructionAddress = reinterpret_cast<DWORD>(pSource);
 
     // Absolute branches don't need to be handled
-    if (dwInstruction & POWERPC_BRANCH_ABSOLUTE)
+    if (instruction & POWERPC_BRANCH_ABSOLUTE)
     {
-        *reinterpret_cast<DWORD *>(pDestination) = dwInstruction;
+        *reinterpret_cast<DWORD *>(pDestination) = instruction;
 
         return 4;
     }
 
-    size_t uiBranchOffsetBitSize = 0;
-    int iBranchOffsetBitBase = 0;
-    DWORD dwBranchOptions = 0;
-    byte bConditionRegisterBit = 0;
+    size_t branchOffsetBitSize = 0;
+    int branchOffsetBitBase = 0;
+    DWORD branchOptions = 0;
+    byte conditionRegisterBit = 0;
 
-    switch (dwInstruction & POWERPC_OPCODE_MASK)
+    switch (instruction & POWERPC_OPCODE_MASK)
     {
         // B - Branch
         // [Opcode]            [Address]           [Absolute] [Linked]
@@ -195,10 +195,10 @@ size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
         // Example
         //  010010   0000 0000 0000 0000 0000 0001      0         0
     case POWERPC_OPCODE_B:
-        uiBranchOffsetBitSize = 24;
-        iBranchOffsetBitBase = 2;
-        dwBranchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS;
-        bConditionRegisterBit = 0;
+        branchOffsetBitSize = 24;
+        branchOffsetBitBase = 2;
+        branchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS;
+        conditionRegisterBit = 0;
         break;
 
         // BC - Branch Conditional
@@ -208,10 +208,10 @@ size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
         // Example
         //  010000        00100                    00001             00 0000 0000 0001      0         0
     case POWERPC_OPCODE_BC:
-        uiBranchOffsetBitSize = 14;
-        iBranchOffsetBitBase = 2;
-        dwBranchOptions = (dwInstruction >> POWERPC_BIT32(10)) & MASK_N_BITS(5);
-        bConditionRegisterBit = (dwInstruction >> POWERPC_BIT32(15)) & MASK_N_BITS(5);
+        branchOffsetBitSize = 14;
+        branchOffsetBitBase = 2;
+        branchOptions = (instruction >> POWERPC_BIT32(10)) & MASK_N_BITS(5);
+        conditionRegisterBit = (instruction >> POWERPC_BIT32(15)) & MASK_N_BITS(5);
         break;
     }
 
@@ -219,31 +219,31 @@ size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
     // The value of the first bit is 4 as all addresses are aligned to for 4 for code therefore,
     // the branch offset can be caluclated by anding in place and removing any suffix bits such as the
     // link register or absolute flags.
-    DWORD dwBranchOffset = dwInstruction & (MASK_N_BITS(uiBranchOffsetBitSize) << iBranchOffsetBitBase);
+    DWORD branchOffset = instruction & (MASK_N_BITS(branchOffsetBitSize) << branchOffsetBitBase);
 
     // Check if the MSB of the offset is set
-    if (dwBranchOffset >> ((uiBranchOffsetBitSize + iBranchOffsetBitBase) - 1))
+    if (branchOffset >> ((branchOffsetBitSize + branchOffsetBitBase) - 1))
     {
         // Add the nessasary bits to our integer to make it negative
-        dwBranchOffset |= ~MASK_N_BITS(uiBranchOffsetBitSize + iBranchOffsetBitBase);
+        branchOffset |= ~MASK_N_BITS(branchOffsetBitSize + branchOffsetBitBase);
     }
 
-    const void *pBranchAddress = reinterpret_cast<void *>(dwInstructionAddress + dwBranchOffset);
+    const void *pBranchAddress = reinterpret_cast<void *>(instructionAddress + branchOffset);
 
-    return WriteFarBranch(pDestination, pBranchAddress, dwInstruction & POWERPC_BRANCH_LINKED, true, dwBranchOptions, bConditionRegisterBit);
+    return WriteFarBranch(pDestination, pBranchAddress, instruction & POWERPC_BRANCH_LINKED, true, branchOptions, conditionRegisterBit);
 }
 
 size_t Detour::CopyInstruction(void *pDestination, const void *pSource)
 {
-    const DWORD dwInstruction = *reinterpret_cast<const DWORD *>(pSource);
+    const DWORD instruction = *reinterpret_cast<const DWORD *>(pSource);
 
-    switch (dwInstruction & POWERPC_OPCODE_MASK)
+    switch (instruction & POWERPC_OPCODE_MASK)
     {
     case POWERPC_OPCODE_B:  // B BL BA BLA
     case POWERPC_OPCODE_BC: // BEQ BNE BLT BGE
         return RelocateBranch(pDestination, pSource);
     default:
-        *reinterpret_cast<DWORD *>(pDestination) = dwInstruction;
+        *reinterpret_cast<DWORD *>(pDestination) = instruction;
         return 4;
     }
 }

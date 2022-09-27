@@ -1,18 +1,18 @@
 # Formatting
 
-Formatting a string in a `printf` style:
+Format a string in a `printf` style:
 ```C++
 void Init()
 {
-    std::string strFormattedString = XexUtils::Formater::Format("My favorite number is %i", 3);
+    std::string formattedString = XexUtils::Formater::Format("My favorite number is %i", 3);
 }
 ```
 
-Converting a narrow string to a wide string:
+Convert a narrow string to a wide string:
 ```C++
 void Init()
 {
-    std::string strName = "John";
-    std::wstring wstrName = XexUtils::Formatter::ToWide(strName);
+    std::string name = "John";
+    std::wstring wideName = XexUtils::Formatter::ToWide(name);
 }
 ```

@@ -10,10 +10,10 @@ namespace Math
 {
 
 // Convert degree to radians.
-double Radians(double dbDegrees);
+float Radians(float degrees);
 
 // Get the position at distance unit from origin.
-vec3 ToFront(const vec3 &origin, float fViewY, float fDistance);
+vec3 ToFront(const vec3 &origin, float viewY, float distance);
 
 }
 }

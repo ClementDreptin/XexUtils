@@ -18,21 +18,21 @@ extern "C"
 namespace XexUtils
 {
 
-DWORD Memory::ResolveFunction(const std::string &strModuleName, DWORD dwOrdinal)
+void *Memory::ResolveFunction(const std::string &moduleName, DWORD ordinal)
 {
-    HMODULE hModule = GetModuleHandle(strModuleName.c_str());
+    HMODULE hModule = GetModuleHandle(moduleName.c_str());
 
-    return (hModule == NULL) ? NULL : reinterpret_cast<DWORD>(GetProcAddress(hModule, reinterpret_cast<const char *>(dwOrdinal)));
+    return (hModule == NULL) ? NULL : GetProcAddress(hModule, reinterpret_cast<const char *>(ordinal));
 }
 
-void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pParameters)
+void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
 {
-    CreateThread(nullptr, 0, pStartAddress, pParameters, 0, nullptr);
+    CreateThread(nullptr, 0, pStartAddress, pArgs, 0, nullptr);
 }
 
-void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pParameters, DWORD dwCreationFlags)
+void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, DWORD creationFlags)
 {
-    ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pParameters, dwCreationFlags);
+    ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pArgs, creationFlags);
 }
 
 }

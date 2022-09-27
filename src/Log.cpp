@@ -4,46 +4,44 @@
 namespace XexUtils
 {
 
-static const int MAX_SIZE = 2048;
-
-void Log::Info(const char *szMessage, ...)
+void Log::Info(const char *message, ...)
 {
     // Get the variadic arguments
-    va_list pArgList;
-    va_start(pArgList, szMessage);
+    va_list args;
+    va_start(args, message);
 
     // Print
-    std::string strFullMessage = "Info: ";
-    strFullMessage += szMessage;
-    Print(strFullMessage.c_str(), pArgList, std::cout);
+    std::string fullMessage = "Info: ";
+    fullMessage += message;
+    Print(fullMessage.c_str(), args, std::cout);
 
     // Free the variadic arguments
-    va_end(pArgList);
+    va_end(args);
 }
 
-void Log::Error(const char *szMessage, ...)
+void Log::Error(const char *message, ...)
 {
     // Get the variadic arguments
-    va_list pArgList;
-    va_start(pArgList, szMessage);
+    va_list args;
+    va_start(args, message);
 
     // Print
-    std::string strFullMessage = "Error: ";
-    strFullMessage += szMessage;
-    Print(strFullMessage.c_str(), pArgList, std::cerr);
+    std::string fullMessage = "Error: ";
+    fullMessage += message;
+    Print(fullMessage.c_str(), args, std::cerr);
 
     // Free the variadic arguments
-    va_end(pArgList);
+    va_end(args);
 }
 
-void Log::Print(const char *szFormat, const va_list pArgList, std::ostream &OutputStream)
+void Log::Print(const char *format, const va_list args, std::ostream &outputStream)
 {
     // Build the string with the format
-    char szBuffer[MAX_SIZE] = { 0 };
-    vsnprintf_s(szBuffer, _TRUNCATE, szFormat, pArgList);
+    char buffer[2048] = { 0 };
+    vsnprintf_s(buffer, _TRUNCATE, format, args);
 
     // Print
-    OutputStream << szBuffer << '\n';
+    outputStream << buffer << '\n';
 }
 
 }

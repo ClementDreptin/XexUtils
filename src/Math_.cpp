@@ -3,25 +3,21 @@
 
 namespace XexUtils
 {
-namespace Math
-{
 
-double Radians(double dbDegrees)
+float Math::Radians(float degrees)
 {
-    double dbPI = 3.14159265359;
-    return (dbDegrees * (dbPI / 180));
+    return (degrees * (XM_PI / 180.0f));
 }
 
-vec3 ToFront(const vec3 &origin, float fViewY, float fDistance)
+Math::vec3 Math::ToFront(const vec3 &origin, float viewY, float distance)
 {
     vec3 result;
 
-    result.x = origin.x + static_cast<float>(fDistance * cos(Radians(fViewY)));
-    result.y = origin.y + static_cast<float>(fDistance * sin(Radians(fViewY)));
+    result.x = origin.x + distance * cos(Radians(viewY));
+    result.y = origin.y + distance * sin(Radians(viewY));
     result.z = origin.z;
 
     return result;
 }
 
-}
 }
