@@ -32,7 +32,7 @@
 #define POWERPC_EXOPCODE_MTSPR POWERPC_EXOPCODE(467)
 
 // SPR field is encoded as two 5 bit bitfields.
-#define POWERPC_SPR(SPR) static_cast<DWORD>(((SPR & 0x1F) << 5) | ((SPR >> 5) & 0x1F))
+#define POWERPC_SPR(SPR) static_cast<POWERPC_INSTRUCTION>(((SPR & 0x1F) << 5) | ((SPR >> 5) & 0x1F))
 
 // Instruction helpers.
 //
@@ -41,16 +41,16 @@
 // rA/rB - Register inputs.
 // SPR - Special purpose register.
 // UIMM/SIMM - Unsigned/signed immediate.
-#define POWERPC_ADDI(rD, rA, SIMM) static_cast<DWORD>(POWERPC_OPCODE_ADDI | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
-#define POWERPC_ADDIS(rD, rA, SIMM) static_cast<DWORD>(POWERPC_OPCODE_ADDIS | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
+#define POWERPC_ADDI(rD, rA, SIMM) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_ADDI | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
+#define POWERPC_ADDIS(rD, rA, SIMM) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_ADDIS | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
 #define POWERPC_LIS(rD, SIMM) POWERPC_ADDIS(rD, 0, SIMM)       // Mnemonic for addis %rD, 0, SIMM
 #define POWERPC_LI(rD, SIMM)        POWERPC_ADDIrD, 0, SIMM)   // Mnemonic for addi %rD, 0, SIMM
-#define POWERPC_MTSPR(SPR, rS) static_cast<DWORD>(POWERPC_OPCODE_EXTENDED | (rS << POWERPC_BIT32(10)) | (POWERPC_SPR(SPR) << POWERPC_BIT32(20)) | POWERPC_EXOPCODE_MTSPR)
+#define POWERPC_MTSPR(SPR, rS) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_EXTENDED | (rS << POWERPC_BIT32(10)) | (POWERPC_SPR(SPR) << POWERPC_BIT32(20)) | POWERPC_EXOPCODE_MTSPR)
 #define POWERPC_MTCTR(rS) POWERPC_MTSPR(9, rS) // Mnemonic for mtspr 9, rS
-#define POWERPC_ORI(rS, rA, UIMM) static_cast<DWORD>(POWERPC_OPCODE_ORI | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | UIMM)
-#define POWERPC_BCCTR(BO, BI, LK) static_cast<DWORD>(POWERPC_OPCODE_BCCTR | (BO << POWERPC_BIT32(10)) | (BI << POWERPC_BIT32(15) | LK & 1) | POWERPC_EXOPCODE_BCCTR)
-#define POWERPC_STD(rS, DS, rA) static_cast<DWORD>(POWERPC_OPCODE_STD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<WORD>(DS) & 0xFFFF))
-#define POWERPC_LD(rS, DS, rA) static_cast<DWORD>(POWERPC_OPCODE_LD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<WORD>(DS) & 0xFFFF))
+#define POWERPC_ORI(rS, rA, UIMM) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_ORI | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | UIMM)
+#define POWERPC_BCCTR(BO, BI, LK) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_BCCTR | (BO << POWERPC_BIT32(10)) | (BI << POWERPC_BIT32(15) | LK & 1) | POWERPC_EXOPCODE_BCCTR)
+#define POWERPC_STD(rS, DS, rA) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_STD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<uint16_t>(DS) & 0xFFFF))
+#define POWERPC_LD(rS, DS, rA) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_LD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<uint16_t>(DS) & 0xFFFF))
 
 // Branch related fields.
 #define POWERPC_BRANCH_LINKED 1
@@ -60,10 +60,10 @@
 namespace XexUtils
 {
 
-byte Detour::s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
+uint8_t Detour::s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
 size_t Detour::s_TrampolineSize = 0;
 
-Detour::Detour(DWORD hookSourceAddress, const void *pHookTarget)
+Detour::Detour(uintptr_t hookSourceAddress, const void *pHookTarget)
 {
     Init(reinterpret_cast<void *>(hookSourceAddress), pHookTarget);
 }
@@ -104,15 +104,15 @@ bool Detour::Install()
     // Create trampoline and copy and fix instructions to the trampoline
     m_pTrampolineDestination = &s_TrampolineBuffer[s_TrampolineSize];
 
-    for (size_t i = 0; i < (hookSize / 4); i++)
+    for (size_t i = 0; i < (hookSize / sizeof(POWERPC_INSTRUCTION)); i++)
     {
-        const void *pInstruction = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + (i * 4));
+        const void *pInstruction = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(m_pHookSource) + (i * sizeof(POWERPC_INSTRUCTION)));
 
         s_TrampolineSize += CopyInstruction(reinterpret_cast<void *>(&s_TrampolineBuffer[s_TrampolineSize]), pInstruction);
     }
 
     // Trampoline branches back to the original function after the branch we used to hook
-    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<DWORD>(m_pHookSource) + hookSize);
+    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(m_pHookSource) + hookSize);
 
     s_TrampolineSize += WriteFarBranch(&s_TrampolineBuffer[s_TrampolineSize], pAfterBranchAddress, false, true);
 
@@ -141,25 +141,25 @@ bool Detour::Remove()
     return false;
 }
 
-size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked, bool preserveRegister, DWORD branchOptions, byte conditionRegisterBit, byte registerIndex)
+size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked, bool preserveRegister, POWERPC_INSTRUCTION branchOptions, uint8_t conditionRegisterBit, uint8_t registerIndex)
 {
-    const DWORD branchFarAsm[] = {
-        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                 // lis   %rX, pBranchTarget@hi
-        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))),  // ori   %rX, %rX, pBranchTarget@lo
+    const POWERPC_INSTRUCTION branchFarAsm[] = {
+        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<uintptr_t>(pBranchTarget))),                 // lis   %rX, pBranchTarget@hi
+        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<uintptr_t>(pBranchTarget))),  // ori   %rX, %rX, pBranchTarget@lo
         POWERPC_MTCTR(registerIndex),                                                                   // mtctr %rX
         POWERPC_BCCTR(branchOptions, conditionRegisterBit, linked)                                      // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD branchFarAsmPreserve[] = {
+    const POWERPC_INSTRUCTION branchFarAsmPreserve[] = {
         POWERPC_STD(registerIndex, -0x30, 1),                                                           // std   %rX, -0x30(%r1)
-        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<DWORD>(pBranchTarget))),                 // lis   %rX, pBranchTarget@hi
-        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<DWORD>(pBranchTarget))),  // ori   %rX, %rX, pBranchTarget@lo
+        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<uintptr_t>(pBranchTarget))),                 // lis   %rX, pBranchTarget@hi
+        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<uintptr_t>(pBranchTarget))),  // ori   %rX, %rX, pBranchTarget@lo
         POWERPC_MTCTR(registerIndex),                                                                   // mtctr %rX
         POWERPC_LD(registerIndex, -0x30, 1),                                                            // lwz   %rX, -0x30(%r1)
         POWERPC_BCCTR(branchOptions, conditionRegisterBit, linked)                                      // bcctr (bcctr 20, 0 == bctr)
     };
 
-    const DWORD *pBranchAsm = preserveRegister ? branchFarAsmPreserve : branchFarAsm;
+    const POWERPC_INSTRUCTION *pBranchAsm = preserveRegister ? branchFarAsmPreserve : branchFarAsm;
     const size_t branchAsmSize = preserveRegister ? sizeof(branchFarAsmPreserve) : sizeof(branchFarAsm);
 
     if (pDestination)
@@ -170,21 +170,21 @@ size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, boo
 
 size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
 {
-    const DWORD instruction = *reinterpret_cast<const DWORD *>(pSource);
-    const DWORD instructionAddress = reinterpret_cast<DWORD>(pSource);
+    const POWERPC_INSTRUCTION instruction = *reinterpret_cast<const POWERPC_INSTRUCTION *>(pSource);
+    const uintptr_t instructionAddress = reinterpret_cast<uintptr_t>(pSource);
 
     // Absolute branches don't need to be handled
     if (instruction & POWERPC_BRANCH_ABSOLUTE)
     {
-        *reinterpret_cast<DWORD *>(pDestination) = instruction;
+        *reinterpret_cast<POWERPC_INSTRUCTION *>(pDestination) = instruction;
 
-        return 4;
+        return sizeof(POWERPC_INSTRUCTION);
     }
 
     size_t branchOffsetBitSize = 0;
     int branchOffsetBitBase = 0;
-    DWORD branchOptions = 0;
-    byte conditionRegisterBit = 0;
+    uint32_t branchOptions = 0;
+    uint8_t conditionRegisterBit = 0;
 
     switch (instruction & POWERPC_OPCODE_MASK)
     {
@@ -219,7 +219,7 @@ size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
     // The value of the first bit is 4 as all addresses are aligned to for 4 for code therefore,
     // the branch offset can be caluclated by anding in place and removing any suffix bits such as the
     // link register or absolute flags.
-    DWORD branchOffset = instruction & (MASK_N_BITS(branchOffsetBitSize) << branchOffsetBitBase);
+    size_t branchOffset = instruction & (MASK_N_BITS(branchOffsetBitSize) << branchOffsetBitBase);
 
     // Check if the MSB of the offset is set
     if (branchOffset >> ((branchOffsetBitSize + branchOffsetBitBase) - 1))
@@ -235,7 +235,7 @@ size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
 
 size_t Detour::CopyInstruction(void *pDestination, const void *pSource)
 {
-    const DWORD instruction = *reinterpret_cast<const DWORD *>(pSource);
+    const POWERPC_INSTRUCTION instruction = *reinterpret_cast<const POWERPC_INSTRUCTION *>(pSource);
 
     switch (instruction & POWERPC_OPCODE_MASK)
     {
@@ -243,8 +243,8 @@ size_t Detour::CopyInstruction(void *pDestination, const void *pSource)
     case POWERPC_OPCODE_BC: // BEQ BNE BLT BGE
         return RelocateBranch(pDestination, pSource);
     default:
-        *reinterpret_cast<DWORD *>(pDestination) = instruction;
-        return 4;
+        *reinterpret_cast<POWERPC_INSTRUCTION *>(pDestination) = instruction;
+        return sizeof(POWERPC_INSTRUCTION);
     }
 }
 

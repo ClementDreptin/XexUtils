@@ -13,7 +13,7 @@ Open a keyboard to get a numerical value:
 void Init()
 {
     std::string value;
-    DWORD result = XexUtils::Xam::ShowKeyboard(L"Keyboard", L"Enter a value", L"123", value, 3, VKBD_LATIN_NUMERIC);
+    uint32_t result = XexUtils::Xam::ShowKeyboard(L"Keyboard", L"Enter a value", L"123", value, 3, VKBD_LATIN_NUMERIC);
 
     if (result == ERROR_CANCELLED)
         XexUtils::Log::Info("Keyboard canceled");
@@ -30,10 +30,10 @@ Check the current title running:
 ```C++
 void Init()
 {
-    const DWORD dashboardTitleId = 0xFFFE07D1;
-    DWORD currentTitle = XexUtils::Xam::GetCurrentTitleId();
+    const uint32_t dashboardTitleId = 0xFFFE07D1;
+    uint32_t currentTitleId = XexUtils::Xam::GetCurrentTitleId();
 
-    if (currentTitle == dashboardTitleId)
+    if (currentTitleId == dashboardTitleId)
         XexUtils::Log::Info("Welcome to the dashboard!");
 }
 ```

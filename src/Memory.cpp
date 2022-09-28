@@ -18,7 +18,7 @@ extern "C"
 namespace XexUtils
 {
 
-void *Memory::ResolveFunction(const std::string &moduleName, DWORD ordinal)
+void *Memory::ResolveFunction(const std::string &moduleName, uint32_t ordinal)
 {
     HMODULE hModule = GetModuleHandle(moduleName.c_str());
 
@@ -30,7 +30,7 @@ void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
     CreateThread(nullptr, 0, pStartAddress, pArgs, 0, nullptr);
 }
 
-void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, DWORD creationFlags)
+void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, uint32_t creationFlags)
 {
     ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pArgs, creationFlags);
 }

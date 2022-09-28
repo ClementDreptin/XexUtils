@@ -2,16 +2,18 @@
 
 #pragma once
 
-#define POWERPC_BRANCH_OPTIONS_ALWAYS (20)
+#define POWERPC_BRANCH_OPTIONS_ALWAYS 20
 #define TRAMPOLINE_BUFFER_MAX_SIZE 0x1000
 
 namespace XexUtils
 {
 
+typedef uint32_t POWERPC_INSTRUCTION;
+
 class Detour
 {
 public:
-    Detour(DWORD hookSourceAddress, const void *pHookTarget);
+    Detour(uintptr_t hookSourceAddress, const void *pHookTarget);
     Detour(void *pHookSource, const void *pHookTarget);
 
     ~Detour();
@@ -40,13 +42,13 @@ private:
     void *m_pTrampolineDestination;
 
     // Any bytes overwritten by the hook.
-    byte m_OriginalInstructions[30];
+    uint8_t m_OriginalInstructions[30];
 
     // The amount of bytes overwritten by the hook.
     size_t m_OriginalLength;
 
     // Buffer containing the trampoline bytes.
-    static byte s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
+    static uint8_t s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
 
     // The current trampoline size.
     static size_t s_TrampolineSize;
@@ -56,7 +58,7 @@ private:
     void Init(void *pHookSource, const void *pHookTarget);
 
     // Write both conditional and unconditional branches using the count register to the destination address that will branch to the target address.
-    size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked = false, bool preserveRegister = false, DWORD branchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, byte conditionRegisterBit = 0, byte registerIndex = 0);
+    size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked = false, bool preserveRegister = false, uint32_t branchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, uint8_t conditionRegisterBit = 0, uint8_t registerIndex = 0);
 
     // Copy and fix relative branch instructions to a new location.
     size_t RelocateBranch(void *pDestination, const void *pSource);

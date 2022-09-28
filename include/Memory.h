@@ -10,13 +10,13 @@ class Memory
 {
 public:
     // Get a function in moduleName from its ordinal.
-    static void *ResolveFunction(const std::string &moduleName, DWORD ordinal);
+    static void *ResolveFunction(const std::string &moduleName, uint32_t ordinal);
 
     // Start a thread.
     static void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs = nullptr);
 
     // Start a thread with special creation flags.
-    static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, DWORD creationFlags);
+    static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, uint32_t creationFlags);
 
     // Write data at pDestination
     template<typename T>
@@ -33,7 +33,7 @@ public:
 
     // Write data at address.
     template<typename T>
-    static void Write(DWORD address, T data)
+    static void Write(uintptr_t address, T data)
     {
         Write(reinterpret_cast<void *>(address));
     }
@@ -53,7 +53,7 @@ public:
 
     // Read memory at address.
     template<typename T>
-    static T Read(DWORD address)
+    static T Read(uintptr_t address)
     {
         Read(reinterpret_cast<void *>(address));
     }

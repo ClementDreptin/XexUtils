@@ -13,11 +13,11 @@ void Init()
 
 Create a thread (like you would with the accessible Win32 API):
 ```C++
-DWORD Worker(void *pArgs)
+uint32_t Worker(void *pArgs)
 {
-    int number = *reinterpret_cast<int *>(pArgs);
+    int number = *static_cast<int *>(pArgs);
 
-    // Do something with dwParam
+    // Do something with number
 
     return 0;
 }
@@ -32,11 +32,11 @@ void Init()
 
 Create a thread detached from the current running title (that will keep running even when the title stops):
 ```C++
-DWORD Worker(void *pArgs)
+uint32_t Worker(void *pArgs)
 {
-    int number = *reinterpret_cast<int *>(pArgs);
+    int number = *static_cast<int *>(pArgs);
 
-    // Do something with dwParam
+    // Do something with number
 
     return 0;
 }
@@ -54,7 +54,7 @@ Read and write to arbitrary addresses safely with no segfault:
 ```C++
 void Init()
 {
-    DWORD address = 0x12345678;
+    uintptr_t address = 0x12345678;
 
     // If reading fails, a message will be logged to stderr and 0 is returned
     // If writing fails, a message will be logged to stderr and nothing will be done
