@@ -35,7 +35,7 @@ public:
     template<typename T>
     static void Write(uintptr_t address, T data)
     {
-        Write(reinterpret_cast<void *>(address));
+        Write<T>(reinterpret_cast<void *>(address), data);
     }
 
     // Read memory at pSource.
@@ -55,7 +55,7 @@ public:
     template<typename T>
     static T Read(uintptr_t address)
     {
-        Read(reinterpret_cast<void *>(address));
+        return Read<T>(reinterpret_cast<void *>(address));
     }
 };
 
