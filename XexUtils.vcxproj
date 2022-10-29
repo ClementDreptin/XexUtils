@@ -61,6 +61,7 @@
   <ItemGroup>
     <ClInclude Include="include\Detour.h" />
     <ClInclude Include="include\Log.h" />
+    <ClInclude Include="include\SMC.h" />
     <ClInclude Include="include\Vec2.h" />
     <ClInclude Include="include\Vec3.h" />
     <ClInclude Include="include\Vec4.h" />
@@ -80,6 +81,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Formatter.cpp" />
+    <ClCompile Include="src\SMC.cpp" />
     <ClCompile Include="src\Vec2.cpp" />
     <ClCompile Include="src\Vec3.cpp" />
     <ClCompile Include="src\Vec4.cpp" />

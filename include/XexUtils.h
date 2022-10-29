@@ -12,4 +12,5 @@
 #include "Memory.h"
 #include "Detour.h"
 #include "Xam_.h"
+#include "SMC.h"
 #include "Log.h"
