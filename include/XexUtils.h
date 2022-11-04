@@ -13,4 +13,5 @@
 #include "Detour.h"
 #include "Xam_.h"
 #include "SMC.h"
+#include "Socket.h"
 #include "Log.h"

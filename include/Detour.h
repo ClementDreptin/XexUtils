@@ -10,6 +10,7 @@ namespace XexUtils
 
 typedef uint32_t POWERPC_INSTRUCTION;
 
+// Class that represents a function hook.
 class Detour
 {
 public:
