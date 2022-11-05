@@ -56,19 +56,19 @@ namespace XexUtils
 bool Socket::s_Initialized = false;
 size_t Socket::s_ReferenceCounter = 0;
 
-Socket::Socket(const std::string &ipAddress, uint16_t port)
-    : m_Socket(INVALID_SOCKET), m_IpAddress(ipAddress), m_Port(port), m_Connected(false)
+Socket::Socket()
 {
-    s_ReferenceCounter++;
+    InitInternal("", 0);
+}
 
-    // Execute the global initialization when creating the first Socket instance
-    if (s_ReferenceCounter == 1)
-        Init();
+Socket::Socket(const std::string &ipAddress, uint16_t port)
+{
+    InitInternal(ipAddress, port);
 }
 
 Socket::Socket(const Socket &other)
 {
-    s_ReferenceCounter++;
+    InitInternal(other.m_IpAddress, other.m_Port);
 }
 
 Socket::~Socket()
@@ -85,6 +85,9 @@ Socket::~Socket()
 
 HRESULT Socket::Connect()
 {
+    if (!s_Initialized)
+        return E_FAIL;
+
     sockaddr_in addrInfo = { 0 };
 
     // Set up the address info of the server
@@ -155,6 +158,21 @@ int Socket::Receive(char *buffer, size_t maxSize)
 
     // Receive at most maxSize bytes in buffer.
     return recv(m_Socket, buffer, maxSize, 0);
+}
+
+void Socket::InitInternal(const std::string &ipAddress, uint16_t port)
+{
+    // Initialize the members
+    m_Socket = INVALID_SOCKET;
+    m_IpAddress = ipAddress;
+    m_Port = port;
+    m_Connected = false;
+
+    s_ReferenceCounter++;
+
+    // Execute the global initialization when creating the first Socket instance
+    if (s_ReferenceCounter == 1)
+        Init();
 }
 
 HRESULT Socket::Init()

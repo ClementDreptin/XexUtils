@@ -7,6 +7,7 @@ namespace XexUtils
 class Socket
 {
 public:
+    Socket();
     Socket(const std::string &ipAddress, uint16_t port);
     Socket(const Socket &other);
     ~Socket();
@@ -29,6 +30,9 @@ private:
     uint16_t m_Port;
 
     bool m_Connected;
+
+    // Common logic of the different constructors
+    void InitInternal(const std::string &ipAddress, uint16_t port);
 
 private:
     static bool s_Initialized;
