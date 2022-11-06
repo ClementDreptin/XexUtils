@@ -26,6 +26,29 @@ void Init()
 }
 ```
 
+Open a message box:
+```C++
+void Init()
+{
+    const wchar_t *buttonLabels[] = { L"Yes", L"No" };
+    uint32_t buttonPressedIndex = 0;
+
+    uint32_t result = XexUtils::Xam::ShowMessageBox(
+        L"Sandwich",
+        L"Do you want a sandwich?",
+        buttonLabels,
+        ARRAYSIZE(buttonLabels),
+        &buttonPressedIndex,
+        XMB_ALERTICON
+    );
+
+    if (result == ERROR_CANCELLED)
+        XexUtils::Log::Info("Message box canceled");
+    else if (result == ERROR_SUCCESS)
+        wprintf_s("User pressed %s\n", buttonLabels[buttonPressedIndex]);
+}
+```
+
 Check the current title running:
 ```C++
 void Init()
