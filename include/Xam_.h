@@ -87,9 +87,15 @@ public:
     // Show an Xbox notification.
     static void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
 
-    // Open a keyboard and return what the user typed as a string.
+    // Open a keyboard, populate the result string with what the user typed and return a uint32_t that represents how
+    // the keyboard was closed.
     // Note: Blocks the current thread while waiting for the user to finish typing.
     static uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength = 15, uint32_t keyboardType = VKBD_DEFAULT);
+
+    // Open a message box, optionally populate a uint32_t that represents the button pressed to close the message box,
+    // and return how the message box was closed.
+    // Note: Blocks the current thread while waiting for the user to close the message box.
+    static uint32_t ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex = nullptr, uint32_t messageBoxType = XMB_NOICON, uint32_t focusedButtonIndex = 0);
 
     // Get the current title ID as a uint32_t.
     static uint32_t GetCurrentTitleId();

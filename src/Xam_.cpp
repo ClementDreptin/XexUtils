@@ -73,6 +73,39 @@ uint32_t Xam::ShowKeyboard(const wchar_t *title, const wchar_t *description, con
     return overlappedResult;
 }
 
+uint32_t Xam::ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex, uint32_t messageBoxType, uint32_t focusedButtonIndex)
+{
+    MESSAGEBOX_RESULT messageBoxResult = { 0 };
+    XOVERLAPPED overlapped = { 0 };
+
+    // Open the message box
+    XShowMessageBoxUI(
+        0,
+        title,
+        text,
+        numberOfButtons,
+        buttonLabels,
+        focusedButtonIndex,
+        messageBoxType,
+        &messageBoxResult,
+        &overlapped
+    );
+
+    // Wait until the message box closes
+    while (!XHasOverlappedIoCompleted(&overlapped))
+        Sleep(100);
+
+    // Get how the message box was closed (success, canceled or internal error)
+    uint32_t overlappedResult = XGetOverlappedResult(&overlapped, nullptr, TRUE);
+
+    // If the message box was closed by pressing "A" on any of the buttons (so not by pressing "B" or the Xbox button)
+    // and if the pressed button is request, write the pressed button at pButtonPressedIndex
+    if (overlappedResult == ERROR_SUCCESS && pButtonPressedIndex != nullptr)
+        *pButtonPressedIndex = messageBoxResult.dwButtonPressed;
+
+    return overlappedResult;
+}
+
 uint32_t Xam::GetCurrentTitleId()
 {
     return XamGetCurrentTitleId();
