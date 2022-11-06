@@ -14,4 +14,5 @@
 #include "Xam_.h"
 #include "SMC.h"
 #include "Socket.h"
+#include "DashLaunch.h"
 #include "Log.h"
