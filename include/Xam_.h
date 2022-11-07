@@ -102,6 +102,9 @@ public:
 
     // Check if an address is accessible and writable.
     static bool IsAddressValid(void *pAddress);
+
+    // Reboot the console.
+    static void Reboot();
 };
 
 }

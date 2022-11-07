@@ -10,6 +10,8 @@ extern "C"
     DWORD XamGetCurrentTitleId();
 
     bool MmIsAddressValid(void *pAddress);
+
+    void HalReturnToFirmware(uint32_t powerDownMode);
 }
 
 namespace XexUtils
@@ -114,6 +116,14 @@ uint32_t Xam::GetCurrentTitleId()
 bool Xam::IsAddressValid(void *pAddress)
 {
     return MmIsAddressValid(pAddress);
+}
+
+void Xam::Reboot()
+{
+    // Declared in xkelib
+    const uint32_t rebootRoutine = 1;
+
+    HalReturnToFirmware(rebootRoutine);
 }
 
 }
