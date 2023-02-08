@@ -19,14 +19,11 @@ typedef enum _PowerLEDMode
     PowerLED_Blink = 0x10,
 } PowerLEDMode;
 
-// Static class with functions to interact with the System Management Controller of the Xbox 360.
 class SMC
 {
 public:
-    // Set the behavior of the power LED (the one in the middle of the power button).
     static void SetPowerLED(PowerLEDMode mode, bool animate);
 
-    // Set the color of the 4 LEDs around the power button (the ones that turn on when controllers are connected).
     static void SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft, LEDColor bottomRight);
 
 private:

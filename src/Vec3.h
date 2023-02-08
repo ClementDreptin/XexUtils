@@ -5,7 +5,6 @@ namespace XexUtils
 namespace Math
 {
 
-// Struct to represent a three-component vector.
 struct vec3
 {
     vec3();

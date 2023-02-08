@@ -5,7 +5,6 @@ namespace XexUtils
 namespace Math
 {
 
-// Struct to represent a four-component vector.
 struct vec4
 {
     vec4();

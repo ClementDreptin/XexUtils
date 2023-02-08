@@ -5,7 +5,6 @@ namespace XexUtils
 namespace Math
 {
 
-// Struct to represent a two-component vector.
 struct vec2
 {
     vec2();

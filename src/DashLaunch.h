@@ -9,7 +9,6 @@ typedef BOOL (*DLAUNCHSETOPTVALBYNAME)(const char *optionName, uint32_t *pOption
 class DashLaunch
 {
 public:
-    // Get the pointers to the DashLaunch functions.
     static HRESULT Init();
 
     // Get the value of optionName as a uint32_t, 1 for true, 0 for false, pointer to the first character for strings.
