@@ -23,10 +23,7 @@ public:
     bool Remove();
 
     template<typename T>
-    T GetOriginal() const
-    {
-        return reinterpret_cast<T>(m_pTrampolineDestination);
-    }
+    inline T GetOriginal() const { return reinterpret_cast<T>(m_pTrampolineDestination); }
 
 private:
     const void *m_pHookTarget;

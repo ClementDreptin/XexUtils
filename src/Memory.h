@@ -27,10 +27,7 @@ public:
     }
 
     template<typename T>
-    static void Write(uintptr_t address, T data)
-    {
-        Write<T>(reinterpret_cast<void *>(address), data);
-    }
+    inline static void Write(uintptr_t address, T data) { Write<T>(reinterpret_cast<void *>(address), data); }
 
     template<typename T>
     static T Read(void *pSource)
@@ -45,10 +42,7 @@ public:
     }
 
     template<typename T>
-    static T Read(uintptr_t address)
-    {
-        return Read<T>(reinterpret_cast<void *>(address));
-    }
+    inline static T Read(uintptr_t address) { return Read<T>(reinterpret_cast<void *>(address)); }
 };
 
 }
