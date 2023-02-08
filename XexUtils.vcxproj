@@ -64,6 +64,7 @@
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Socket.h" />
     <ClInclude Include="src\SMC.h" />
+    <ClInclude Include="src\ValueOrPtr.h" />
     <ClInclude Include="src\Vec2.h" />
     <ClInclude Include="src\Vec3.h" />
     <ClInclude Include="src\Vec4.h" />
