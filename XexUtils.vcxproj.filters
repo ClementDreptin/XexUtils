@@ -58,40 +58,40 @@
     <ClInclude Include="include\XexUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Formatter.h">
+    <ClInclude Include="src\Formatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Math_.h">
+    <ClInclude Include="src\Math_.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Memory.h">
+    <ClInclude Include="src\Xam_.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Xam_.h">
+    <ClInclude Include="src\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Log.h">
+    <ClInclude Include="src\Vec2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Vec2.h">
+    <ClInclude Include="src\Vec3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Vec3.h">
+    <ClInclude Include="src\Vec4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Vec4.h">
+    <ClInclude Include="src\Detour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Detour.h">
+    <ClInclude Include="src\SMC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\SMC.h">
+    <ClInclude Include="src\Socket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Socket.h">
+    <ClInclude Include="src\DashLaunch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DashLaunch.h">
+    <ClInclude Include="src\Memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

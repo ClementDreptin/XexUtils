@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|Xbox 360">
@@ -44,7 +44,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)\$(TargetName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>NDEBUG;_XBOX;_LIB</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ObjectFileName>$(IntDir)$(ProjectName)\%(RelativeDir)</ObjectFileName>
@@ -59,20 +59,20 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\DashLaunch.h" />
-    <ClInclude Include="include\Detour.h" />
-    <ClInclude Include="include\Log.h" />
-    <ClInclude Include="include\Socket.h" />
-    <ClInclude Include="include\SMC.h" />
-    <ClInclude Include="include\Vec2.h" />
-    <ClInclude Include="include\Vec3.h" />
-    <ClInclude Include="include\Vec4.h" />
+    <ClInclude Include="src\DashLaunch.h" />
+    <ClInclude Include="src\Detour.h" />
+    <ClInclude Include="src\Log.h" />
+    <ClInclude Include="src\Socket.h" />
+    <ClInclude Include="src\SMC.h" />
+    <ClInclude Include="src\Vec2.h" />
+    <ClInclude Include="src\Vec3.h" />
+    <ClInclude Include="src\Vec4.h" />
     <ClInclude Include="include\XexUtils.h" />
-    <ClInclude Include="include\Math_.h" />
-    <ClInclude Include="include\Memory.h" />
+    <ClInclude Include="src\Math_.h" />
+    <ClInclude Include="src\Memory.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="include\Formatter.h" />
-    <ClInclude Include="include\Xam_.h" />
+    <ClInclude Include="src\Formatter.h" />
+    <ClInclude Include="src\Xam_.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DashLaunch.cpp" />

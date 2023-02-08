@@ -7,12 +7,12 @@
 #include <xtl.h>
 
 // XexUtils headers
-#include "Formatter.h"
-#include "Math_.h"
-#include "Memory.h"
-#include "Detour.h"
-#include "Xam_.h"
-#include "SMC.h"
-#include "Socket.h"
-#include "DashLaunch.h"
-#include "Log.h"
+#include "../src/Formatter.h"
+#include "../src/Math_.h"
+#include "../src/Memory.h"
+#include "../src/Detour.h"
+#include "../src/Xam_.h"
+#include "../src/SMC.h"
+#include "../src/Socket.h"
+#include "../src/DashLaunch.h"
+#include "../src/Log.h"
