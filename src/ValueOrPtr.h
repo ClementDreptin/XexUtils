@@ -1,5 +1,8 @@
 #pragma once
 
+namespace XexUtils
+{
+
 template<typename T>
 class ValueOrPtr
 {
@@ -27,3 +30,5 @@ private:
 
     bool isPtr() const { return m_Index == 1; }
 };
+
+}
