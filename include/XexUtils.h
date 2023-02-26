@@ -2,6 +2,9 @@
 
 // C++ standard library headers
 #include <string>
+#include <math.h>
+#include <iostream>
+#include <cstdint>
 
 // Xbox headers
 #include <xtl.h>
