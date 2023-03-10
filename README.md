@@ -17,5 +17,5 @@ git clone https://github.com/ClementDreptin/XexUtils.git \path\to\XexUtils
 - Add it as project on Visual Studio:&nbsp;
 Right click on the solution name in the solution explorer then `Add > Existing Project...` and select `XexUtils.vcxproj` in `\path\to\XexUtils`.
 - Add it as a reference to your main project:&nbsp;
-Right click on your main project in the solution explorer then `References... > Add New Reference...` and select `XexUtils`.
+Right click on your main project in the solution explorer then `Add > Reference...`, tick `XexUtils` and click OK.
 - Add `xnet.lib` to `Configuration Properties > Linker > Input > Additional Dependencies` if it's not already there.
