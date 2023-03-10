@@ -73,3 +73,22 @@ void Init()
         XexUtils::Log::Error("Segfault prevented at address: %#010x", pRandomPointer);
 }
 ```
+
+Allow games to access the hard drive:
+```C++
+void Init()
+{
+    HRESULT hr = XexUtils::Xam::MountHdd();
+    if (FAILED(hr))
+    {
+        XexUtils::Log::Error("Could not mount HDD");
+        return;
+    }
+
+    std::ofstream file("hdd:\\file.txt");
+    if (file.is_open()) // Would return false if XexUtils::Xam::MountHdd didn't get called
+    {
+        // Write something to the file..
+    }
+}
+```

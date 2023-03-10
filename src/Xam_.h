@@ -95,6 +95,8 @@ public:
     static bool IsAddressValid(void *pAddress);
 
     static void Reboot();
+
+    static HRESULT MountHdd();
 };
 
 }

@@ -4,6 +4,13 @@
 #include "Memory.h"
 #include "Formatter.h"
 
+typedef struct _STRING
+{
+    uint16_t Length;
+    uint16_t MaxLength;
+    char *Buffer;
+} STRING;
+
 // Imports from xboxkrnl.exe and xam.xex
 extern "C"
 {
@@ -12,6 +19,10 @@ extern "C"
     bool MmIsAddressValid(void *pAddress);
 
     void HalReturnToFirmware(uint32_t powerDownMode);
+
+    void RtlInitAnsiString(STRING *pDestinationString, const char *sourceString);
+
+    HRESULT ObCreateSymbolicLink(STRING *pLinkName, STRING *pDevicePath);
 }
 
 namespace XexUtils
@@ -124,6 +135,25 @@ void Xam::Reboot()
     const uint32_t rebootRoutine = 1;
 
     HalReturnToFirmware(rebootRoutine);
+}
+
+HRESULT Xam::MountHdd()
+{
+    // Allow the game to access the entire hard drive.
+    // The system only allows executables to access the directory they live in and binds it to
+    // the "game:" drive. Nothing else is accessible unless you create a symbolic link.
+
+    STRING linkName = { 0 };
+    STRING deviceName = { 0 };
+    const char destinationDrive[] = "\\??\\hdd:";
+    const char hddDevicePath[] = "\\Device\\Harddisk0\\Partition1\\";
+
+    // Initialize the STRING structs
+    RtlInitAnsiString(&linkName, destinationDrive);
+    RtlInitAnsiString(&deviceName, hddDevicePath);
+
+    // Bind the root of the hard drive to the "hdd:" drive.
+    return ObCreateSymbolicLink(&linkName, &deviceName);
 }
 
 }
