@@ -20,3 +20,4 @@
 #include "../src/DashLaunch.h"
 #include "../src/Log.h"
 #include "../src/ValueOrPtr.h"
+#include "../src/Input.h"
