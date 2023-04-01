@@ -11,7 +11,7 @@ namespace Math
 
 float Radians(float degrees);
 
-vec3 ToFront(const vec3 &origin, float viewY, float distance);
+vec3 ProjectForward(const vec3 &origin, float viewY, float distance);
 
 }
 }
