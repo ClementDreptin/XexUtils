@@ -4,12 +4,12 @@
 #include "Memory.h"
 #include "Formatter.h"
 
-typedef struct _STRING
+struct STRING
 {
     uint16_t Length;
     uint16_t MaxLength;
     char *Buffer;
-} STRING;
+};
 
 // Imports from xboxkrnl.exe and xam.xex
 extern "C"
