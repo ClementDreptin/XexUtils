@@ -1,6 +1,7 @@
 # Memory
 
 Get a function pointer from a module through its ordinal:
+
 ```C++
 void Init()
 {
@@ -12,6 +13,7 @@ void Init()
 ```
 
 Create a thread (like you would with the accessible Win32 API):
+
 ```C++
 uint32_t Worker(void *pArgs)
 {
@@ -31,6 +33,7 @@ void Init()
 ```
 
 Create a thread detached from the current running title (that will keep running even when the title stops):
+
 ```C++
 uint32_t Worker(void *pArgs)
 {
@@ -51,6 +54,7 @@ void Init()
 ```
 
 Read and write to arbitrary addresses safely with no segfault:
+
 ```C++
 void Init()
 {

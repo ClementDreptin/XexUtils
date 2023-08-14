@@ -1,6 +1,7 @@
 # Formatting
 
 Format a string in a `printf` style:
+
 ```C++
 void Init()
 {
@@ -9,6 +10,7 @@ void Init()
 ```
 
 Convert a narrow string to a wide string:
+
 ```C++
 void Init()
 {

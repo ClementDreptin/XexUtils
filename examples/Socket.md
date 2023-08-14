@@ -1,6 +1,7 @@
 # Socket
 
 Connect to a server through insecure sockets and exchange data:
+
 ```C++
 void Init()
 {

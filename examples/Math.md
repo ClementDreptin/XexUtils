@@ -1,6 +1,7 @@
 # Math
 
 Add two three-component vectors together (check the [vec2](../include/Vec2.h), [vec3](../include/Vec3.h) and [vec4](../include/Vec4.h) structs to see all of the available operations):
+
 ```C++
 void Init()
 {
@@ -12,6 +13,7 @@ void Init()
 ```
 
 Convert an angle from degrees to radians:
+
 ```C++
 void Init()
 {
@@ -21,6 +23,7 @@ void Init()
 ```
 
 Project a vector:
+
 ```C++
 void Init()
 {

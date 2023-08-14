@@ -1,6 +1,7 @@
 # ValueOrPtr
 
 Manipulate both a value and a pointer seemlessly:
+
 ```C++
 void Init()
 {

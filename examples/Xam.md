@@ -1,6 +1,7 @@
 # XAM (Xbox API)
 
 Show an Xbox notification:
+
 ```C++
 void Init()
 {
@@ -9,6 +10,7 @@ void Init()
 ```
 
 Open a keyboard to get a numerical value:
+
 ```C++
 void Init()
 {
@@ -27,6 +29,7 @@ void Init()
 ```
 
 Open a message box:
+
 ```C++
 void Init()
 {
@@ -50,6 +53,7 @@ void Init()
 ```
 
 Check the current title running:
+
 ```C++
 void Init()
 {
@@ -62,6 +66,7 @@ void Init()
 ```
 
 Check if a pointer is valid before dereferencing it:
+
 ```C++
 void Init()
 {
@@ -75,6 +80,7 @@ void Init()
 ```
 
 Allow games to access the hard drive:
+
 ```C++
 void Init()
 {

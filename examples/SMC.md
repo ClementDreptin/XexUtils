@@ -1,6 +1,7 @@
 # System Managment Controller (SMC)
 
 Change the power LED behavior (the LED in the middle of the power button):
+
 ```C++
 void Init()
 {
@@ -10,6 +11,7 @@ void Init()
 ```
 
 Set the color of the 4 LEDs around the power button (the ones that turn on when controllers are connected):
+
 ```C++
 void Init()
 {

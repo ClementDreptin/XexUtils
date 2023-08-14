@@ -1,6 +1,7 @@
 # Detouring
 
 Detour a function:
+
 ```C++
 XexUtils::Detour *pFunctionDetour = nullptr;
 
@@ -18,7 +19,9 @@ void Init()
 ```
 
 #### Note
+
 `Detour::GetOriginal` is a templated function that needs to be called with the function pointer type to return. This could be done automatically with templated arguments but the Xbox 360 Compiler only supports C++0x which is a draft of C++11 and templated arguments were not part of the draft yet. A templated arguments implementation would be much nicer to use:
+
 ```C++
 class Detour
 {

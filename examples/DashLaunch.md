@@ -1,6 +1,7 @@
 # DashLaunch
 
 Get and set a DashLaunch option value by its name:
+
 ```C++
 void Init()
 {
