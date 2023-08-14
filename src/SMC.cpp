@@ -1,11 +1,7 @@
 #include "pch.h"
 #include "SMC.h"
 
-// Imports from xboxkrnl.exe
-extern "C"
-{
-    void HalSendSMCMessage(void *pInput, void *pOutput);
-}
+#include "Kernel.h"
 
 namespace XexUtils
 {

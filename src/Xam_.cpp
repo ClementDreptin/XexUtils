@@ -3,27 +3,7 @@
 
 #include "Memory.h"
 #include "Formatter.h"
-
-struct STRING
-{
-    uint16_t Length;
-    uint16_t MaxLength;
-    char *Buffer;
-};
-
-// Imports from xboxkrnl.exe and xam.xex
-extern "C"
-{
-    DWORD XamGetCurrentTitleId();
-
-    bool MmIsAddressValid(void *pAddress);
-
-    void HalReturnToFirmware(uint32_t powerDownMode);
-
-    void RtlInitAnsiString(STRING *pDestinationString, const char *sourceString);
-
-    HRESULT ObCreateSymbolicLink(STRING *pLinkName, STRING *pDevicePath);
-}
+#include "Kernel.h"
 
 namespace XexUtils
 {

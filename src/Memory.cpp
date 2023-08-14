@@ -1,19 +1,7 @@
 #include "pch.h"
 #include "Memory.h"
 
-// Import from xboxkrnl.exe
-extern "C"
-{
-    DWORD __stdcall ExCreateThread(
-        HANDLE *pHandle,
-        DWORD dwStackSize,
-        DWORD *pThreadId,
-        void *apiThreadStartup,
-        PTHREAD_START_ROUTINE pStartAddress,
-        void *pParameter,
-        DWORD dwCreationFlagsMod
-    );
-}
+#include "Kernel.h"
 
 namespace XexUtils
 {

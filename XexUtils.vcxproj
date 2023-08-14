@@ -59,6 +59,7 @@
     <ClInclude Include="src\DashLaunch.h" />
     <ClInclude Include="src\Detour.h" />
     <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Kernel.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Socket.h" />
     <ClInclude Include="src\SMC.h" />

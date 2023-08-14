@@ -1,42 +1,7 @@
 #include "pch.h"
 #include "Socket.h"
 
-typedef enum
-{
-    XNCALLER_INVALID = 0,
-    XNCALLER_TITLE = 1,
-    XNCALLER_SYSAPP = 2,
-    XNCALLER_XBDM = 3,
-    XNCALLER_PERSISTING = 3,
-    XNCALLER_TEST = 4,
-    NUM_XNCALLER_TYPES = 4,
-} XNCALLER_TYPE;
-
-// Imports from xam.xex
-extern "C"
-{
-    int __stdcall NetDll_WSAStartupEx(XNCALLER_TYPE xnCaller, uint16_t versionRequested, WSAData *pWSAData, uint32_t versionReq);
-
-    int __stdcall NetDll_WSACleanup(XNCALLER_TYPE xnCaller);
-
-    int __stdcall NetDll_XNetStartup(XNCALLER_TYPE xnCaller, const XNetStartupParams *pXNetParams);
-
-    uint32_t __stdcall NetDll_inet_addr(const char *ipAddress);
-
-    SOCKET __stdcall NetDll_socket(XNCALLER_TYPE xnCaller, int af, int type, int protocol);
-
-    int __stdcall NetDll_setsockopt(XNCALLER_TYPE xnCaller, SOCKET s, int level, int optname, const char *optval, int optlen);
-
-    int __stdcall NetDll_shutdown(XNCALLER_TYPE xnCaller, SOCKET s, int how);
-
-    int __stdcall NetDll_closesocket(XNCALLER_TYPE xnCaller, SOCKET s);
-
-    int __stdcall NetDll_connect(XNCALLER_TYPE xnCaller, SOCKET s, const struct sockaddr *name, int namelen);
-
-    int __stdcall NetDll_send(XNCALLER_TYPE xnc, SOCKET s, const char *buf, int len, int flags);
-
-    int __stdcall NetDll_recv(XNCALLER_TYPE xnc, SOCKET s, char *buf, int len, int flags);
-}
+#include "Kernel.h"
 
 #define WSAStartup(pWSAData) NetDll_WSAStartupEx(XNCALLER_SYSAPP, MAKEWORD(2, 2), pWSAData, 2)
 #define WSACleanup() NetDll_WSACleanup(XNCALLER_SYSAPP)

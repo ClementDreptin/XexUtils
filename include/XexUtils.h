@@ -21,3 +21,4 @@
 #include "../src/Log.h"
 #include "../src/ValueOrPtr.h"
 #include "../src/Input.h"
+#include "../src/Kernel.h"
