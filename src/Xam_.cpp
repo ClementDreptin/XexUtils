@@ -111,10 +111,7 @@ bool Xam::IsAddressValid(void *pAddress)
 
 void Xam::Reboot()
 {
-    // Declared in xkelib
-    const uint32_t rebootRoutine = 1;
-
-    HalReturnToFirmware(rebootRoutine);
+    HalReturnToFirmware(HalRebootRoutine);
 }
 
 HRESULT Xam::MountHdd()

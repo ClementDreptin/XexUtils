@@ -1,5 +1,7 @@
 #pragma once
 
+// Most of those were taken from xkelib
+
 extern "C"
 {
     struct STRING
@@ -13,7 +15,21 @@ extern "C"
 
     HRESULT ObCreateSymbolicLink(STRING *pLinkName, STRING *pDevicePath);
 
-    void HalReturnToFirmware(uint32_t powerDownMode);
+    typedef enum
+    {
+        HalHaltRoutine,
+        HalRebootRoutine,
+        HalKdRebootRoutine,
+        HalFatalErrorRebootRoutine,
+        HalResetSMCRoutine,
+        HalPowerDownRoutine,
+        HalRebootQuiesceRoutine,
+        HalForceShutdownRoutine,
+        HalPowerCycleQuiesceRoutine,
+        HalMaximumRoutine,
+    } FIRMWARE_REENTRY;
+
+    void HalReturnToFirmware(FIRMWARE_REENTRY powerDownMode);
 
     void HalSendSMCMessage(void *pInput, void *pOutput);
 
@@ -64,3 +80,13 @@ extern "C"
 
     int NetDll_recv(XNCALLER_TYPE xnc, SOCKET s, char *buf, int len, int flags);
 }
+
+#define __isync() __emit(0x4C00012C)
+
+#define doSync(addr) \
+    while (0) \
+    { \
+        __dcbst(0, addr); \
+        __sync(); \
+        __isync(); \
+    }
