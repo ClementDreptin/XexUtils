@@ -1,251 +1,232 @@
 #include "pch.h"
 #include "Detour.h"
 
-#include "Xam_.h"
-
-#define MASK_N_BITS(N) ((1 << (N)) - 1)
-
-#define POWERPC_HI(X) ((X >> 16) & 0xFFFF)
-#define POWERPC_LO(X) (X & 0xFFFF)
-
-// PowerPC most significant bit is addressed as bit 0 in documentation.
-#define POWERPC_BIT32(N) (31 - N)
-
-// Opcode is bits 0-5.
-// Allowing for op codes ranging from 0-63.
-#define POWERPC_OPCODE(OP) (OP << 26)
-#define POWERPC_OPCODE_ADDI POWERPC_OPCODE(14)
-#define POWERPC_OPCODE_ADDIS POWERPC_OPCODE(15)
-#define POWERPC_OPCODE_BC POWERPC_OPCODE(16)
-#define POWERPC_OPCODE_B POWERPC_OPCODE(18)
-#define POWERPC_OPCODE_BCCTR POWERPC_OPCODE(19)
-#define POWERPC_OPCODE_ORI POWERPC_OPCODE(24)
-#define POWERPC_OPCODE_EXTENDED POWERPC_OPCODE(31) // Use extended opcodes.
-#define POWERPC_OPCODE_STW POWERPC_OPCODE(36)
-#define POWERPC_OPCODE_LWZ POWERPC_OPCODE(32)
-#define POWERPC_OPCODE_LD POWERPC_OPCODE(58)
-#define POWERPC_OPCODE_STD POWERPC_OPCODE(62)
-#define POWERPC_OPCODE_MASK POWERPC_OPCODE(63)
-
-#define POWERPC_EXOPCODE(OP) (OP << 1)
-#define POWERPC_EXOPCODE_BCCTR POWERPC_EXOPCODE(528)
-#define POWERPC_EXOPCODE_MTSPR POWERPC_EXOPCODE(467)
-
-// SPR field is encoded as two 5 bit bitfields.
-#define POWERPC_SPR(SPR) static_cast<POWERPC_INSTRUCTION>(((SPR & 0x1F) << 5) | ((SPR >> 5) & 0x1F))
-
-// Instruction helpers.
-//
-// rD - Destination register.
-// rS - Source register.
-// rA/rB - Register inputs.
-// SPR - Special purpose register.
-// UIMM/SIMM - Unsigned/signed immediate.
-#define POWERPC_ADDI(rD, rA, SIMM) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_ADDI | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
-#define POWERPC_ADDIS(rD, rA, SIMM) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_ADDIS | (rD << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | SIMM)
-#define POWERPC_LIS(rD, SIMM) POWERPC_ADDIS(rD, 0, SIMM) // Mnemonic for addis %rD, 0, SIMM
-#define POWERPC_LI(rD, SIMM) POWERPC_ADDI(rD, 0, SIMM)   // Mnemonic for addi %rD, 0, SIMM
-#define POWERPC_MTSPR(SPR, rS) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_EXTENDED | (rS << POWERPC_BIT32(10)) | (POWERPC_SPR(SPR) << POWERPC_BIT32(20)) | POWERPC_EXOPCODE_MTSPR)
-#define POWERPC_MTCTR(rS) POWERPC_MTSPR(9, rS) // Mnemonic for mtspr 9, rS
-#define POWERPC_ORI(rS, rA, UIMM) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_ORI | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | UIMM)
-#define POWERPC_BCCTR(BO, BI, LK) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_BCCTR | (BO << POWERPC_BIT32(10)) | (BI << POWERPC_BIT32(15) | LK & 1) | POWERPC_EXOPCODE_BCCTR)
-#define POWERPC_STD(rS, DS, rA) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_STD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<uint16_t>(DS) & 0xFFFF))
-#define POWERPC_LD(rS, DS, rA) static_cast<POWERPC_INSTRUCTION>(POWERPC_OPCODE_LD | (rS << POWERPC_BIT32(10)) | (rA << POWERPC_BIT32(15)) | (static_cast<uint16_t>(DS) & 0xFFFF))
-
-// Branch related fields.
-#define POWERPC_BRANCH_LINKED 1
-#define POWERPC_BRANCH_ABSOLUTE 2
-#define POWERPC_BRANCH_TYPE_MASK (POWERPC_BRANCH_LINKED | POWERPC_BRANCH_ABSOLUTE)
+#include "Kernel.h"
+#include "Memory.h"
 
 namespace XexUtils
 {
 
-uint8_t Detour::s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE] = { 0 };
-size_t Detour::s_TrampolineSize = 0;
+// This will hold all the instructions for all hooks. This needs to be a static buffer because,
+// if it was a class member, it would be allocated on the stack and stack memory isn't executable
+Detour::Stub Detour::s_StubSection[MAX_HOOK_COUNT];
+size_t Detour::s_HookCount = 0;
+CRITICAL_SECTION Detour::s_CriticalSection = { 0 };
 
-Detour::Detour(uintptr_t hookSourceAddress, const void *pHookTarget)
+Detour::Detour(void *pSource, const void *pDestination)
+    : m_pSource(pSource), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
-    Init(reinterpret_cast<void *>(hookSourceAddress), pHookTarget);
 }
 
-Detour::Detour(void *pHookSource, const void *pHookTarget)
+Detour::Detour(uintptr_t sourceAddress, const void *pDestination)
+    : m_pSource(reinterpret_cast<void *>(sourceAddress)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
-    Init(pHookSource, pHookTarget);
 }
 
-void Detour::Init(void *pHookSource, const void *pHookTarget)
+Detour::Detour(const std::string &moduleName, uint32_t ordinal, const void *pDestination)
+    : m_pSource(Memory::ResolveFunction(moduleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
-    m_pHookSource = pHookSource;
-    m_pHookTarget = pHookTarget;
-    m_pTrampolineDestination = nullptr;
-    m_OriginalLength = 0;
+}
 
-    Install();
+Detour::Detour(const std::string &moduleName, const std::string &importedModuleName, uint32_t ordinal, const void *pDestination)
+    : m_pSource(GetModuleImport(moduleName, importedModuleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
+{
 }
 
 Detour::~Detour()
 {
-    Remove();
 }
 
-bool Detour::Install()
+HRESULT Detour::Install()
 {
-    // Check if we are already hooked
-    if (m_OriginalLength != 0)
-        return false;
+    if (s_HookCount >= MAX_HOOK_COUNT || m_pSource == nullptr || m_pDestination == nullptr)
+        return E_FAIL;
 
-    const size_t hookSize = WriteFarBranch(nullptr, m_pHookTarget);
+    if (s_CriticalSection.Synchronization.RawEvent[0] == 0)
+        InitializeCriticalSection(&s_CriticalSection);
 
-    // Save the original instructions for unhooking later on
-    memcpy(m_OriginalInstructions, m_pHookSource, hookSize);
+    EnterCriticalSection(&s_CriticalSection);
 
-    m_OriginalLength = hookSize;
+    // Keep track of where the stub of the current instance is in s_StubSection
+    m_HookIndex = s_HookCount;
 
-    // Create trampoline and copy and fix instructions to the trampoline
-    m_pTrampolineDestination = &s_TrampolineBuffer[s_TrampolineSize];
+    // Copy the original instructions at m_pSource before hooking to be able to
+    // restore them later
+    m_Original = Memory::Read<Jump>(m_pSource);
 
-    for (size_t i = 0; i < (hookSize / sizeof(POWERPC_INSTRUCTION)); i++)
-    {
-        const void *pInstruction = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(m_pHookSource) + (i * sizeof(POWERPC_INSTRUCTION)));
+    DetourFunctionStart();
 
-        s_TrampolineSize += CopyInstruction(reinterpret_cast<void *>(&s_TrampolineBuffer[s_TrampolineSize]), pInstruction);
-    }
+    s_HookCount++;
 
-    // Trampoline branches back to the original function after the branch we used to hook
-    const void *pAfterBranchAddress = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(m_pHookSource) + hookSize);
+    LeaveCriticalSection(&s_CriticalSection);
 
-    s_TrampolineSize += WriteFarBranch(&s_TrampolineBuffer[s_TrampolineSize], pAfterBranchAddress, false, true);
-
-    // Finally write the branch to the function that we are hooking
-    WriteFarBranch(m_pHookSource, m_pHookTarget);
-
-    return true;
+    return S_OK;
 }
 
-bool Detour::Remove()
+void Detour::Remove()
 {
-    if (m_pHookSource && m_OriginalLength)
-    {
-        // Trying to remove a hook from a game function after the game has been closed could cause a segfault so we
-        // make sure the hook function is still loaded in memory
-        bool isHookSourceAddressValid = Xam::IsAddressValid(m_pHookSource);
-        if (isHookSourceAddressValid)
-            memcpy(m_pHookSource, m_OriginalInstructions, m_OriginalLength);
+    // Restore the original instructions if needed
+    if (m_HookIndex != -1 && m_pSource != nullptr && Xam::IsAddressValid(m_pSource))
+        Memory::Write<Jump>(m_pSource, m_Original);
 
-        m_OriginalLength = 0;
-        m_pHookSource = nullptr;
-
-        return true;
-    }
-
-    return false;
+    m_pSource = nullptr;
+    m_pDestination = nullptr;
+    m_HookIndex = 0;
+    m_Original = Jump();
 }
 
-size_t Detour::WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked, bool preserveRegister, POWERPC_INSTRUCTION branchOptions, uint8_t conditionRegisterBit, uint8_t registerIndex)
+#define POWERPC_B 0x48
+#define POWERPC_BL 0x4B
+
+void Detour::DetourFunctionStart()
 {
-    const POWERPC_INSTRUCTION branchFarAsm[] = {
-        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<uintptr_t>(pBranchTarget))),                // lis   %rX, pBranchTarget@hi
-        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<uintptr_t>(pBranchTarget))), // ori   %rX, %rX, pBranchTarget@lo
-        POWERPC_MTCTR(registerIndex),                                                                      // mtctr %rX
-        POWERPC_BCCTR(branchOptions, conditionRegisterBit, linked)                                         // bcctr (bcctr 20, 0 == bctr)
-    };
+    POWERPC_INSTRUCTION *pSource = static_cast<POWERPC_INSTRUCTION *>(m_pSource);
+    POWERPC_INSTRUCTION *pStub = reinterpret_cast<POWERPC_INSTRUCTION *>(&s_StubSection[m_HookIndex]);
+    size_t instructionCount = 0;
 
-    const POWERPC_INSTRUCTION branchFarAsmPreserve[] = {
-        POWERPC_STD(registerIndex, -0x30, 1),                                                              // std   %rX, -0x30(%r1)
-        POWERPC_LIS(registerIndex, POWERPC_HI(reinterpret_cast<uintptr_t>(pBranchTarget))),                // lis   %rX, pBranchTarget@hi
-        POWERPC_ORI(registerIndex, registerIndex, POWERPC_LO(reinterpret_cast<uintptr_t>(pBranchTarget))), // ori   %rX, %rX, pBranchTarget@lo
-        POWERPC_MTCTR(registerIndex),                                                                      // mtctr %rX
-        POWERPC_LD(registerIndex, -0x30, 1),                                                               // lwz   %rX, -0x30(%r1)
-        POWERPC_BCCTR(branchOptions, conditionRegisterBit, linked)                                         // bcctr (bcctr 20, 0 == bctr)
-    };
+    for (size_t i = 0; i < NUM_INSTRUCTIONS_IN_JUMP; i++)
+    {
+        POWERPC_INSTRUCTION instruction = Memory::Read<POWERPC_INSTRUCTION>(&pSource[i]);
+        POWERPC_INSTRUCTION_TYPE instructionType = Memory::Read<POWERPC_INSTRUCTION_TYPE>(&pSource[i]);
 
-    const POWERPC_INSTRUCTION *pBranchAsm = preserveRegister ? branchFarAsmPreserve : branchFarAsm;
-    const size_t branchAsmSize = preserveRegister ? sizeof(branchFarAsmPreserve) : sizeof(branchFarAsm);
+        // If the function op code is null, it's invalid
+        if (instruction == 0)
+            break;
 
-    if (pDestination)
-        memcpy(pDestination, pBranchAsm, branchAsmSize);
+        // If the instruction is a branch
+        if (instructionType == POWERPC_B || instructionType == POWERPC_BL)
+        {
+            // Get a pointer to where the branch goes
+            void *pBranchDestination = ResolveBranch(instruction, &pSource[i]);
+            bool linked = (instruction & 1) != 0;
 
-    return branchAsmSize;
+            // Jump from the stub to where the branch goes
+            PatchInJump(&pStub[instructionCount], pBranchDestination, linked);
+            instructionCount += NUM_INSTRUCTIONS_IN_JUMP;
+
+            // If it was a branch to a different section of the same function (b loc_),
+            // we won't need to add anything else to the stub
+            if (!linked)
+            {
+                PatchInJump(pSource, m_pDestination, false);
+                return;
+            }
+        }
+        // Otherwise, just copy the instruction to the stub
+        else
+        {
+            Memory::Write<POWERPC_INSTRUCTION>(&pStub[instructionCount], instruction);
+            instructionCount++;
+        }
+    }
+
+    // Make the stub call the original function
+    PatchInJump(&pStub[instructionCount], &pSource[NUM_INSTRUCTIONS_IN_JUMP], false);
+
+    // Make the original function call the stub
+    PatchInJump(pSource, m_pDestination, false);
 }
 
-size_t Detour::RelocateBranch(void *pDestination, const void *pSource)
+void Detour::PatchInJump(void *pSource, const void *pDestination, bool linked)
 {
-    const POWERPC_INSTRUCTION instruction = *reinterpret_cast<const POWERPC_INSTRUCTION *>(pSource);
-    const uintptr_t instructionAddress = reinterpret_cast<uintptr_t>(pSource);
+    Jump jump;
+    uintptr_t destinationAddress = reinterpret_cast<uintptr_t>(pDestination);
 
-    // Absolute branches don't need to be handled
-    if (instruction & POWERPC_BRANCH_ABSOLUTE)
-    {
-        *reinterpret_cast<POWERPC_INSTRUCTION *>(pDestination) = instruction;
+    jump.Instructions[0] = 0x3C000000 + (destinationAddress >> 16);    // lis    %r0, dest>>16
+    jump.Instructions[1] = 0x60000000 + (destinationAddress & 0xFFFF); // ori    %r0, %r0, dest&0xFFFF
+    jump.Instructions[2] = 0x7C0903A6;                                 // mtctr  %r0
+    jump.Instructions[3] = 0x4E800420 + (linked ? 1 : 0);              // bctr/bctrl
 
-        return sizeof(POWERPC_INSTRUCTION);
-    }
+    Memory::Write<Jump>(pSource, jump);
 
-    size_t branchOffsetBitSize = 0;
-    int branchOffsetBitBase = 0;
-    uint32_t branchOptions = 0;
-    uint8_t conditionRegisterBit = 0;
-
-    switch (instruction & POWERPC_OPCODE_MASK)
-    {
-        // B - Branch
-        // [Opcode]            [Address]           [Absolute] [Linked]
-        //   0-5                 6-29                  30        31
-        //
-        // Example
-        //  010010   0000 0000 0000 0000 0000 0001      0         0
-    case POWERPC_OPCODE_B:
-        branchOffsetBitSize = 24;
-        branchOffsetBitBase = 2;
-        branchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS;
-        conditionRegisterBit = 0;
-        break;
-
-        // BC - Branch Conditional
-        // [Opcode]   [Branch Options]     [Condition Register]         [Address]      [Absolute] [Linked]
-        //   0-5           6-10                    11-15                  16-29            30        31
-        //
-        // Example
-        //  010000        00100                    00001             00 0000 0000 0001      0         0
-    case POWERPC_OPCODE_BC:
-        branchOffsetBitSize = 14;
-        branchOffsetBitBase = 2;
-        branchOptions = (instruction >> POWERPC_BIT32(10)) & MASK_N_BITS(5);
-        conditionRegisterBit = (instruction >> POWERPC_BIT32(15)) & MASK_N_BITS(5);
-        break;
-    }
-
-    // Even though the address part of the instruction begins from bit 29 in the case of bc and b.
-    // The value of the first bit is 4 as all addresses are aligned to for 4 for code therefore,
-    // the branch offset can be caluclated by anding in place and removing any suffix bits such as the
-    // link register or absolute flags.
-    size_t branchOffset = instruction & (MASK_N_BITS(branchOffsetBitSize) << branchOffsetBitBase);
-
-    // Check if the MSB of the offset is set
-    if (branchOffset >> ((branchOffsetBitSize + branchOffsetBitBase) - 1))
-    {
-        // Add the nessasary bits to our integer to make it negative
-        branchOffset |= ~MASK_N_BITS(branchOffsetBitSize + branchOffsetBitBase);
-    }
-
-    const void *pBranchAddress = reinterpret_cast<void *>(instructionAddress + branchOffset);
-
-    return WriteFarBranch(pDestination, pBranchAddress, instruction & POWERPC_BRANCH_LINKED, true, branchOptions, conditionRegisterBit);
+    doSync(pSource);
 }
 
-size_t Detour::CopyInstruction(void *pDestination, const void *pSource)
+void *Detour::ResolveBranch(POWERPC_INSTRUCTION instruction, const void *pBranch)
 {
-    const POWERPC_INSTRUCTION instruction = *reinterpret_cast<const POWERPC_INSTRUCTION *>(pSource);
+    // Taken from here
+    // https://github.com/skiff/libpsutil/blob/master/libpsutil/system/memory.cpp#L90
 
-    switch (instruction & POWERPC_OPCODE_MASK)
+    uintptr_t offset = instruction & 0x3FFFFFC;
+
+    if (offset & (1 << 25))
+        offset |= 0xFC000000;
+
+    return reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(pBranch) + offset);
+}
+
+void *Detour::GetModuleImport(const std::string &baseModuleName, const std::string &importedModuleName, uint32_t ordinal)
+{
+    // Very inspired from this
+    // https://github.com/TeaModz/XeLiveStealth-Full-Source/blob/master/XeLive/Hooking.cpp#L100
+
+    // Usage example
+    //
+    // GetModuleImport("hud.xex", "xam.xex", 842);
+    //
+    // This would get a pointer to the 842nd function exported by xam.xex (XuiRegisterClass)
+    // used by "hud.xex"
+
+    // Get the module handle of the base module
+    HMODULE moduleHandle = GetModuleHandle(baseModuleName.c_str());
+    if (moduleHandle == nullptr)
+        return nullptr;
+
+    // Get a pointer to the function we're looking for but from our module (so the one
+    // this code is running in, not the base module)
+    void *pFunc = Memory::ResolveFunction(importedModuleName, ordinal);
+    if (pFunc == nullptr)
+        return nullptr;
+
+    // Get the import descriptor of the base module
+    LDR_DATA_TABLE_ENTRY *pDataTable = reinterpret_cast<LDR_DATA_TABLE_ENTRY *>(moduleHandle);
+    XEX_IMPORT_DESCRIPTOR *pImportDesc = static_cast<XEX_IMPORT_DESCRIPTOR *>(RtlImageXexHeaderField(pDataTable->XexHeaderBase, 0x000103FF));
+    if (pImportDesc == nullptr)
+        return nullptr;
+
+    // Calculate the import table location from the import descriptor
+    // The memory is laid out as such:
+    //
+    // ┌──────────────────────────────┐
+    // │ XEX_IMPORT_DESCRIPTOR        │
+    // │   uint32_t Size              │  => size: 0xC
+    // │   uint32_t NameTableSize     │
+    // │   uint32_t ModuleCount       │
+    // ├──────────────────────────────┤
+    // │ NAME_TABLE                   │  => size: NameTableSize
+    // │ (unknown struct)             │
+    // ├──────────────────────────────┤
+    // │ XEX_IMPORT_TABLE 1           │
+    // │ XEX_IMPORT_TABLE 2           │  => size: The sum of all XEX_IMPORT_TABLE TableSize fields
+    // │ XEX_IMPORT_TABLE ...         │
+    // │ XEX_IMPORT_TABLE ModuleCount │
+    // └──────────────────────────────┘
+    //
+    // So the address of the first import table is
+    // pImportDesc + sizeof(XEX_IMPORT_DESCRIPTOR) + pImportDesc->NameTableSize
+
+    XEX_IMPORT_TABLE *pImportTable = reinterpret_cast<XEX_IMPORT_TABLE *>(
+        reinterpret_cast<uintptr_t>(pImportDesc) + sizeof(XEX_IMPORT_DESCRIPTOR) + pImportDesc->NameTableSize
+    );
+
+    for (size_t i = 0; i < pImportDesc->ModuleCount; i++)
     {
-    case POWERPC_OPCODE_B:  // B BL BA BLA
-    case POWERPC_OPCODE_BC: // BEQ BNE BLT BGE
-        return RelocateBranch(pDestination, pSource);
-    default:
-        *reinterpret_cast<POWERPC_INSTRUCTION *>(pDestination) = instruction;
-        return sizeof(POWERPC_INSTRUCTION);
+        for (size_t j = 0; j < pImportTable->ImportCount; j++)
+        {
+            void *pImportStubAddress = *reinterpret_cast<void **>(pImportTable->ImportStubAddr[j]);
+
+            if (pImportStubAddress == pFunc)
+                return reinterpret_cast<void *>(pImportTable->ImportStubAddr[j + 1]);
+        }
+
+        // Set pImportTable to the address of the next import table, which is the
+        // address of the current import table + the size of the current import table
+        pImportTable = reinterpret_cast<XEX_IMPORT_TABLE *>(
+            reinterpret_cast<uintptr_t>(pImportTable) + pImportTable->TableSize
+        );
     }
+
+    return nullptr;
 }
 
 }

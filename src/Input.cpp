@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Input.h"
 
+#include "Memory.h"
+
 namespace XexUtils
 {
 
@@ -17,7 +19,7 @@ Input::Gamepad *Input::GetInput()
         return &s_Gamepad;
 
     // Copy the gamepad to the local structure
-    memcpy_s(&s_Gamepad, sizeof(Input::Gamepad), &state.Gamepad, sizeof(XINPUT_GAMEPAD));
+    Memory::Write<XINPUT_GAMEPAD>(&s_Gamepad, state.Gamepad);
 
     // Save the buttons pressed at the previous frame to set the currently pressed buttons only if
     // they were not already pressed at the previous frame, we need to do this because pressing

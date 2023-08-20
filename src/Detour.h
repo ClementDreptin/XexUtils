@@ -1,60 +1,68 @@
-// Original version made my iMoD1998 (https://gist.github.com/iMoD1998/4aa48d5c990535767a3fc3251efc0348)
-
 #pragma once
 
-#define POWERPC_BRANCH_OPTIONS_ALWAYS 20
-#define TRAMPOLINE_BUFFER_MAX_SIZE 0x1000
+#define MAX_HOOK_COUNT 100
+#define NUM_INSTRUCTIONS_IN_JUMP 4
 
 namespace XexUtils
 {
 
-typedef uint32_t POWERPC_INSTRUCTION;
-
 class Detour
 {
 public:
-    Detour(uintptr_t hookSourceAddress, const void *pHookTarget);
-    Detour(void *pHookSource, const void *pHookTarget);
+    Detour(void *pSource, const void *pDestination);
+
+    Detour(uintptr_t sourceAddress, const void *pDestination);
+
+    Detour(const std::string &moduleName, uint32_t ordinal, const void *pDestination);
+
+    Detour(const std::string &moduleName, const std::string &importedModuleName, uint32_t ordinal, const void *pDestination);
 
     ~Detour();
 
-    bool Install();
+    HRESULT Install();
 
-    bool Remove();
+    void Remove();
 
     template<typename T>
     inline T GetOriginal() const
     {
-        return reinterpret_cast<T>(m_pTrampolineDestination);
+        return reinterpret_cast<T>(&s_StubSection[m_HookIndex]);
     }
 
 private:
-    const void *m_pHookTarget;
+    typedef uint32_t POWERPC_INSTRUCTION;
+    typedef uint8_t POWERPC_INSTRUCTION_TYPE;
 
-    void *m_pHookSource;
+    struct Stub
+    {
+        POWERPC_INSTRUCTION Instructions[20]; // DetourFunctionStart can copy up to 20 instructions
 
-    void *m_pTrampolineDestination;
+        Stub() { ZeroMemory(&Instructions, sizeof(Instructions)); }
+    };
 
-    uint8_t m_OriginalInstructions[30];
+    struct Jump
+    {
+        POWERPC_INSTRUCTION Instructions[NUM_INSTRUCTIONS_IN_JUMP];
 
-    size_t m_OriginalLength;
+        Jump() { ZeroMemory(&Instructions, sizeof(Instructions)); }
+    };
 
-    static uint8_t s_TrampolineBuffer[TRAMPOLINE_BUFFER_MAX_SIZE];
+    void *m_pSource;
+    const void *m_pDestination;
+    size_t m_HookIndex;
+    Jump m_Original;
 
-    static size_t s_TrampolineSize;
+    static Stub s_StubSection[MAX_HOOK_COUNT];
+    static size_t s_HookCount;
+    static CRITICAL_SECTION s_CriticalSection;
 
-    // Function that contains to constructor logic, it's meant to share the same logic for multiple constructors.
-    // This is necessary because C++0x doesn't support calling one constructor from another constructor.
-    void Init(void *pHookSource, const void *pHookTarget);
+    void DetourFunctionStart();
 
-    // Write both conditional and unconditional branches using the count register to the destination address that will branch to the target address.
-    size_t WriteFarBranch(void *pDestination, const void *pBranchTarget, bool linked = false, bool preserveRegister = false, uint32_t branchOptions = POWERPC_BRANCH_OPTIONS_ALWAYS, uint8_t conditionRegisterBit = 0, uint8_t registerIndex = 0);
+    void PatchInJump(void *pSource, const void *pDestination, bool linked);
 
-    // Copy and fix relative branch instructions to a new location.
-    size_t RelocateBranch(void *pDestination, const void *pSource);
+    void *ResolveBranch(POWERPC_INSTRUCTION instruction, const void *pBranch);
 
-    // Copy an instruction enusuring things such as PC relative offsets are fixed.
-    size_t CopyInstruction(void *pDestination, const void *pSource);
+    void *GetModuleImport(const std::string &baseModuleName, const std::string &importedModuleName, uint32_t ordinal);
 };
 
 }

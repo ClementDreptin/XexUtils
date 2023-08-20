@@ -8,9 +8,11 @@ namespace XexUtils
 
 void *Memory::ResolveFunction(const std::string &moduleName, uint32_t ordinal)
 {
-    HMODULE hModule = GetModuleHandle(moduleName.c_str());
+    HMODULE moduleHandle = GetModuleHandle(moduleName.c_str());
+    if (moduleHandle == nullptr)
+        return nullptr;
 
-    return (hModule == NULL) ? NULL : GetProcAddress(hModule, reinterpret_cast<const char *>(ordinal));
+    return GetProcAddress(moduleHandle, reinterpret_cast<const char *>(ordinal));
 }
 
 void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)

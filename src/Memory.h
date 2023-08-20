@@ -15,7 +15,7 @@ public:
     static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, uint32_t creationFlags);
 
     template<typename T>
-    static void Write(void *pDestination, T data)
+    static void Write(void *pDestination, const T &data)
     {
         if (!Xam::IsAddressValid(pDestination))
         {
@@ -27,7 +27,7 @@ public:
     }
 
     template<typename T>
-    inline static void Write(uintptr_t address, T data)
+    inline static void Write(uintptr_t address, const T &data)
     {
         Write<T>(reinterpret_cast<void *>(address), data);
     }
@@ -35,12 +35,6 @@ public:
     template<typename T>
     static T Read(void *pSource)
     {
-        if (!Xam::IsAddressValid(pSource))
-        {
-            Log::Error("Invalid address: %p", pSource);
-            return 0;
-        }
-
         return *static_cast<T *>(pSource);
     }
 
