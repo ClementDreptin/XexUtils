@@ -2,68 +2,145 @@
 
 // Most of those were taken from xkelib
 
+struct STRING
+{
+    uint16_t Length;
+    uint16_t MaxLength;
+    char *Buffer;
+};
+
+struct UNICODE_STRING
+{
+    uint16_t Length;
+    uint16_t MaxLength;
+    wchar_t *Buffer;
+};
+
+typedef enum
+{
+    HalHaltRoutine,
+    HalRebootRoutine,
+    HalKdRebootRoutine,
+    HalFatalErrorRebootRoutine,
+    HalResetSMCRoutine,
+    HalPowerDownRoutine,
+    HalRebootQuiesceRoutine,
+    HalForceShutdownRoutine,
+    HalPowerCycleQuiesceRoutine,
+    HalMaximumRoutine,
+} FIRMWARE_REENTRY;
+
+typedef enum
+{
+    XNCALLER_INVALID = 0,
+    XNCALLER_TITLE = 1,
+    XNCALLER_SYSAPP = 2,
+    XNCALLER_XBDM = 3,
+    XNCALLER_PERSISTING = 3,
+    XNCALLER_TEST = 4,
+    NUM_XNCALLER_TYPES = 4,
+} XNCALLER_TYPE;
+
+struct LDR_DATA_TABLE_ENTRY
+{
+    LIST_ENTRY InLoadOrderLinks;
+    LIST_ENTRY InClosureOrderLinks;
+    LIST_ENTRY InInitializationOrderLinks;
+    void *NtHeadersBase;
+    void *ImageBase;
+    uint32_t SizeOfNtImage;
+    UNICODE_STRING FullDllName;
+    UNICODE_STRING BaseDllName;
+    uint32_t Flags;
+    uint32_t SizeOfFullImage;
+    void *EntryPoint;
+    uint16_t LoadCount;
+    uint16_t ModuleIndex;
+    void *DllBaseOriginal;
+    uint32_t CheckSum;
+    uint32_t ModuleLoadFlags;
+    uint32_t TimeDateStamp;
+    void *LoadedImports;
+    void *XexHeaderBase;
+
+    union {
+        STRING LoadFileName;
+
+        struct
+        {
+            void *ClosureRoot;
+            void *TraversalParent;
+        } asEntry;
+    } inf;
+};
+
+struct XEX_IMPORT_TABLE
+{
+    uint32_t TableSize;
+    uint8_t NextImportDigest[20];
+    uint32_t ModuleNumber;
+    uint32_t Version[2];
+    uint8_t Unused;
+    uint8_t ModuleIndex;
+    uint16_t ImportCount;
+    uint32_t ImportStubAddr[1];
+};
+
+struct XEX_IMPORT_DESCRIPTOR
+{
+    uint32_t Size;
+    uint32_t NameTableSize;
+    uint32_t ModuleCount;
+};
+
+typedef enum
+{
+    EXCREATETHREAD_SUSPENDED = 1 << 0,
+    EXCREATETHREAD_SYSTEM = 1 << 1,
+    EXCREATETHREAD_TLS_STATIC = 1 << 3,
+    EXCREATETHREAD_PRIORITY1 = 1 << 5,
+    EXCREATETHREAD_PRIORITY0 = 1 << 6,
+    EXCREATETHREAD_RETURN_KTHREAD = 1 << 7,
+    EXCREATETHREAD_TITLE_EXEC = 1 << 8,
+    EXCREATETHREAD_HIDDEN = 1 << 10,
+    EXCREATETHREAD_CORE0 = 1 << 24,
+    EXCREATETHREAD_CORE1 = 1 << 25,
+    EXCREATETHREAD_CORE2 = 1 << 26,
+    EXCREATETHREAD_CORE3 = 1 << 27,
+    EXCREATETHREAD_CORE4 = 1 << 28,
+    EXCREATETHREAD_CORE5 = 1 << 29,
+} EXCREATETHREAD_FLAG;
+
+#define __isync() __emit(0x4C00012C)
+
+#define doSync(addr) \
+    __dcbst(0, addr); \
+    __sync(); \
+    __isync()
+
 extern "C"
 {
-    struct STRING
-    {
-        uint16_t Length;
-        uint16_t MaxLength;
-        char *Buffer;
-    };
-
-    struct UNICODE_STRING
-    {
-        uint16_t Length;
-        uint16_t MaxLength;
-        wchar_t *Buffer;
-    };
-
     void RtlInitAnsiString(STRING *pDestinationString, const char *sourceString);
 
     HRESULT ObCreateSymbolicLink(STRING *pLinkName, STRING *pDevicePath);
-
-    typedef enum
-    {
-        HalHaltRoutine,
-        HalRebootRoutine,
-        HalKdRebootRoutine,
-        HalFatalErrorRebootRoutine,
-        HalResetSMCRoutine,
-        HalPowerDownRoutine,
-        HalRebootQuiesceRoutine,
-        HalForceShutdownRoutine,
-        HalPowerCycleQuiesceRoutine,
-        HalMaximumRoutine,
-    } FIRMWARE_REENTRY;
 
     void HalReturnToFirmware(FIRMWARE_REENTRY powerDownMode);
 
     void HalSendSMCMessage(void *pInput, void *pOutput);
 
-    DWORD ExCreateThread(
+    uint32_t ExCreateThread(
         HANDLE *pHandle,
-        DWORD dwStackSize,
-        DWORD *pThreadId,
-        void *apiThreadStartup,
+        uint32_t stackSize,
+        uint32_t *pThreadId,
+        void *pApiThreadStartup,
         PTHREAD_START_ROUTINE pStartAddress,
         void *pParameter,
-        DWORD dwCreationFlagsMod
+        EXCREATETHREAD_FLAG creationFlags
     );
 
-    DWORD XamGetCurrentTitleId();
+    uint32_t XamGetCurrentTitleId();
 
     bool MmIsAddressValid(void *pAddress);
-
-    typedef enum
-    {
-        XNCALLER_INVALID = 0,
-        XNCALLER_TITLE = 1,
-        XNCALLER_SYSAPP = 2,
-        XNCALLER_XBDM = 3,
-        XNCALLER_PERSISTING = 3,
-        XNCALLER_TEST = 4,
-        NUM_XNCALLER_TYPES = 4,
-    } XNCALLER_TYPE;
 
     int NetDll_WSAStartupEx(XNCALLER_TYPE xnCaller, uint16_t versionRequested, WSAData *pWSAData, uint32_t versionReq);
 
@@ -87,64 +164,5 @@ extern "C"
 
     int NetDll_recv(XNCALLER_TYPE xnc, SOCKET s, char *buf, int len, int flags);
 
-    struct LDR_DATA_TABLE_ENTRY
-    {
-        LIST_ENTRY InLoadOrderLinks;           // 0x00 sz:0x8
-        LIST_ENTRY InClosureOrderLinks;        // 0x08 sz:0x8
-        LIST_ENTRY InInitializationOrderLinks; // 0x10 sz:0x8
-        void *NtHeadersBase;                   // 0x18 sz:0x4
-        void *ImageBase;                       // 0x1C sz:0x4
-        uint32_t SizeOfNtImage;                // 0x20 sz:0x4
-        UNICODE_STRING FullDllName;            // 0x24 sz:0x8
-        UNICODE_STRING BaseDllName;            // 0x2C sz:0x8
-        uint32_t Flags;                        // 0x34 sz:0x4
-        uint32_t SizeOfFullImage;              // 0x38 sz:0x4
-        void *EntryPoint;                      // 0x3C sz:0x4
-        uint16_t LoadCount;                    // 0x40 sz:0x2
-        uint16_t ModuleIndex;                  // 0x42 sz:0x2
-        void *DllBaseOriginal;                 // 0x44 sz:0x4
-        uint32_t CheckSum;                     // 0x48 sz:0x4
-        uint32_t ModuleLoadFlags;              // 0x4C sz:0x4
-        uint32_t TimeDateStamp;                // 0x50 sz:0x4
-        void *LoadedImports;                   // 0x54 sz:0x4
-        void *XexHeaderBase;                   // 0x58 sz:0x4
-
-        union {
-            STRING LoadFileName; // 0x5C sz:0x8
-
-            struct
-            {
-                void *ClosureRoot;     // 0x5C sz:0x4 LDR_DATA_TABLE_ENTRY
-                void *TraversalParent; // 0x60 sz:0x4 LDR_DATA_TABLE_ENTRY
-            } asEntry;
-        } inf;
-    }; // size 0x64
-
-    struct XEX_IMPORT_TABLE
-    {
-        uint32_t TableSize;           // 0x00 sz:0x04
-        uint8_t NextImportDigest[20]; // 0x04 sz:0x14
-        uint32_t ModuleNumber;        // 0x18 sz:0x04
-        uint32_t Version[2];          // 0x1C sz:0x08
-        uint8_t Unused;               // 0x24 sz:0x01
-        uint8_t ModuleIndex;          // 0x25 sz:0x01
-        uint16_t ImportCount;         // 0x26 sz:0x02
-        uint32_t ImportStubAddr[1];   // 0x28 sz:0x04
-    };                                // size 0x2C
-
-    struct XEX_IMPORT_DESCRIPTOR
-    {
-        uint32_t Size;          // 0x0 sz:0x4
-        uint32_t NameTableSize; // 0x4 sz:0x4
-        uint32_t ModuleCount;   // 0x8 sz:0x4
-    };                          // size 0x0C
-
     void *RtlImageXexHeaderField(void *pXexHeaderBase, uint32_t imageField);
 }
-
-#define __isync() __emit(0x4C00012C)
-
-#define doSync(addr) \
-    __dcbst(0, addr); \
-    __sync(); \
-    __isync()

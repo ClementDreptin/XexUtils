@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Memory.h"
 
-#include "Kernel.h"
-
 namespace XexUtils
 {
 
@@ -20,7 +18,7 @@ void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
     CreateThread(nullptr, 0, pStartAddress, pArgs, 0, nullptr);
 }
 
-void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, uint32_t creationFlags)
+void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags)
 {
     ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pArgs, creationFlags);
 }

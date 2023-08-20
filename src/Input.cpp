@@ -12,7 +12,7 @@ Input::Gamepad *Input::GetInput()
 {
     // Get the gamepad state
     XINPUT_STATE state = { 0 };
-    DWORD result = XInputGetState(0, &state);
+    uint32_t result = XInputGetState(0, &state);
 
     // If the first controller is not connected, just return early
     if (result != ERROR_SUCCESS)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Kernel.h"
 #include "Xam_.h"
 
 namespace XexUtils
@@ -12,7 +13,7 @@ public:
 
     static void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs = nullptr);
 
-    static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, uint32_t creationFlags);
+    static void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags);
 
     template<typename T>
     static void Write(void *pDestination, const T &data)
