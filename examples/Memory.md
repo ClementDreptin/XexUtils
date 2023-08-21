@@ -49,7 +49,7 @@ void Init()
     int number = 3;
 
     // The flag parameter (the third one), is the one that allows you to customize the way the thread behaves
-    XexUtils::Memory::ThreadEx(reinterpret_cast<PTHREAD_START_ROUTINE>(Worker), &number, 2);
+    XexUtils::Memory::ThreadEx(reinterpret_cast<PTHREAD_START_ROUTINE>(Worker), &number, EXCREATETHREAD_SYSTEM);
 }
 ```
 

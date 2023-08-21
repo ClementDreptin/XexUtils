@@ -92,7 +92,7 @@ uint32_t Xam::ShowMessageBox(const wchar_t *title, const wchar_t *text, const wc
     uint32_t overlappedResult = XGetOverlappedResult(&overlapped, nullptr, TRUE);
 
     // If the message box was closed by pressing "A" on any of the buttons (so not by pressing "B" or the Xbox button)
-    // and if the pressed button is request, write the pressed button at pButtonPressedIndex
+    // and if the pressed button is requested, write the pressed button at pButtonPressedIndex
     if (overlappedResult == ERROR_SUCCESS && pButtonPressedIndex != nullptr)
         *pButtonPressedIndex = messageBoxResult.dwButtonPressed;
 
