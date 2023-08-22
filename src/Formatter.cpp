@@ -22,13 +22,12 @@ std::string Formatter::Format(const char *format, ...)
 
 std::wstring Formatter::ToWide(const std::string &narrowString)
 {
-    // Create the wide string
-    std::wstring wideString;
+    return std::wstring(narrowString.begin(), narrowString.end());
+}
 
-    // Copy the narrow string into the wide string from start to end
-    wideString.assign(narrowString.begin(), narrowString.end());
-
-    return wideString;
+std::string Formatter::ToNarrow(const std::wstring &wideString)
+{
+    return std::string(wideString.begin(), wideString.end());
 }
 
 }
