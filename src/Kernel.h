@@ -165,4 +165,6 @@ extern "C"
     int NetDll_recv(XNCALLER_TYPE xnc, SOCKET s, char *buf, int len, int flags);
 
     void *RtlImageXexHeaderField(void *pXexHeaderBase, uint32_t imageField);
+
+    void *MmGetPhysicalAddress(void *pAddress);
 }

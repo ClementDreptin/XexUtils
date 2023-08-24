@@ -1,6 +1,7 @@
 # Logging
 
 Log messages to stdout and stderr:
+
 ```C++
 void Init()
 {
@@ -10,6 +11,7 @@ void Init()
 ```
 
 Each log function has a corresponding wide string version:
+
 ```C++
 void Init()
 {

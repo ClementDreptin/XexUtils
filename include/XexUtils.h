@@ -22,3 +22,4 @@
 #include "../src/ValueOrPtr.h"
 #include "../src/Input.h"
 #include "../src/Kernel.h"
+#include "../src/Hypervisor.h"
