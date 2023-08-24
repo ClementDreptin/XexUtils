@@ -29,6 +29,18 @@ void Init()
 {
     XexUtils::Math::vec3 myCurrentPosition = GetCurrentPosition();
     XexUtils::Math::vec3 myCurrentOrientation = GetCurrentOrientation();
-    XexUtils::Math::vec3 TenUnitsInFrontOfMe = XexUtils::Math::ToFront(myCurrentPosition, myCurrentOrientation.y, 10);
+    XexUtils::Math::vec3 TenUnitsInFrontOfMe = XexUtils::Math::ProjectForward(myCurrentPosition, myCurrentOrientation.y, 10);
+}
+```
+
+Round to the next multiple of a number:
+
+```C++
+void Init()
+{
+    RoundToNextMultipleOf<3>(4); // => 6
+    RoundToNextMultipleOf<5>(2); // => 5
+
+    RountToNextMultipleOf<4>(4); // => 8 (keep in mind it rounds to the NEXT multiple)
 }
 ```
