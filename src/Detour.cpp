@@ -87,7 +87,7 @@ void Detour::DetourFunctionStart()
 
     for (size_t i = 0; i < NUM_INSTRUCTIONS_IN_JUMP; i++)
     {
-        POWERPC_INSTRUCTION instruction = Memory::Read<POWERPC_INSTRUCTION>(&pSource[i]);
+        POWERPC_INSTRUCTION instruction = pSource[i];
         POWERPC_INSTRUCTION_TYPE instructionType = Memory::Read<POWERPC_INSTRUCTION_TYPE>(&pSource[i]);
 
         // If the function op code is null, it's invalid
@@ -116,7 +116,7 @@ void Detour::DetourFunctionStart()
         // Otherwise, just copy the instruction to the stub
         else
         {
-            Memory::Write<POWERPC_INSTRUCTION>(&pStub[instructionCount], instruction);
+            pStub[instructionCount] = instruction;
             instructionCount++;
         }
     }
