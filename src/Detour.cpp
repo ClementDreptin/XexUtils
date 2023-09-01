@@ -35,6 +35,7 @@ Detour::Detour(const std::string &moduleName, const std::string &importedModuleN
 
 Detour::~Detour()
 {
+    Remove();
 }
 
 HRESULT Detour::Install()
