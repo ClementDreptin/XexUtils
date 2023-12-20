@@ -11,7 +11,7 @@ Input::Gamepad Input::s_Gamepad;
 Input::Gamepad *Input::GetInput()
 {
     // Get the gamepad state
-    XINPUT_STATE state = { 0 };
+    XINPUT_STATE state = {};
     uint32_t result = XInputGetState(0, &state);
 
     // If the first controller is not connected, just return early
@@ -27,8 +27,14 @@ Input::Gamepad *Input::GetInput()
     s_Gamepad.PressedButtons = (s_Gamepad.LastButtons ^ s_Gamepad.wButtons) & s_Gamepad.wButtons;
     s_Gamepad.LastButtons = s_Gamepad.wButtons;
 
+    // Convert thumbstick values coming from XINPUT to a [-1;+1] space
+    s_Gamepad.ThumbLeftX = ConvertThumbstickValue(s_Gamepad.sThumbLX, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+    s_Gamepad.ThumbLeftY = ConvertThumbstickValue(s_Gamepad.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+    s_Gamepad.ThumbRightX = ConvertThumbstickValue(s_Gamepad.sThumbRX, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+    s_Gamepad.ThumbRightY = ConvertThumbstickValue(s_Gamepad.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+
     // Get the keystrokes
-    XINPUT_KEYSTROKE keystroke = { 0 };
+    XINPUT_KEYSTROKE keystroke = {};
     result = XInputGetKeystroke(0, XINPUT_FLAG_GAMEPAD, &keystroke);
 
     // If no button is pressed, just return early
@@ -97,6 +103,16 @@ uint16_t Input::ButtonForVirtualKey(uint16_t virtualKey)
     default:
         return 0;
     }
+}
+
+float ConvertThumbstickValue(int16_t thumbstickValue, int16_t deadZone)
+{
+    if (thumbstickValue > +deadZone)
+        return (thumbstickValue - deadZone) / (32767.0f - deadZone);
+    if (thumbstickValue < -deadZone)
+        return (thumbstickValue + deadZone + 1.0f) / (32767.0f - deadZone);
+
+    return 0.0f;
 }
 
 }
