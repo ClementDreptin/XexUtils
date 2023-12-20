@@ -68,8 +68,8 @@ uint32_t Xam::ShowKeyboard(const wchar_t *title, const wchar_t *description, con
 
 uint32_t Xam::ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex, uint32_t messageBoxType, uint32_t focusedButtonIndex)
 {
-    MESSAGEBOX_RESULT messageBoxResult = { 0 };
-    XOVERLAPPED overlapped = { 0 };
+    MESSAGEBOX_RESULT messageBoxResult = {};
+    XOVERLAPPED overlapped = {};
 
     // Open the message box
     XShowMessageBoxUI(
@@ -120,8 +120,8 @@ HRESULT Xam::MountHdd()
     // The system only allows executables to access the directory they live in and binds it to
     // the "game:" drive. Nothing else is accessible unless you create a symbolic link.
 
-    STRING linkName = { 0 };
-    STRING deviceName = { 0 };
+    STRING linkName = {};
+    STRING deviceName = {};
     const char destinationDrive[] = "\\??\\hdd:";
     const char hddDevicePath[] = "\\Device\\Harddisk0\\Partition1\\";
 

@@ -67,7 +67,7 @@ void Log::Error(const wchar_t *message, ...)
 void Log::Print(const char *format, const va_list args, std::ostream &outputStream)
 {
     // Build the string with the format
-    char buffer[2048] = { 0 };
+    char buffer[2048] = {};
     vsnprintf_s(buffer, _TRUNCATE, format, args);
 
     // Print
@@ -77,7 +77,7 @@ void Log::Print(const char *format, const va_list args, std::ostream &outputStre
 void Log::Print(const wchar_t *format, const va_list args, std::wostream &outputStream)
 {
     // Build the string with the format
-    wchar_t buffer[2048] = { 0 };
+    wchar_t buffer[2048] = {};
     _vsnwprintf_s(buffer, _TRUNCATE, format, args);
 
     // Print

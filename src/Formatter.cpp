@@ -11,7 +11,7 @@ std::string Formatter::Format(const char *format, ...)
     va_start(args, format);
 
     // Build the string with the format
-    char buffer[2048] = { 0 };
+    char buffer[2048] = {};
     vsnprintf_s(buffer, _TRUNCATE, format, args);
 
     // Free the variadic arguments

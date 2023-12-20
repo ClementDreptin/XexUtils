@@ -33,7 +33,7 @@ void Init()
     Sleep(500);
 
     // Receive the response
-    char buffer[4096] = { 0 };
+    char buffer[4096] = {};
     int bytesReceived = socket.Receive(buffer, sizeof(buffer));
     if (bytesReceive == -1)
     {

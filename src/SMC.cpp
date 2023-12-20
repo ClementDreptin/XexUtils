@@ -6,7 +6,7 @@
 namespace XexUtils
 {
 
-uint8_t SMC::s_CommandBuffer[16] = { 0 };
+uint8_t SMC::s_CommandBuffer[16] = {};
 
 void SMC::SetPowerLED(PowerLEDMode mode, bool animate)
 {

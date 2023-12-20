@@ -9,7 +9,7 @@ Consider the following code:
 void Update()
 {
     // Get the gamepad state
-    XINPUT_STATE state = { 0 };
+    XINPUT_STATE state = {};
     XInputGetState(0, &state);
 
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT)

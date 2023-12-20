@@ -11,7 +11,7 @@ namespace XexUtils
 // if it was a class member, it would be allocated on the stack and stack memory isn't executable
 Detour::Stub Detour::s_StubSection[MAX_HOOK_COUNT];
 size_t Detour::s_HookCount = 0;
-CRITICAL_SECTION Detour::s_CriticalSection = { 0 };
+CRITICAL_SECTION Detour::s_CriticalSection = {};
 
 Detour::Detour(void *pSource, const void *pDestination)
     : m_pSource(pSource), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))

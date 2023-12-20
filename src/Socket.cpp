@@ -53,7 +53,7 @@ HRESULT Socket::Connect()
     if (!s_Initialized)
         return E_FAIL;
 
-    sockaddr_in addrInfo = { 0 };
+    sockaddr_in addrInfo = {};
 
     // Set up the address info of the server
     addrInfo.sin_family = AF_INET;
@@ -142,8 +142,8 @@ void Socket::InitInternal(const std::string &ipAddress, uint16_t port)
 
 HRESULT Socket::Init()
 {
-    WSADATA wsaData = { 0 };
-    XNetStartupParams xNetStartupParams = { 0 };
+    WSADATA wsaData = {};
+    XNetStartupParams xNetStartupParams = {};
 
     // Bypass security
     xNetStartupParams.cfgSizeOfStruct = sizeof(XNetStartupParams);
