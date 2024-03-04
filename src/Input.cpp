@@ -105,7 +105,7 @@ uint16_t Input::ButtonForVirtualKey(uint16_t virtualKey)
     }
 }
 
-float ConvertThumbstickValue(int16_t thumbstickValue, int16_t deadZone)
+float Input::ConvertThumbstickValue(int16_t thumbstickValue, int16_t deadZone)
 {
     if (thumbstickValue > +deadZone)
         return (thumbstickValue - deadZone) / (32767.0f - deadZone);
