@@ -97,6 +97,8 @@ public:
     static void Reboot();
 
     static HRESULT MountHdd();
+
+    static bool IsDevkit();
 };
 
 }

@@ -48,7 +48,7 @@ void Init()
     if (result == ERROR_CANCELLED)
         XexUtils::Log::Info("Message box canceled");
     else if (result == ERROR_SUCCESS)
-        wprintf_s("User pressed %s\n", buttonLabels[buttonPressedIndex]);
+        wprintf_s(L"User pressed %s\n", buttonLabels[buttonPressedIndex]);
 }
 ```
 
@@ -70,7 +70,7 @@ Check if a pointer is valid before dereferencing it:
 ```C++
 void Init()
 {
-    void *pRandomPointer = reinterpret_cast<void *>(0x12345678);
+    uint32_t *pRandomPointer = reinterpret_cast<uint32_t *>(0x12345678);
 
     if (XexUtils::Xam::IsAddressValid(pRandomPointer))
         *pRandomPointer = 0x123;
@@ -96,5 +96,17 @@ void Init()
     {
         // Write something to the file..
     }
+}
+```
+
+Detect if the console is a devkit:
+
+```C++
+void Init()
+{
+    if (XexUtils::Xam::IsDevkit())
+        XexUtils::Log::Info("Console is a devkit");
+    else
+        XexUtils::Log::Info("Console is not a devkit");
 }
 ```
