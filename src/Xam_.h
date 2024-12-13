@@ -2,6 +2,8 @@
 
 namespace XexUtils
 {
+namespace Xam
+{
 
 typedef enum _XNOTIFYQUEUEUI_TYPE
 {
@@ -79,26 +81,23 @@ typedef enum _XNOTIFYQUEUEUI_TYPE
     XNOTIFYUI_TYPE_SMARTGLASSAVAILABLE = 77,
 } XNOTIFYQUEUEUI_TYPE;
 
-class Xam
-{
-public:
-    static void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
+void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
 
-    // Note: Blocks the current thread while waiting for the user to finish typing.
-    static uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength = 15, uint32_t keyboardType = VKBD_DEFAULT);
+// Note: Blocks the current thread while waiting for the user to finish typing.
+uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength = 15, uint32_t keyboardType = VKBD_DEFAULT);
 
-    // Note: Blocks the current thread while waiting for the user to close the message box.
-    static uint32_t ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex = nullptr, uint32_t messageBoxType = XMB_NOICON, uint32_t focusedButtonIndex = 0);
+// Note: Blocks the current thread while waiting for the user to close the message box.
+uint32_t ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex = nullptr, uint32_t messageBoxType = XMB_NOICON, uint32_t focusedButtonIndex = 0);
 
-    static uint32_t GetCurrentTitleId();
+uint32_t GetCurrentTitleId();
 
-    static bool IsAddressValid(void *pAddress);
+bool IsAddressValid(void *pAddress);
 
-    static void Reboot();
+void Reboot();
 
-    static HRESULT MountHdd();
+HRESULT MountHdd();
 
-    static bool IsDevkit();
-};
+bool IsDevkit();
 
+}
 }

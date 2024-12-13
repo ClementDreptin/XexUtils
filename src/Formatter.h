@@ -2,15 +2,14 @@
 
 namespace XexUtils
 {
-
-class Formatter
+namespace Formatter
 {
-public:
-    static std::string Format(const char *format, ...);
 
-    static std::wstring ToWide(const std::string &narrowString);
+std::string Format(const char *format, ...);
 
-    static std::string ToNarrow(const std::wstring &wideString);
-};
+std::wstring ToWide(const std::string &narrowString);
 
+std::string ToNarrow(const std::wstring &wideString);
+
+}
 }

@@ -3,8 +3,10 @@
 
 namespace XexUtils
 {
+namespace Formatter
+{
 
-std::string Formatter::Format(const char *format, ...)
+std::string Format(const char *format, ...)
 {
     // Get the variadic arguments
     va_list args;
@@ -20,14 +22,15 @@ std::string Formatter::Format(const char *format, ...)
     return std::string(buffer);
 }
 
-std::wstring Formatter::ToWide(const std::string &narrowString)
+std::wstring ToWide(const std::string &narrowString)
 {
     return std::wstring(narrowString.begin(), narrowString.end());
 }
 
-std::string Formatter::ToNarrow(const std::wstring &wideString)
+std::string ToNarrow(const std::wstring &wideString)
 {
     return std::string(wideString.begin(), wideString.end());
 }
 
+}
 }

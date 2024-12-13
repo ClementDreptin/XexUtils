@@ -3,8 +3,10 @@
 
 namespace XexUtils
 {
+namespace Memory
+{
 
-void *Memory::ResolveFunction(const std::string &moduleName, uint32_t ordinal)
+void *ResolveFunction(const std::string &moduleName, uint32_t ordinal)
 {
     HMODULE moduleHandle = GetModuleHandle(moduleName.c_str());
     if (moduleHandle == nullptr)
@@ -13,14 +15,15 @@ void *Memory::ResolveFunction(const std::string &moduleName, uint32_t ordinal)
     return GetProcAddress(moduleHandle, reinterpret_cast<const char *>(ordinal));
 }
 
-void Memory::Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
+void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
 {
     CreateThread(nullptr, 0, pStartAddress, pArgs, 0, nullptr);
 }
 
-void Memory::ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags)
+void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags)
 {
     ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pArgs, creationFlags);
 }
 
+}
 }

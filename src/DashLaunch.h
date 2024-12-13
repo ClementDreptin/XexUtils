@@ -2,20 +2,19 @@
 
 namespace XexUtils
 {
+namespace DashLaunch
+{
 
 typedef BOOL (*DLAUNCHGETOPTVALBYNAME)(const char *optionName, uint32_t *pOptionValue);
 typedef BOOL (*DLAUNCHSETOPTVALBYNAME)(const char *optionName, uint32_t *pOptionValue);
 
-class DashLaunch
-{
-public:
-    static HRESULT Init();
+HRESULT Init();
 
-    // Get the value of optionName as a uint32_t, 1 for true, 0 for false, pointer to the first character for strings.
-    static DLAUNCHGETOPTVALBYNAME GetOptionValueByName;
+// Get the value of optionName as a uint32_t, 1 for true, 0 for false, pointer to the first character for strings.
+extern DLAUNCHGETOPTVALBYNAME GetOptionValueByName;
 
-    // Set the value of optionName as a uint32_t, 1 for true, 0 for false, pointer to the first character for strings.
-    static DLAUNCHSETOPTVALBYNAME SetOptionValueByName;
-};
+// Set the value of optionName as a uint32_t, 1 for true, 0 for false, pointer to the first character for strings.
+extern DLAUNCHSETOPTVALBYNAME SetOptionValueByName;
 
+}
 }

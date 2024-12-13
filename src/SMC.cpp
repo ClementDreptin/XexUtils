@@ -5,10 +5,12 @@
 
 namespace XexUtils
 {
+namespace SMC
+{
 
-uint8_t SMC::s_CommandBuffer[16] = {};
+static uint8_t s_CommandBuffer[16] = {};
 
-void SMC::SetPowerLED(PowerLEDMode mode, bool animate)
+void SetPowerLED(PowerLEDMode mode, bool animate)
 {
     ZeroMemory(s_CommandBuffer, sizeof(s_CommandBuffer));
 
@@ -19,7 +21,7 @@ void SMC::SetPowerLED(PowerLEDMode mode, bool animate)
     HalSendSMCMessage(s_CommandBuffer, nullptr);
 }
 
-void SMC::SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft, LEDColor bottomRight)
+void SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft, LEDColor bottomRight)
 {
     ZeroMemory(s_CommandBuffer, sizeof(s_CommandBuffer));
 
@@ -34,4 +36,5 @@ void SMC::SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft,
     HalSendSMCMessage(s_CommandBuffer, nullptr);
 }
 
+}
 }

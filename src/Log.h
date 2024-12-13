@@ -2,30 +2,24 @@
 
 namespace XexUtils
 {
-
-class Log
+namespace Log
 {
-public:
-    static void Info(const char *message, ...);
 
-    inline static void Info(const std::string &message) { Info(message.c_str()); }
+void Info(const char *message, ...);
 
-    static void Info(const wchar_t *message, ...);
+void Info(const std::string &message);
 
-    inline static void Info(const std::wstring &message) { Info(message.c_str()); }
+void Info(const wchar_t *message, ...);
 
-    static void Error(const char *message, ...);
+void Info(const std::wstring &message);
 
-    inline static void Error(const std::string &message) { Error(message.c_str()); }
+void Error(const char *message, ...);
 
-    static void Error(const wchar_t *message, ...);
+void Error(const std::string &message);
 
-    inline static void Error(const std::wstring &message) { Error(message.c_str()); }
+void Error(const wchar_t *message, ...);
 
-private:
-    static void Print(const char *format, const va_list args, std::ostream &outputStream);
+void Error(const std::wstring &message);
 
-    static void Print(const wchar_t *format, const va_list args, std::wostream &outputStream);
-};
-
+}
 }

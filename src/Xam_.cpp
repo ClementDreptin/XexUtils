@@ -7,18 +7,20 @@
 
 namespace XexUtils
 {
+namespace Xam
+{
 
 // Create a pointer to XNotifyQueueUI in xam.xex
 
 typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE type, uint32_t userIndex, uint64_t areas, const wchar_t *displayText, void *pContextData);
 static XNOTIFYQUEUEUI XNotifyQueueUI = static_cast<XNOTIFYQUEUEUI>(Memory::ResolveFunction("xam.xex", 656));
 
-void Xam::XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
+void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
 {
     XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, Formatter::ToWide(text).c_str(), nullptr);
 }
 
-uint32_t Xam::ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength, uint32_t keyboardType)
+uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength, uint32_t keyboardType)
 {
     // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
     size_t realMaxLength = maxLength + 1;
@@ -66,7 +68,7 @@ uint32_t Xam::ShowKeyboard(const wchar_t *title, const wchar_t *description, con
     return overlappedResult;
 }
 
-uint32_t Xam::ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex, uint32_t messageBoxType, uint32_t focusedButtonIndex)
+uint32_t ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex, uint32_t messageBoxType, uint32_t focusedButtonIndex)
 {
     MESSAGEBOX_RESULT messageBoxResult = {};
     XOVERLAPPED overlapped = {};
@@ -99,22 +101,22 @@ uint32_t Xam::ShowMessageBox(const wchar_t *title, const wchar_t *text, const wc
     return overlappedResult;
 }
 
-uint32_t Xam::GetCurrentTitleId()
+uint32_t GetCurrentTitleId()
 {
     return XamGetCurrentTitleId();
 }
 
-bool Xam::IsAddressValid(void *pAddress)
+bool IsAddressValid(void *pAddress)
 {
     return MmIsAddressValid(pAddress);
 }
 
-void Xam::Reboot()
+void Reboot()
 {
     HalReturnToFirmware(HalRebootRoutine);
 }
 
-HRESULT Xam::MountHdd()
+HRESULT MountHdd()
 {
     // Allow the game to access the entire hard drive.
     // The system only allows executables to access the directory they live in and binds it to
@@ -133,7 +135,7 @@ HRESULT Xam::MountHdd()
     return ObCreateSymbolicLink(&linkName, &deviceName);
 }
 
-bool Xam::IsDevkit()
+bool IsDevkit()
 {
     HMODULE rgLoaderModule = GetModuleHandle("RGLoader.xex");
     HMODULE xbdmModule = GetModuleHandle("xbdm.xex");
@@ -162,4 +164,5 @@ bool Xam::IsDevkit()
     return false;
 }
 
+}
 }

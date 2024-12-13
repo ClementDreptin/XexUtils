@@ -5,10 +5,59 @@
 
 namespace XexUtils
 {
+namespace Input
+{
 
-Input::Gamepad Input::s_Gamepad;
+static Gamepad s_Gamepad;
 
-Input::Gamepad *Input::GetInput()
+static uint16_t ButtonForVirtualKey(uint16_t virtualKey)
+{
+    switch (virtualKey)
+    {
+    case VK_PAD_A:
+        return XINPUT_GAMEPAD_A;
+    case VK_PAD_B:
+        return XINPUT_GAMEPAD_B;
+    case VK_PAD_X:
+        return XINPUT_GAMEPAD_X;
+    case VK_PAD_Y:
+        return XINPUT_GAMEPAD_Y;
+    case VK_PAD_RSHOULDER:
+        return XINPUT_GAMEPAD_RIGHT_SHOULDER;
+    case VK_PAD_LSHOULDER:
+        return XINPUT_GAMEPAD_LEFT_SHOULDER;
+    case VK_PAD_DPAD_UP:
+        return XINPUT_GAMEPAD_DPAD_UP;
+    case VK_PAD_DPAD_DOWN:
+        return XINPUT_GAMEPAD_DPAD_DOWN;
+    case VK_PAD_DPAD_LEFT:
+        return XINPUT_GAMEPAD_DPAD_LEFT;
+    case VK_PAD_DPAD_RIGHT:
+        return XINPUT_GAMEPAD_DPAD_RIGHT;
+    case VK_PAD_START:
+        return XINPUT_GAMEPAD_START;
+    case VK_PAD_BACK:
+        return XINPUT_GAMEPAD_BACK;
+    case VK_PAD_LTHUMB_PRESS:
+        return XINPUT_GAMEPAD_LEFT_THUMB;
+    case VK_PAD_RTHUMB_PRESS:
+        return XINPUT_GAMEPAD_RIGHT_THUMB;
+    default:
+        return 0;
+    }
+}
+
+static float ConvertThumbstickValue(int16_t thumbstickValue, int16_t deadZone)
+{
+    if (thumbstickValue > +deadZone)
+        return (thumbstickValue - deadZone) / (32767.0f - deadZone);
+    if (thumbstickValue < -deadZone)
+        return (thumbstickValue + deadZone + 1.0f) / (32767.0f - deadZone);
+
+    return 0.0f;
+}
+
+Gamepad *GetInput()
 {
     // Get the gamepad state
     XINPUT_STATE state = {};
@@ -68,51 +117,5 @@ Input::Gamepad *Input::GetInput()
     return &s_Gamepad;
 }
 
-uint16_t Input::ButtonForVirtualKey(uint16_t virtualKey)
-{
-    switch (virtualKey)
-    {
-    case VK_PAD_A:
-        return XINPUT_GAMEPAD_A;
-    case VK_PAD_B:
-        return XINPUT_GAMEPAD_B;
-    case VK_PAD_X:
-        return XINPUT_GAMEPAD_X;
-    case VK_PAD_Y:
-        return XINPUT_GAMEPAD_Y;
-    case VK_PAD_RSHOULDER:
-        return XINPUT_GAMEPAD_RIGHT_SHOULDER;
-    case VK_PAD_LSHOULDER:
-        return XINPUT_GAMEPAD_LEFT_SHOULDER;
-    case VK_PAD_DPAD_UP:
-        return XINPUT_GAMEPAD_DPAD_UP;
-    case VK_PAD_DPAD_DOWN:
-        return XINPUT_GAMEPAD_DPAD_DOWN;
-    case VK_PAD_DPAD_LEFT:
-        return XINPUT_GAMEPAD_DPAD_LEFT;
-    case VK_PAD_DPAD_RIGHT:
-        return XINPUT_GAMEPAD_DPAD_RIGHT;
-    case VK_PAD_START:
-        return XINPUT_GAMEPAD_START;
-    case VK_PAD_BACK:
-        return XINPUT_GAMEPAD_BACK;
-    case VK_PAD_LTHUMB_PRESS:
-        return XINPUT_GAMEPAD_LEFT_THUMB;
-    case VK_PAD_RTHUMB_PRESS:
-        return XINPUT_GAMEPAD_RIGHT_THUMB;
-    default:
-        return 0;
-    }
 }
-
-float Input::ConvertThumbstickValue(int16_t thumbstickValue, int16_t deadZone)
-{
-    if (thumbstickValue > +deadZone)
-        return (thumbstickValue - deadZone) / (32767.0f - deadZone);
-    if (thumbstickValue < -deadZone)
-        return (thumbstickValue + deadZone + 1.0f) / (32767.0f - deadZone);
-
-    return 0.0f;
-}
-
 }

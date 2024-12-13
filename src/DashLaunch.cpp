@@ -7,17 +7,19 @@
 
 namespace XexUtils
 {
+namespace DashLaunch
+{
 
-enum
+typedef enum _DL_ORDINALS
 {
     DL_ORDINALS_GETOPTVALBYNAME = 9,
     DL_ORDINALS_SETOPTVALBYNAME = 10,
-};
+} DL_ORDINALS;
 
-DLAUNCHGETOPTVALBYNAME DashLaunch::GetOptionValueByName = nullptr;
-DLAUNCHSETOPTVALBYNAME DashLaunch::SetOptionValueByName = nullptr;
+DLAUNCHGETOPTVALBYNAME GetOptionValueByName = nullptr;
+DLAUNCHSETOPTVALBYNAME SetOptionValueByName = nullptr;
 
-HRESULT DashLaunch::Init()
+HRESULT Init()
 {
     GetOptionValueByName = static_cast<DLAUNCHGETOPTVALBYNAME>(Memory::ResolveFunction(LAUNCH_MODULE, DL_ORDINALS_GETOPTVALBYNAME));
     if (GetOptionValueByName == nullptr)
@@ -30,4 +32,5 @@ HRESULT DashLaunch::Init()
     return S_OK;
 }
 
+}
 }

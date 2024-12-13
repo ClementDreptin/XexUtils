@@ -3,8 +3,30 @@
 
 namespace XexUtils
 {
+namespace Log
+{
 
-void Log::Info(const char *message, ...)
+static void Print(const char *format, const va_list args, std::ostream &outputStream)
+{
+    // Build the string with the format
+    char buffer[2048] = {};
+    vsnprintf_s(buffer, _TRUNCATE, format, args);
+
+    // Print
+    outputStream << buffer << '\n';
+}
+
+static void Print(const wchar_t *format, const va_list args, std::wostream &outputStream)
+{
+    // Build the string with the format
+    wchar_t buffer[2048] = {};
+    _vsnwprintf_s(buffer, _TRUNCATE, format, args);
+
+    // Print
+    outputStream << buffer << '\n';
+}
+
+void Info(const char *message, ...)
 {
     // Get the variadic arguments
     va_list args;
@@ -19,7 +41,12 @@ void Log::Info(const char *message, ...)
     va_end(args);
 }
 
-void Log::Info(const wchar_t *message, ...)
+inline void Info(const std::string &message)
+{
+    Info(message.c_str());
+}
+
+void Info(const wchar_t *message, ...)
 {
     // Get the variadic arguments
     va_list args;
@@ -34,7 +61,12 @@ void Log::Info(const wchar_t *message, ...)
     va_end(args);
 }
 
-void Log::Error(const char *message, ...)
+inline void Info(const std::wstring &message)
+{
+    Info(message.c_str());
+}
+
+void Error(const char *message, ...)
 {
     // Get the variadic arguments
     va_list args;
@@ -49,7 +81,12 @@ void Log::Error(const char *message, ...)
     va_end(args);
 }
 
-void Log::Error(const wchar_t *message, ...)
+inline void Error(const std::string &message)
+{
+    Error(message.c_str());
+}
+
+void Error(const wchar_t *message, ...)
 {
     // Get the variadic arguments
     va_list args;
@@ -64,24 +101,10 @@ void Log::Error(const wchar_t *message, ...)
     va_end(args);
 }
 
-void Log::Print(const char *format, const va_list args, std::ostream &outputStream)
+inline void Error(const std::wstring &message)
 {
-    // Build the string with the format
-    char buffer[2048] = {};
-    vsnprintf_s(buffer, _TRUNCATE, format, args);
-
-    // Print
-    outputStream << buffer << '\n';
+    Error(message.c_str());
 }
 
-void Log::Print(const wchar_t *format, const va_list args, std::wostream &outputStream)
-{
-    // Build the string with the format
-    wchar_t buffer[2048] = {};
-    _vsnwprintf_s(buffer, _TRUNCATE, format, args);
-
-    // Print
-    outputStream << buffer << '\n';
 }
-
 }

@@ -2,6 +2,8 @@
 
 namespace XexUtils
 {
+namespace SMC
+{
 
 typedef enum _LEDColor
 {
@@ -19,15 +21,9 @@ typedef enum _PowerLEDMode
     PowerLED_Blink = 0x10,
 } PowerLEDMode;
 
-class SMC
-{
-public:
-    static void SetPowerLED(PowerLEDMode mode, bool animate);
+void SetPowerLED(PowerLEDMode mode, bool animate);
 
-    static void SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft, LEDColor bottomRight);
+void SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft, LEDColor bottomRight);
 
-private:
-    static uint8_t s_CommandBuffer[16];
-};
-
+}
 }
