@@ -41,7 +41,7 @@ void Info(const char *message, ...)
     va_end(args);
 }
 
-inline void Info(const std::string &message)
+void Info(const std::string &message)
 {
     Info(message.c_str());
 }
@@ -61,7 +61,7 @@ void Info(const wchar_t *message, ...)
     va_end(args);
 }
 
-inline void Info(const std::wstring &message)
+void Info(const std::wstring &message)
 {
     Info(message.c_str());
 }
@@ -81,7 +81,7 @@ void Error(const char *message, ...)
     va_end(args);
 }
 
-inline void Error(const std::string &message)
+void Error(const std::string &message)
 {
     Error(message.c_str());
 }
@@ -101,7 +101,7 @@ void Error(const wchar_t *message, ...)
     va_end(args);
 }
 
-inline void Error(const std::wstring &message)
+void Error(const std::wstring &message)
 {
     Error(message.c_str());
 }
