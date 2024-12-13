@@ -21,7 +21,7 @@ static uint64_t VirtualAddressToPhysicalAddress(const void *pAddress)
 static uint64_t __declspec(naked) HvxGetVersions(uint32_t key, uint64_t type, uint64_t sourceAddress, uint64_t destinationAddress, uint64_t length)
 {
     // Execute syscall number 0
-    // syscalls table: https://www.xenonwiki.com/System_Calls
+    // syscalls table: https://github.com/exjam/xbox360-emu/blob/master/docs/kernel/ordinals/syscall.ord
     __asm
     {
         li r0, 0x0
