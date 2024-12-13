@@ -10,6 +10,11 @@ namespace Input
 
 static Gamepad s_Gamepad;
 
+Gamepad::Gamepad()
+    : LastButtons(0), LastLeftTrigger(false), LastRightTrigger(false), PressedButtons(0), PressedLeftTrigger(false), PressedRightTrigger(false)
+{
+}
+
 static uint16_t ButtonForVirtualKey(uint16_t virtualKey)
 {
     switch (virtualKey)

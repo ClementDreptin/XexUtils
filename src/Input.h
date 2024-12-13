@@ -7,9 +7,7 @@ namespace Input
 
 struct Gamepad : public XINPUT_GAMEPAD
 {
-    Gamepad()
-        : LastButtons(0), LastLeftTrigger(false), LastRightTrigger(false),
-          PressedButtons(0), PressedLeftTrigger(false), PressedRightTrigger(false) {}
+    Gamepad();
 
     // Records the state (when last updated) of the buttons.
     // These remain set as long as the button is pressed.
