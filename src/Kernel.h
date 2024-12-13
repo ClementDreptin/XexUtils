@@ -16,7 +16,7 @@ struct UNICODE_STRING
     wchar_t *Buffer;
 };
 
-typedef enum
+typedef enum _FIRMWARE_REENTRY
 {
     HalHaltRoutine,
     HalRebootRoutine,
@@ -30,7 +30,7 @@ typedef enum
     HalMaximumRoutine,
 } FIRMWARE_REENTRY;
 
-typedef enum
+typedef enum _XNCALLER_TYPE
 {
     XNCALLER_INVALID = 0,
     XNCALLER_TITLE = 1,
@@ -93,7 +93,7 @@ struct XEX_IMPORT_DESCRIPTOR
     uint32_t ModuleCount;
 };
 
-typedef enum
+typedef enum _EXCREATETHREAD_FLAG
 {
     EXCREATETHREAD_SUSPENDED = 1 << 0,
     EXCREATETHREAD_SYSTEM = 1 << 1,
