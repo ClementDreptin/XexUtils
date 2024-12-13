@@ -1,9 +1,14 @@
 #pragma once
 
+// Xbox headers
 #include <xtl.h>
-#include <string>
-#include <math.h>
-#include <iostream>
+
+// C++ standard library
+#include <cmath>
 #include <cstdint>
-#include "Xam_.h"
+#include <iostream>
+#include <string>
+
+// Functions used in a lot of places
 #include "Log.h"
+#include "Xam_.h"

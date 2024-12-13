@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Xam_.h"
 
-#include "Memory.h"
 #include "Formatter.h"
 #include "Kernel.h"
+#include "Memory.h"
 
 namespace XexUtils
 {
