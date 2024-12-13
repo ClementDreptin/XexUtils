@@ -40,3 +40,19 @@ void Update()
 Code inside the `if` block will execute only the first frame where DPAD RIGHT is pressed, and not every frame.
 
 **NOTE**: `Input::Gamepad::PressedButtons` is set again when repeat events are reported by `XInputGetKeystroke`. This means that holding a button will be detected as a normal button press for approximately one second, then button repeats for as long as the button is held.
+
+You can also get the gamepad state of any controller by passing the user index as an argument:
+
+```C++
+// Imagine this function is called every frame
+void Update()
+{
+    // Get the gamepad state of the second controller
+    Input::Gamepad *pGamepad = Input::GetInput(1);
+
+    if (pGamepad->PressedButtons & XINPUT_GAMEPAD_DPAD_RIGHT)
+    {
+        // Do something when DPAD RIGHT is pressed
+    }
+}
+```

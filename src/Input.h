@@ -28,7 +28,7 @@ struct Gamepad : public XINPUT_GAMEPAD
     float ThumbRightY;
 };
 
-Gamepad *GetInput();
+Gamepad *GetInput(uint32_t userIndex = 0);
 
 }
 }
