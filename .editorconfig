@@ -8,5 +8,8 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
-[*.vcxproj]
+[*.{vcxproj,yml}]
 indent_size = 2
+
+[*.sln]
+indent_style = tab
