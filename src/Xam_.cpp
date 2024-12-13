@@ -137,31 +137,8 @@ HRESULT MountHdd()
 
 bool IsDevkit()
 {
-    HMODULE rgLoaderModule = GetModuleHandle("RGLoader.xex");
-    HMODULE xbdmModule = GetModuleHandle("xbdm.xex");
-
-    // A console is considered a devkit if has RGLoader
-    if (rgLoaderModule != NULL)
-        return true;
-
-    LDR_DATA_TABLE_ENTRY *pXbdmDataTable = reinterpret_cast<LDR_DATA_TABLE_ENTRY *>(xbdmModule);
-    std::string xbdmFullPath = Formatter::ToNarrow(pXbdmDataTable->FullDllName.Buffer);
-
-    char xbdmDir[MAX_PATH] = {};
-    _splitpath_s(
-        xbdmFullPath.c_str(),
-        nullptr, 0,
-        xbdmDir, sizeof(xbdmDir),
-        nullptr, 0,
-        nullptr, 0
-    );
-
-    // A console is considered a devkit if it has an XBDM module in flash memory
-    char flashDir[] = "\\Device\\Flash";
-    if (!strncmp(xbdmDir, flashDir, sizeof(xbdmDir)))
-        return true;
-
-    return false;
+    // Read a 32-bit unsigned int at 0x8E038610 and if the 16th is NOT set, the console is a devkit
+    return !(Memory::Read<uint32_t>(0x8E038610) & (1 << 15));
 }
 
 }
