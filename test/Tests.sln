@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests.vcxproj", "{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AtgFramework", "deps\AtgFramework\AtgFramework.vcxproj", "{91D208A6-9936-47FD-9659-67205C3EB0AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Xbox 360 = Debug|Xbox 360
@@ -17,6 +19,12 @@ Global
 		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
+		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
+		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
