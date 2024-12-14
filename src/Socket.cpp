@@ -58,7 +58,7 @@ HRESULT Socket::Connect()
     // Set up the address info of the server
     addrInfo.sin_family = AF_INET;
     addrInfo.sin_port = htons(m_Port);
-    addrInfo.sin_addr.s_addr = NetDll_inet_addr(m_IpAddress.c_str());
+    addrInfo.sin_addr.s_addr = inet_addr(m_IpAddress.c_str());
 
     if (addrInfo.sin_addr.s_addr == INADDR_NONE)
         return E_FAIL;
