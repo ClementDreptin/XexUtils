@@ -15,6 +15,9 @@
     <Keyword>Xbox360Proj</Keyword>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\XexUtils.vcxproj">
+      <Project>{c598d106-4f6d-4505-95de-aa896a0ac7fa}</Project>
+    </ProjectReference>
     <ProjectReference Include="deps\AtgFramework\AtgFramework.vcxproj">
       <Project>{91d208a6-9936-47fd-9659-67205c3eb0ab}</Project>
     </ProjectReference>
@@ -39,7 +42,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(XEDK)\Source\Samples\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\include;$(XEDK)\Source\Samples\Common</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

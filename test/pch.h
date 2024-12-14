@@ -6,6 +6,9 @@
 // C++ standard library
 #include <iostream>
 
+// XexUtils
+#include <XexUtils.h>
+
 // AtgFramework
 #include <AtgConsole.h>
 #include <AtgDevice.h>
