@@ -13,8 +13,10 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
 		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
 		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{65E97963-AD56-4F22-BCA0-7F3A10DEEB35}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
