@@ -76,9 +76,11 @@
     </Deploy>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="specs.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="specs.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
