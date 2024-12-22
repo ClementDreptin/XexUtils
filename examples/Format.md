@@ -14,7 +14,7 @@ Format a wide string in a `wprintf` style:
 ```C++
 void Init()
 {
-    std::wstring formattedWideString = XexUtils::Formatter::WideFormat(L"My favorite number is %i", 3);
+    std::wstring formattedWideString = XexUtils::Formatter::Format(L"My favorite number is %i", 3);
 }
 ```
 

@@ -16,10 +16,10 @@ static void Formatter()
         TEST_EQ(result, "hello world 3");
     });
 
-    Describe("Formatter::WideFormat");
+    Describe("Formatter::Format (wide)");
 
     It("creates and std::wstring from the wide format", []() {
-        std::wstring result = Formatter::WideFormat(L"hello %s %d", L"world", 3);
+        std::wstring result = Formatter::Format(L"hello %s %d", L"world", 3);
 
         TEST_EQ(Formatter::ToNarrow(result), "hello world 3");
     });

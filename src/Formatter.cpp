@@ -22,7 +22,7 @@ std::string Format(const char *format, ...)
     return std::string(buffer);
 }
 
-std::wstring WideFormat(const wchar_t *format, ...)
+std::wstring Format(const wchar_t *format, ...)
 {
     // Get the variadic arguments
     va_list args;
