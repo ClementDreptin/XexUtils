@@ -21,10 +21,9 @@ float vec2::magnitude() const
     return sqrtf(x * x + y * y);
 }
 
-void vec2::normalize()
+vec2 vec2::normalize() const
 {
-    float mag = magnitude();
-    divide(mag);
+    return *this / magnitude();
 }
 
 void vec2::add(const vec2 &other)
@@ -66,12 +65,6 @@ void vec2::divide(const float &divider)
 bool vec2::isNull() const
 {
     return x == 0.0f && y == 0.0f;
-}
-
-void vec2::operator-()
-{
-    x = -x;
-    y = -y;
 }
 
 bool vec2::operator==(const vec2 &other) const
@@ -132,6 +125,11 @@ vec2 vec2::operator/(const vec2 &other) const
 vec2 vec2::operator/(const float &divider) const
 {
     return vec2(x / divider, y / divider);
+}
+
+vec2 vec2::operator-() const
+{
+    return vec2(-x, -y);
 }
 
 }

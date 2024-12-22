@@ -35,6 +35,12 @@ inline void Write(uintptr_t address, const T &data)
 template<typename T>
 inline T Read(void *pSource)
 {
+    if (pSource == nullptr || !Xam::IsAddressValid(pSource))
+    {
+        Log::Error("Invalid address: %p", pSource);
+        return T();
+    }
+
     return *static_cast<T *>(pSource);
 }
 

@@ -12,7 +12,7 @@ vec4::vec4()
 }
 
 vec4::vec4(float x, float y, float z, float w)
-    : x(x), y(y), z(z), w(0.0f)
+    : x(x), y(y), z(z), w(w)
 {
 }
 
@@ -21,10 +21,9 @@ float vec4::magnitude() const
     return sqrtf(x * x + y * y + z * z + w * w);
 }
 
-void vec4::normalize()
+vec4 vec4::normalize() const
 {
-    float mag = magnitude();
-    divide(mag);
+    return *this / magnitude();
 }
 
 void vec4::add(const vec4 &other)
@@ -78,14 +77,6 @@ void vec4::divide(const float &divider)
 bool vec4::isNull() const
 {
     return x == 0.0f && y == 0.0f && z == 0.0f && w == 0.0f;
-}
-
-void vec4::operator-()
-{
-    x = -x;
-    y = -y;
-    z = -z;
-    w = -w;
 }
 
 bool vec4::operator==(const vec4 &other) const
@@ -146,6 +137,11 @@ vec4 vec4::operator/(const vec4 &other) const
 vec4 vec4::operator/(const float &divider) const
 {
     return vec4(x / divider, y / divider, z / divider, w / divider);
+}
+
+vec4 vec4::operator-() const
+{
+    return vec4(-x, -y, -z, -w);
 }
 
 }

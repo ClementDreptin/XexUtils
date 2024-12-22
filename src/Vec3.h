@@ -33,7 +33,7 @@ struct vec3
 #pragma warning(pop)
 
     float magnitude() const;
-    void normalize();
+    vec3 normalize() const;
 
     void add(const vec3 &other);
     void substract(const vec3 &other);
@@ -43,8 +43,6 @@ struct vec3
     void divide(const float &divider);
 
     bool isNull() const;
-
-    void operator-();
 
     bool operator==(const vec3 &other) const;
     bool operator!=(const vec3 &other) const;
@@ -59,6 +57,7 @@ struct vec3
     vec3 operator*(const float &multiplier) const;
     vec3 operator/(const vec3 &other) const;
     vec3 operator/(const float &divider) const;
+    vec3 operator-() const;
 };
 
 }

@@ -21,10 +21,9 @@ float vec3::magnitude() const
     return sqrtf(x * x + y * y + z * z);
 }
 
-void vec3::normalize()
+vec3 vec3::normalize() const
 {
-    float mag = magnitude();
-    divide(mag);
+    return *this / magnitude();
 }
 
 void vec3::add(const vec3 &other)
@@ -72,13 +71,6 @@ void vec3::divide(const float &divider)
 bool vec3::isNull() const
 {
     return x == 0.0f && y == 0.0f && z == 0.0f;
-}
-
-void vec3::operator-()
-{
-    x = -x;
-    y = -y;
-    z = -z;
 }
 
 bool vec3::operator==(const vec3 &other) const
@@ -139,6 +131,11 @@ vec3 vec3::operator/(const vec3 &other) const
 vec3 vec3::operator/(const float &divider) const
 {
     return vec3(x / divider, y / divider, z / divider);
+}
+
+vec3 vec3::operator-() const
+{
+    return vec3(-x, -y, -z);
 }
 
 }

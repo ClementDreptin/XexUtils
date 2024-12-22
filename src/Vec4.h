@@ -35,7 +35,7 @@ struct vec4
 #pragma warning(pop)
 
     float magnitude() const;
-    void normalize();
+    vec4 normalize() const;
 
     void add(const vec4 &other);
     void substract(const vec4 &other);
@@ -45,8 +45,6 @@ struct vec4
     void divide(const float &divider);
 
     bool isNull() const;
-
-    void operator-();
 
     bool operator==(const vec4 &other) const;
     bool operator!=(const vec4 &other) const;
@@ -61,6 +59,7 @@ struct vec4
     vec4 operator*(const float &multiplier) const;
     vec4 operator/(const vec4 &other) const;
     vec4 operator/(const float &divider) const;
+    vec4 operator-() const;
 };
 
 }
