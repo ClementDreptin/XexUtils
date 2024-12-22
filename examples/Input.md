@@ -28,7 +28,7 @@ When using the `Input` class like this:
 void Update()
 {
     // Get the gamepad state
-    Input::Gamepad *pGamepad = Input::GetInput();
+    XexUtils::Input::Gamepad *pGamepad = XexUtils::Input::GetInput();
 
     if (pGamepad->PressedButtons & XINPUT_GAMEPAD_DPAD_RIGHT)
     {
@@ -39,7 +39,7 @@ void Update()
 
 Code inside the `if` block will execute only the first frame where DPAD RIGHT is pressed, and not every frame.
 
-**NOTE**: `Input::Gamepad::PressedButtons` is set again when repeat events are reported by `XInputGetKeystroke`. This means that holding a button will be detected as a normal button press for approximately one second, then button repeats for as long as the button is held.
+**NOTE**: `XexUtils::Input::Gamepad::PressedButtons` is set again when repeat events are reported by `XInputGetKeystroke`. This means that holding a button will be detected as a normal button press for approximately one second, then button repeats for as long as the button is held.
 
 You can also get the gamepad state of any controller by passing the user index as an argument:
 
@@ -48,7 +48,7 @@ You can also get the gamepad state of any controller by passing the user index a
 void Update()
 {
     // Get the gamepad state of the second controller
-    Input::Gamepad *pGamepad = Input::GetInput(1);
+    XexUtils::Input::Gamepad *pGamepad = XexUtils::Input::GetInput(1);
 
     if (pGamepad->PressedButtons & XINPUT_GAMEPAD_DPAD_RIGHT)
     {

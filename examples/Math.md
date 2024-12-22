@@ -17,7 +17,7 @@ Convert an angle from degrees to radians:
 ```C++
 void Init()
 {
-    float degrees = 30;
+    float degrees = 30.0f;
     float radians = XexUtils::Math::Radians(degrees); // 0.523599
 }
 ```
@@ -29,7 +29,7 @@ void Init()
 {
     XexUtils::Math::vec3 myCurrentPosition = GetCurrentPosition();
     XexUtils::Math::vec3 myCurrentOrientation = GetCurrentOrientation();
-    XexUtils::Math::vec3 TenUnitsInFrontOfMe = XexUtils::Math::ProjectForward(myCurrentPosition, myCurrentOrientation.y, 10);
+    XexUtils::Math::vec3 TenUnitsInFrontOfMe = XexUtils::Math::ProjectForward(myCurrentPosition, myCurrentOrientation.y, 10.0f);
 }
 ```
 
@@ -38,9 +38,9 @@ Round to the next multiple of a number:
 ```C++
 void Init()
 {
-    RoundToNextMultipleOf<3>(4); // => 6
-    RoundToNextMultipleOf<5>(2); // => 5
+    XexUtils::Math::RoundToNextMultipleOf<3>(4); // => 6
+    XexUtils::Math::RoundToNextMultipleOf<5>(2); // => 5
 
-    RountToNextMultipleOf<4>(4); // => 8 (keep in mind it rounds to the NEXT multiple)
+    XexUtils::Math::RoundToNextMultipleOf<4>(4); // => 8 (keep in mind it rounds to the NEXT multiple)
 }
 ```
