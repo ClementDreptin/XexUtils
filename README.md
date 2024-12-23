@@ -8,6 +8,7 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
 
 -   Download the latest binary and header files from the [releases](https://github.com/ClementDreptin/XexUtils/releases).
 -   Add `\path\to\XexUtils\lib` to `Configuration Properties > Linker > General > Additional Libary Directories`.
+-   Add `XexUtils.lib` (or `XexUtilsd.lib` for the debug version) to `Configuration Properties > Linker > Input > Additional Dependencies`.
 -   Add `\path\to\XexUtils\include` to `Configuration Properties > C/C++ > General > Additional Include Directories`.
 
 ### Compiling from source
