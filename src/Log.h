@@ -5,21 +5,19 @@ namespace XexUtils
 namespace Log
 {
 
-void Info(const char *message, ...);
+void Print(const char *format, ...);
 
-void Info(const std::string &message);
+void Print(const std::string &message);
 
-void Info(const wchar_t *message, ...);
+void Print(const wchar_t *format, ...);
 
-void Info(const std::wstring &message);
-
-void Error(const char *message, ...);
-
-void Error(const std::string &message);
-
-void Error(const wchar_t *message, ...);
-
-void Error(const std::wstring &message);
+void Print(const std::wstring &message);
 
 }
 }
+
+#ifndef NDEBUG
+    #define DebugPrint(format, ...) XexUtils::Log::Print(format, __VA_ARGS__)
+#else
+    #define DebugPrint(format, ...)
+#endif

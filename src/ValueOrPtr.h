@@ -11,7 +11,10 @@ public:
         : m_Value(value), m_Ptr(nullptr), m_IsPtr(false) {}
 
     ValueOrPtr(T *ptr)
-        : m_Value(T()), m_Ptr(ptr), m_IsPtr(true) {}
+        : m_Value(T()), m_Ptr(ptr), m_IsPtr(true)
+    {
+        XASSERT(m_Ptr != nullptr);
+    }
 
     inline const T &operator*() const { return m_IsPtr ? *m_Ptr : m_Value; }
 

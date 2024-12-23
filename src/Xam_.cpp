@@ -22,6 +22,10 @@ void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
 
 uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength, uint32_t keyboardType)
 {
+    XASSERT(title != nullptr);
+    XASSERT(description != nullptr);
+    XASSERT(defaultText != nullptr);
+
     // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
     size_t realMaxLength = maxLength + 1;
     XOVERLAPPED overlapped = {};
@@ -70,6 +74,11 @@ uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wc
 
 uint32_t ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex, uint32_t messageBoxType, uint32_t focusedButtonIndex)
 {
+    XASSERT(title != nullptr);
+    XASSERT(text != nullptr);
+    XASSERT(buttonLabels != nullptr);
+    XASSERT(buttonLabels[0] != nullptr);
+
     MESSAGEBOX_RESULT messageBoxResult = {};
     XOVERLAPPED overlapped = {};
 
@@ -106,9 +115,9 @@ uint32_t GetCurrentTitleId()
     return XamGetCurrentTitleId();
 }
 
-bool IsAddressValid(void *pAddress)
+bool IsAddressValid(const void *pAddress)
 {
-    return MmIsAddressValid(pAddress);
+    return MmIsAddressValid(const_cast<void *>(pAddress));
 }
 
 void Reboot()

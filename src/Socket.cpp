@@ -109,8 +109,7 @@ void Socket::Disconnect()
 
 int Socket::Send(const char *buffer, size_t size)
 {
-    if (!m_Connected)
-        return -1;
+    XASSERT(m_Connected == true);
 
     // Send the bytes from buffer in the socket
     return send(m_Socket, buffer, size, 0);
@@ -118,8 +117,7 @@ int Socket::Send(const char *buffer, size_t size)
 
 int Socket::Receive(char *buffer, size_t maxSize)
 {
-    if (!m_Connected)
-        return -1;
+    XASSERT(m_Connected == true);
 
     // Receive at most maxSize bytes in buffer.
     return recv(m_Socket, buffer, maxSize, 0);
@@ -127,6 +125,8 @@ int Socket::Receive(char *buffer, size_t maxSize)
 
 void Socket::InitInternal(const std::string &ipAddress, uint16_t port)
 {
+    XASSERT(port != 0);
+
     // Initialize the members
     m_Socket = INVALID_SOCKET;
     m_IpAddress = ipAddress;
@@ -150,12 +150,20 @@ HRESULT Socket::Init()
     xNetStartupParams.cfgFlags = XNET_STARTUP_BYPASS_SECURITY;
 
     // Initialize XNet
-    if (XNetStartup(&xNetStartupParams) != 0)
+    int err = XNetStartup(&xNetStartupParams);
+    if (err != 0)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: XNetStartup failed with code %d", err);
         return E_FAIL;
+    }
 
     // Initialize Winsock
-    if (WSAStartup(&wsaData) != 0)
+    err = WSAStartup(&wsaData);
+    if (err != 0)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: WSAStartup failed with code %d", err);
         return E_FAIL;
+    }
 
     s_Initialized = true;
 

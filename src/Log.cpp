@@ -6,104 +6,44 @@ namespace XexUtils
 namespace Log
 {
 
-static void Print(const char *format, const va_list args, std::ostream &outputStream)
+void Print(const char *format, ...)
 {
-    // Build the string with the format
+    XASSERT(format != nullptr);
+
+    va_list args;
+    va_start(args, format);
+
     char buffer[2048] = {};
     vsnprintf_s(buffer, _TRUNCATE, format, args);
 
-    // Print
-    outputStream << buffer << '\n';
+    std::cout << buffer << '\n';
+
+    va_end(args);
 }
 
-static void Print(const wchar_t *format, const va_list args, std::wostream &outputStream)
+void Print(const std::string &message)
 {
-    // Build the string with the format
+    Print(message.c_str());
+}
+
+void Print(const wchar_t *format, ...)
+{
+    XASSERT(format != nullptr);
+
+    va_list args;
+    va_start(args, format);
+
     wchar_t buffer[2048] = {};
     _vsnwprintf_s(buffer, _TRUNCATE, format, args);
 
-    // Print
-    outputStream << buffer << '\n';
-}
+    std::wcout << buffer << '\n';
 
-void Info(const char *message, ...)
-{
-    // Get the variadic arguments
-    va_list args;
-    va_start(args, message);
-
-    // Print
-    std::string fullMessage = "Info: ";
-    fullMessage += message;
-    Print(fullMessage.c_str(), args, std::cout);
-
-    // Free the variadic arguments
     va_end(args);
 }
 
-void Info(const std::string &message)
+void Print(const std::wstring &message)
 {
-    Info(message.c_str());
-}
-
-void Info(const wchar_t *message, ...)
-{
-    // Get the variadic arguments
-    va_list args;
-    va_start(args, message);
-
-    // Print
-    std::wstring fullMessage = L"Info: ";
-    fullMessage += message;
-    Print(fullMessage.c_str(), args, std::wcout);
-
-    // Free the variadic arguments
-    va_end(args);
-}
-
-void Info(const std::wstring &message)
-{
-    Info(message.c_str());
-}
-
-void Error(const char *message, ...)
-{
-    // Get the variadic arguments
-    va_list args;
-    va_start(args, message);
-
-    // Print
-    std::string fullMessage = "Error: ";
-    fullMessage += message;
-    Print(fullMessage.c_str(), args, std::cerr);
-
-    // Free the variadic arguments
-    va_end(args);
-}
-
-void Error(const std::string &message)
-{
-    Error(message.c_str());
-}
-
-void Error(const wchar_t *message, ...)
-{
-    // Get the variadic arguments
-    va_list args;
-    va_start(args, message);
-
-    // Print
-    std::wstring fullMessage = L"Error: ";
-    fullMessage += message;
-    Print(fullMessage.c_str(), args, std::wcerr);
-
-    // Free the variadic arguments
-    va_end(args);
-}
-
-void Error(const std::wstring &message)
-{
-    Error(message.c_str());
+    Print(message.c_str());
 }
 
 }

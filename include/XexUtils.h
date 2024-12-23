@@ -10,6 +10,7 @@
 #include <string>
 
 // XexUtils
+#include "../src/Assert.h"
 #include "../src/DashLaunch.h"
 #include "../src/Detour.h"
 #include "../src/Formatter.h"

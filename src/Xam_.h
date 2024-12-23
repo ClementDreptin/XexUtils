@@ -91,7 +91,7 @@ uint32_t ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t
 
 uint32_t GetCurrentTitleId();
 
-bool IsAddressValid(void *pAddress);
+bool IsAddressValid(const void *pAddress);
 
 void Reboot();
 

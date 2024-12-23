@@ -19,7 +19,7 @@ void Write(void *pDestination, const T &data)
 {
     if (pDestination == nullptr || !Xam::IsAddressValid(pDestination))
     {
-        Log::Error("Invalid address: %p", pDestination);
+        DebugPrint("Invalid address: %p", pDestination);
         return;
     }
 
@@ -37,7 +37,7 @@ inline T Read(void *pSource)
 {
     if (pSource == nullptr || !Xam::IsAddressValid(pSource))
     {
-        Log::Error("Invalid address: %p", pSource);
+        DebugPrint("Invalid address: %p", pSource);
         return T();
     }
 

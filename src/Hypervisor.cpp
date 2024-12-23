@@ -13,6 +13,8 @@ namespace Hypervisor
 
 static uint64_t VirtualAddressToPhysicalAddress(const void *pAddress)
 {
+    XASSERT(pAddress != nullptr);
+
     return 0x8000000000000000 + reinterpret_cast<uint64_t>(MmGetPhysicalAddress(const_cast<void *>(pAddress)));
 }
 
@@ -36,12 +38,18 @@ static uint64_t __declspec(naked) HvxGetVersions(uint32_t key, uint64_t type, ui
 // Note: memory at pDestination HAS to be allocated with XPhysicalAlloc and not just malloc
 void Peek(uint64_t address, void *pDestination, size_t length)
 {
+    XASSERT(address != 0);
+    XASSERT(pDestination != nullptr);
+
     uint64_t destination = VirtualAddressToPhysicalAddress(pDestination);
     HvxGetVersions(MAGIC, TYPE, address, destination, length);
 }
 
 void Poke(uint64_t address, const void *pSource, size_t length)
 {
+    XASSERT(address != 0);
+    XASSERT(pSource != nullptr);
+
     uint64_t source = VirtualAddressToPhysicalAddress(pSource);
     HvxGetVersions(MAGIC, TYPE, source, address, length);
 }

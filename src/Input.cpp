@@ -68,8 +68,7 @@ Gamepad *GetInput(uint32_t userIndex)
     XINPUT_STATE state = {};
     uint32_t result = XInputGetState(userIndex, &state);
 
-    if (userIndex > XUSER_MAX_COUNT)
-        userIndex = 0;
+    XASSERT(userIndex < XUSER_MAX_COUNT);
 
     Gamepad &gamepad = s_Gamepads[userIndex];
 

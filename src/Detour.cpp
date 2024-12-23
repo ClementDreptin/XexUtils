@@ -16,21 +16,29 @@ CRITICAL_SECTION Detour::s_CriticalSection = {};
 Detour::Detour(void *pSource, const void *pDestination)
     : m_pSource(pSource), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
+    XASSERT(m_pSource != nullptr);
+    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::Detour(uintptr_t sourceAddress, const void *pDestination)
     : m_pSource(reinterpret_cast<void *>(sourceAddress)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
+    XASSERT(m_pSource != nullptr);
+    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::Detour(const std::string &moduleName, uint32_t ordinal, const void *pDestination)
     : m_pSource(Memory::ResolveFunction(moduleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
+    XASSERT(m_pSource != nullptr);
+    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::Detour(const std::string &moduleName, const std::string &importedModuleName, uint32_t ordinal, const void *pDestination)
     : m_pSource(GetModuleImport(moduleName, importedModuleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
+    XASSERT(m_pSource != nullptr);
+    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::~Detour()
@@ -41,7 +49,20 @@ Detour::~Detour()
 HRESULT Detour::Install()
 {
     if (s_HookCount >= MAX_HOOK_COUNT || m_pSource == nullptr || m_pDestination == nullptr)
+    {
+        DebugPrint("[XexUtils][Detour]: Error");
+
+#ifndef NDEBUG
+        if (s_HookCount >= MAX_HOOK_COUNT)
+            DebugPrint("\tMax hook count exceeded, current: %d, max: %d.", s_HookCount, MAX_HOOK_COUNT);
+        if (m_pSource == nullptr)
+            DebugPrint("\tSource address is null.");
+        if (m_pDestination == nullptr)
+            DebugPrint("\tDestination address is null.");
+#endif
+
         return E_FAIL;
+    }
 
     if (s_CriticalSection.Synchronization.RawEvent[0] == 0)
         InitializeCriticalSection(&s_CriticalSection);
@@ -92,7 +113,13 @@ void Detour::DetourFunctionStart()
 
         // If the function op code is null, it's invalid
         if (instruction == 0)
+        {
+            DebugPrint(
+                "[XexUtils][Detour]: Error: Found invalid instruction with null opcode at %p.",
+                &pSource[i]
+            );
             break;
+        }
 
         // If the instruction is a branch
         if (instructionType == POWERPC_B || instructionType == POWERPC_BL)
@@ -148,6 +175,9 @@ void *Detour::ResolveBranch(POWERPC_INSTRUCTION instruction, const void *pBranch
     // Taken from here
     // https://github.com/skiff/libpsutil/blob/master/libpsutil/system/memory.cpp#L90
 
+    XASSERT(instruction != 0);
+    XASSERT(pBranch != nullptr);
+
     uintptr_t offset = instruction & 0x3FFFFFC;
 
     if (offset & (1 << 25))
@@ -171,19 +201,34 @@ void *Detour::GetModuleImport(const std::string &baseModuleName, const std::stri
     // Get the module handle of the base module
     HMODULE moduleHandle = GetModuleHandle(baseModuleName.c_str());
     if (moduleHandle == nullptr)
+    {
+        DebugPrint(
+            "[XexUtils][Detour]: Error: Could not get handle of module %s. Make sure it is loaded.",
+            baseModuleName.c_str()
+        );
         return nullptr;
+    }
 
     // Get a pointer to the function we're looking for but from our module (so the one
     // this code is running in, not the base module)
     void *pFunc = Memory::ResolveFunction(importedModuleName, ordinal);
     if (pFunc == nullptr)
+    {
+        DebugPrint(
+            "[XexUtils][Detour]: Error: Could not resolve function number %d from module %s."
+            "Make sure the module is loaded and exports at least %d functions.",
+            ordinal,
+            importedModuleName.c_str(),
+            ordinal
+        );
         return nullptr;
+    }
 
     // Get the import descriptor of the base module
     LDR_DATA_TABLE_ENTRY *pDataTable = reinterpret_cast<LDR_DATA_TABLE_ENTRY *>(moduleHandle);
     XEX_IMPORT_DESCRIPTOR *pImportDesc = static_cast<XEX_IMPORT_DESCRIPTOR *>(RtlImageXexHeaderField(pDataTable->XexHeaderBase, 0x000103FF));
-    if (pImportDesc == nullptr)
-        return nullptr;
+
+    XASSERT(pImportDesc != nullptr);
 
     // Calculate the import table location from the import descriptor
     // The memory is laid out as such:
@@ -226,6 +271,13 @@ void *Detour::GetModuleImport(const std::string &baseModuleName, const std::stri
             reinterpret_cast<uintptr_t>(pImportTable) + pImportTable->TableSize
         );
     }
+
+    DebugPrint(
+        "[XexUtils][Detour]: Error: Could not find function number %d exported by %s used in %s",
+        ordinal,
+        importedModuleName.c_str(),
+        baseModuleName.c_str()
+    );
 
     return nullptr;
 }
