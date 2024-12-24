@@ -38,4 +38,4 @@ You can't build with the 64-bit version of MSBuild so you'll need to run the 32-
 Set-Alias msbuild "<path_vs2022>\MSBuild\Current\Bin\MSBuild.exe"
 ```
 
-Now run `msbuild` to compile the plugin and deploy it to your console.
+Now run `msbuild` to compile the test app and deploy it to your console.
