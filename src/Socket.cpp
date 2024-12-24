@@ -153,7 +153,7 @@ HRESULT Socket::Init()
     int err = XNetStartup(&xNetStartupParams);
     if (err != 0)
     {
-        DebugPrint("[XexUtils][Socket]: Error: XNetStartup failed with code %d", err);
+        DebugPrint("[XexUtils][Socket]: Error: XNetStartup failed with code %d.", err);
         return E_FAIL;
     }
 
@@ -161,7 +161,7 @@ HRESULT Socket::Init()
     err = WSAStartup(&wsaData);
     if (err != 0)
     {
-        DebugPrint("[XexUtils][Socket]: Error: WSAStartup failed with code %d", err);
+        DebugPrint("[XexUtils][Socket]: Error: WSAStartup failed with code %d.", err);
         return E_FAIL;
     }
 

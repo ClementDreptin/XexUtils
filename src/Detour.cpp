@@ -273,7 +273,7 @@ void *Detour::GetModuleImport(const std::string &baseModuleName, const std::stri
     }
 
     DebugPrint(
-        "[XexUtils][Detour]: Error: Could not find function number %d exported by %s used in %s",
+        "[XexUtils][Detour]: Error: Could not find function number %d exported by %s used in %s.",
         ordinal,
         importedModuleName.c_str(),
         baseModuleName.c_str()

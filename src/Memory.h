@@ -19,7 +19,7 @@ void Write(void *pDestination, const T &data)
 {
     if (pDestination == nullptr || !Xam::IsAddressValid(pDestination))
     {
-        DebugPrint("Invalid address: %p", pDestination);
+        DebugPrint("[XexUtils][Memory]: Error: Invalid address: %p.", pDestination);
         return;
     }
 
@@ -37,7 +37,7 @@ inline T Read(void *pSource)
 {
     if (pSource == nullptr || !Xam::IsAddressValid(pSource))
     {
-        DebugPrint("Invalid address: %p", pSource);
+        DebugPrint("[XexUtils][Memory]: Error: Invalid address: %p.", pSource);
         return T();
     }
 
