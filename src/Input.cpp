@@ -93,7 +93,7 @@ Gamepad *GetInput(uint32_t userIndex)
 
     // Get the keystrokes
     XINPUT_KEYSTROKE keystroke = {};
-    result = XInputGetKeystroke(0, XINPUT_FLAG_GAMEPAD, &keystroke);
+    result = XInputGetKeystroke(userIndex, XINPUT_FLAG_GAMEPAD, &keystroke);
 
     // If no button is pressed, just return early
     if (result != ERROR_SUCCESS)
