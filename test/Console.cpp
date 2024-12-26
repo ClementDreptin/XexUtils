@@ -39,17 +39,16 @@ Console::Console()
 HRESULT Console::Create()
 {
     Direct3D *pD3D = Direct3DCreate9(D3D_SDK_VERSION);
+    XASSERT(pD3D != nullptr);
 
     HRESULT hr = pD3D->CreateDevice(0, D3DDEVTYPE_HAL, NULL, D3DCREATE_HARDWARE_VERTEXPROCESSING, &s_d3dpp, reinterpret_cast<D3DDevice **>(&s_pd3dDevice));
-    if (FAILED(hr))
-        return hr;
+    XASSERT(SUCCEEDED(hr));
 
     // Set the global device so that other functions can use it
     ATG::g_pd3dDevice = s_pd3dDevice;
 
     hr = m_Font.Create("game:\\Media\\Fonts\\Arial_16.xpr");
-    if (FAILED(hr))
-        return hr;
+    XASSERT(SUCCEEDED(hr));
 
     m_LineHeight = m_Font.GetFontHeight();
     m_MaxLinesToDisplay = static_cast<size_t>(s_SafeAreaHeight / m_LineHeight);
@@ -76,6 +75,8 @@ void Console::Print(const std::string &text)
 void Console::Update()
 {
     XexUtils::Input::Gamepad *pGamepad = XexUtils::Input::GetInput();
+
+    XASSERT(pGamepad != nullptr);
 
     // No need to scroll if we have enough space to display everything
     if (m_Lines.size() <= m_MaxLinesToDisplay)
