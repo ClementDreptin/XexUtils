@@ -9,6 +9,8 @@ namespace XexUtils
 class Detour
 {
 public:
+    Detour();
+
     Detour(void *pSource, const void *pDestination);
 
     Detour(uintptr_t sourceAddress, const void *pDestination);

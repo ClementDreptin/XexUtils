@@ -3,7 +3,7 @@
 Detour a function:
 
 ```C++
-XexUtils::Detour *pFunctionDetour = nullptr;
+XexUtils::Detour functionDetour(0x12345678, FunctionHook);
 
 void FunctionHook(int param1, int param2)
 {
@@ -14,8 +14,6 @@ void FunctionHook(int param1, int param2)
 
 void Init()
 {
-    pFunctionDetour = new XexUtils::Detour(0x12345678, FunctionHook);
-
     HRESULT hr = pFunctionDetour->Install();
     if (FAILED(hr))
     {

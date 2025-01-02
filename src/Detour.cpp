@@ -13,6 +13,11 @@ Detour::Stub Detour::s_StubSection[MAX_HOOK_COUNT];
 size_t Detour::s_HookCount = 0;
 CRITICAL_SECTION Detour::s_CriticalSection = {};
 
+Detour::Detour()
+    : m_pSource(nullptr), m_pDestination(nullptr), m_HookIndex(static_cast<size_t>(-1))
+{
+}
+
 Detour::Detour(void *pSource, const void *pDestination)
     : m_pSource(pSource), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
