@@ -7,9 +7,12 @@
 namespace XexUtils
 {
 
-// This will hold all the instructions for all hooks. This needs to be a static buffer because,
-// if it was a class member, it would be allocated on the stack and stack memory isn't executable
-Detour::Stub Detour::s_StubSection[MAX_HOOK_COUNT];
+#pragma section(".text")
+
+// This will hold all the instructions for all hooks. Allocating in an executable section
+// isn't mandatory on real hardware because modded consoles have page permissions disabled,
+// but this is necessary on Xenia, which emulates retail hardware
+__declspec(allocate(".text")) Detour::Stub Detour::s_StubSection[MAX_HOOK_COUNT];
 size_t Detour::s_HookCount = 0;
 CRITICAL_SECTION Detour::s_CriticalSection = {};
 
