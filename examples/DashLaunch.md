@@ -9,7 +9,7 @@ void Init()
     HRESULT hr = XexUtils::DashLaunch::Init();
     if (FAILED(hr))
     {
-        XexUtils::Log::Error("Couldn't get functions from DashLaunch");
+        XexUtils::Log::Print("Couldn't get functions from DashLaunch");
         return;
     }
 
@@ -18,7 +18,7 @@ void Init()
     BOOL result = XexUtils::DashLaunch::GetOptionValueByName("liveblock", &liveBlockEnabled);
     if (result == FALSE)
     {
-        XexUtils::Log::Error("Couldn't get the liveblock value from DashLaunch");
+        XexUtils::Log::Print("Couldn't get the liveblock value from DashLaunch");
         return;
     }
 
@@ -28,7 +28,7 @@ void Init()
         result = XexUtils::DashLaunch::SetOptionValueByName("liveblock", &enableLiveBlock);
         if (result == FALSE)
         {
-            XexUtils::Log::Error("Couldn't enable liveblock");
+            XexUtils::Log::Print("Couldn't enable liveblock");
             return;
         }
     }

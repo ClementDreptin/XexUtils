@@ -15,7 +15,7 @@ void Init()
     hr = socket.Connect();
     if (FAILED(hr))
     {
-        XexUtils::Log::Error("Couldn't connect to server");
+        XexUtils::Log::Print("Couldn't connect to server");
         return;
     }
 
@@ -24,7 +24,7 @@ void Init()
     int bytesSent = socket.Send(packet, sizeof(packet));
     if (bytesSent != sizeof(packet))
     {
-        XexUtils::Log::Error("Not all packets were sent");
+        XexUtils::Log::Print("Not all packets were sent");
         socket.Disconnect();
         return;
     }
@@ -37,7 +37,7 @@ void Init()
     int bytesReceived = socket.Receive(buffer, sizeof(buffer));
     if (bytesReceive == -1)
     {
-        XexUtils::Log::Error("Couldn't receive the server response");
+        XexUtils::Log::Print("Couldn't receive the server response");
         socket.Disconnect();
         return;
     }

@@ -105,8 +105,8 @@ Detect if the console is a devkit:
 void Init()
 {
     if (XexUtils::Xam::IsDevkit())
-        XexUtils::Log::Info("Console is a devkit");
+        XexUtils::Log::Print("Console is a devkit");
     else
-        XexUtils::Log::Info("Console is not a devkit");
+        XexUtils::Log::Print("Console is not a devkit");
 }
 ```
