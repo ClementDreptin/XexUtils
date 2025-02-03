@@ -196,7 +196,7 @@ void *Detour::ResolveBranch(POWERPC_INSTRUCTION instruction, const void *pBranch
 
 void *Detour::GetModuleImport(const std::string &baseModuleName, const std::string &importedModuleName, uint32_t ordinal)
 {
-    // Very inspired from this
+    // Very inspired by this
     // https://github.com/TeaModz/XeLiveStealth-Full-Source/blob/master/XeLive/Hooking.cpp#L100
 
     // Usage example

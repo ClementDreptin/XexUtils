@@ -18,7 +18,7 @@ void Init()
     uint32_t result = XexUtils::Xam::ShowKeyboard(L"Keyboard", L"Enter a value", L"123", value, 3, VKBD_LATIN_NUMERIC);
 
     if (result == ERROR_CANCELLED)
-        XexUtils::Log::Info("Keyboard canceled");
+        XexUtils::Log::Print("Keyboard canceled");
     else if (result == ERROR_SUCCESS)
     {
         int number = atoi(value.c_str());
@@ -46,7 +46,7 @@ void Init()
     );
 
     if (result == ERROR_CANCELLED)
-        XexUtils::Log::Info("Message box canceled");
+        XexUtils::Log::Print("Message box canceled");
     else if (result == ERROR_SUCCESS)
         wprintf_s(L"User pressed %s\n", buttonLabels[buttonPressedIndex]);
 }
@@ -61,7 +61,7 @@ void Init()
     uint32_t currentTitleId = XexUtils::Xam::GetCurrentTitleId();
 
     if (currentTitleId == dashboardTitleId)
-        XexUtils::Log::Info("Welcome to the dashboard!");
+        XexUtils::Log::Print("Welcome to the dashboard!");
 }
 ```
 
@@ -75,7 +75,7 @@ void Init()
     if (XexUtils::Xam::IsAddressValid(pRandomPointer))
         *pRandomPointer = 0x123;
     else
-        XexUtils::Log::Error("Segfault prevented at address: %#010x", pRandomPointer);
+        XexUtils::Log::Print("Segfault prevented at address: %#010x", pRandomPointer);
 }
 ```
 
@@ -87,7 +87,7 @@ void Init()
     HRESULT hr = XexUtils::Xam::MountHdd();
     if (FAILED(hr))
     {
-        XexUtils::Log::Error("Could not mount HDD");
+        XexUtils::Log::Print("Could not mount HDD");
         return;
     }
 
