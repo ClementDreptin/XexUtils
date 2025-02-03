@@ -99,5 +99,7 @@ HRESULT MountHdd();
 
 bool IsDevkit();
 
+bool InXenia();
+
 }
 }

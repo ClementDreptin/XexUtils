@@ -146,8 +146,24 @@ HRESULT MountHdd()
 
 bool IsDevkit()
 {
-    // Read a 32-bit unsigned int at 0x8E038610 and if the 16th is NOT set, the console is a devkit
-    return !(Memory::Read<uint32_t>(0x8E038610) & (1 << 15));
+    // Read a 32-bit unsigned int at 0x8E038610 and if the 16th is NOT set, the console is a devkit.
+    // This bit is not set while running in Xenia so make sure that's not the case
+    return !(Memory::Read<uint32_t>(0x8E038610) & (1 << 15)) && !InXenia();
+}
+
+bool InXenia()
+{
+    // Inspired by this
+    // https://github.com/RBEnhanced/RB3Enhanced/blob/master/source/xbox360.c#L16
+
+    void *xamFirstExport = Memory::ResolveFunction("xam.xex", 1);
+#ifndef NDEBUG
+    if (xamFirstExport == nullptr)
+        DebugPrint("[XexUtils][Xam]: Could not find the first function exported by xam.xex, this should not happen.");
+#endif
+
+    // If Xam is not in the typical memory address space, we're in an emulator
+    return reinterpret_cast<uintptr_t>(xamFirstExport) >> 24 != 0x81;
 }
 
 }

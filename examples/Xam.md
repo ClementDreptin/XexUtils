@@ -110,3 +110,15 @@ void Init()
         XexUtils::Log::Print("Console is not a devkit");
 }
 ```
+
+Detect if the code is running in [Xenia](https://xenia.jp/):
+
+```C++
+void Init()
+{
+    if (XexUtils::Xam::InXenia())
+        XexUtils::Log::Print("Code is running in Xenia");
+    else
+        XexUtils::Log::Print("Code is not running in Xenia");
+}
+```
