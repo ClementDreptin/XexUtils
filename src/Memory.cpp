@@ -18,14 +18,17 @@ void *ResolveFunction(const std::string &moduleName, uint32_t ordinal)
     return GetProcAddress(moduleHandle, reinterpret_cast<const char *>(ordinal));
 }
 
-void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
+HANDLE Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
 {
-    CreateThread(nullptr, 0, pStartAddress, pArgs, 0, nullptr);
+    return CreateThread(nullptr, 0, pStartAddress, pArgs, 0, nullptr);
 }
 
-void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags)
+HANDLE ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags, uint32_t *pThreadId)
 {
-    ExCreateThread(nullptr, 0, nullptr, nullptr, pStartAddress, pArgs, creationFlags);
+    HANDLE handle = nullptr;
+    ExCreateThread(&handle, 0, pThreadId, nullptr, pStartAddress, pArgs, creationFlags);
+
+    return handle;
 }
 
 }

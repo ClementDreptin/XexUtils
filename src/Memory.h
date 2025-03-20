@@ -10,9 +10,9 @@ namespace Memory
 
 void *ResolveFunction(const std::string &moduleName, uint32_t ordinal);
 
-void Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs = nullptr);
+HANDLE Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs = nullptr);
 
-void ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags);
+HANDLE ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags, uint32_t *pThreadId = nullptr);
 
 template<typename T>
 void Write(void *pDestination, const T &data)
