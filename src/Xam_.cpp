@@ -133,11 +133,16 @@ HRESULT MountHdd()
 
     STRING linkName = {};
     STRING deviceName = {};
-    const char destinationDrive[] = "\\??\\hdd:";
+    const char userDestinationDrive[] = "\\??\\hdd:";
+    const char systemDestinationDrive[] = "\\System??\\hdd:";
     const char hddDevicePath[] = "\\Device\\Harddisk0\\Partition1\\";
 
     // Initialize the STRING structs
-    RtlInitAnsiString(&linkName, destinationDrive);
+    if (KeGetCurrentProcessType() == PROC_SYSTEM)
+        RtlInitAnsiString(&linkName, systemDestinationDrive);
+    else
+        RtlInitAnsiString(&linkName, userDestinationDrive);
+
     RtlInitAnsiString(&deviceName, hddDevicePath);
 
     // Bind the root of the hard drive to the "hdd:" drive.
