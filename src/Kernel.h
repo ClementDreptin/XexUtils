@@ -16,31 +16,6 @@ struct UNICODE_STRING
     wchar_t *Buffer;
 };
 
-typedef enum _FIRMWARE_REENTRY
-{
-    HalHaltRoutine,
-    HalRebootRoutine,
-    HalKdRebootRoutine,
-    HalFatalErrorRebootRoutine,
-    HalResetSMCRoutine,
-    HalPowerDownRoutine,
-    HalRebootQuiesceRoutine,
-    HalForceShutdownRoutine,
-    HalPowerCycleQuiesceRoutine,
-    HalMaximumRoutine,
-} FIRMWARE_REENTRY;
-
-typedef enum _XNCALLER_TYPE
-{
-    XNCALLER_INVALID = 0,
-    XNCALLER_TITLE = 1,
-    XNCALLER_SYSAPP = 2,
-    XNCALLER_XBDM = 3,
-    XNCALLER_PERSISTING = 3,
-    XNCALLER_TEST = 4,
-    NUM_XNCALLER_TYPES = 4,
-} XNCALLER_TYPE;
-
 struct LDR_DATA_TABLE_ENTRY
 {
     LIST_ENTRY InLoadOrderLinks;
@@ -93,6 +68,38 @@ struct XEX_IMPORT_DESCRIPTOR
     uint32_t ModuleCount;
 };
 
+typedef enum _FIRMWARE_REENTRY
+{
+    HalHaltRoutine,
+    HalRebootRoutine,
+    HalKdRebootRoutine,
+    HalFatalErrorRebootRoutine,
+    HalResetSMCRoutine,
+    HalPowerDownRoutine,
+    HalRebootQuiesceRoutine,
+    HalForceShutdownRoutine,
+    HalPowerCycleQuiesceRoutine,
+    HalMaximumRoutine,
+} FIRMWARE_REENTRY;
+
+typedef enum _PROC_TYPE
+{
+    PROC_IDLE,
+    PROC_USER,
+    PROC_SYSTEM,
+} PROC_TYPE;
+
+typedef enum _XNCALLER_TYPE
+{
+    XNCALLER_INVALID = 0,
+    XNCALLER_TITLE = 1,
+    XNCALLER_SYSAPP = 2,
+    XNCALLER_XBDM = 3,
+    XNCALLER_PERSISTING = 3,
+    XNCALLER_TEST = 4,
+    NUM_XNCALLER_TYPES = 4,
+} XNCALLER_TYPE;
+
 typedef enum _EXCREATETHREAD_FLAG
 {
     EXCREATETHREAD_SUSPENDED = 1 << 0,
@@ -137,14 +144,6 @@ typedef enum _XEX_LOADING_FLAG
 
 extern "C"
 {
-    void RtlInitAnsiString(STRING *pDestinationString, const char *sourceString);
-
-    HRESULT ObCreateSymbolicLink(STRING *pLinkName, STRING *pDevicePath);
-
-    void HalReturnToFirmware(FIRMWARE_REENTRY powerDownMode);
-
-    void HalSendSMCMessage(void *pInput, void *pOutput);
-
     uint32_t ExCreateThread(
         HANDLE *pHandle,
         uint32_t stackSize,
@@ -155,37 +154,47 @@ extern "C"
         EXCREATETHREAD_FLAG creationFlags
     );
 
-    HRESULT XexLoadImage(const char *imageName, XEX_LOADING_FLAG flags, uint32_t minVersion, HANDLE *pHandle);
+    void HalReturnToFirmware(FIRMWARE_REENTRY powerDownMode);
 
-    HRESULT XexUnloadImage(HANDLE handle);
+    void HalSendSMCMessage(void *pInput, void *pOutput);
 
-    uint32_t XamGetCurrentTitleId();
+    PROC_TYPE KeGetCurrentProcessType();
+
+    void *MmGetPhysicalAddress(void *pAddress);
 
     bool MmIsAddressValid(void *pAddress);
 
-    int NetDll_WSAStartupEx(XNCALLER_TYPE xnCaller, uint16_t versionRequested, WSAData *pWSAData, uint32_t versionReq);
-
     int NetDll_WSACleanup(XNCALLER_TYPE xnCaller);
 
+    int NetDll_WSAStartupEx(XNCALLER_TYPE xnCaller, uint16_t versionRequested, WSAData *pWSAData, uint32_t versionReq);
+
     int NetDll_XNetStartup(XNCALLER_TYPE xnCaller, const XNetStartupParams *pXNetParams);
-
-    uint32_t NetDll_inet_addr(const char *ipAddress);
-
-    SOCKET NetDll_socket(XNCALLER_TYPE xnCaller, int af, int type, int protocol);
-
-    int NetDll_setsockopt(XNCALLER_TYPE xnCaller, SOCKET s, int level, int optname, const char *optval, int optlen);
-
-    int NetDll_shutdown(XNCALLER_TYPE xnCaller, SOCKET s, int how);
 
     int NetDll_closesocket(XNCALLER_TYPE xnCaller, SOCKET s);
 
     int NetDll_connect(XNCALLER_TYPE xnCaller, SOCKET s, const struct sockaddr *name, int namelen);
 
-    int NetDll_send(XNCALLER_TYPE xnc, SOCKET s, const char *buf, int len, int flags);
+    uint32_t NetDll_inet_addr(const char *ipAddress);
 
     int NetDll_recv(XNCALLER_TYPE xnc, SOCKET s, char *buf, int len, int flags);
 
+    int NetDll_send(XNCALLER_TYPE xnc, SOCKET s, const char *buf, int len, int flags);
+
+    int NetDll_setsockopt(XNCALLER_TYPE xnCaller, SOCKET s, int level, int optname, const char *optval, int optlen);
+
+    int NetDll_shutdown(XNCALLER_TYPE xnCaller, SOCKET s, int how);
+
+    SOCKET NetDll_socket(XNCALLER_TYPE xnCaller, int af, int type, int protocol);
+
+    HRESULT ObCreateSymbolicLink(STRING *pLinkName, STRING *pDevicePath);
+
     void *RtlImageXexHeaderField(void *pXexHeaderBase, uint32_t imageField);
 
-    void *MmGetPhysicalAddress(void *pAddress);
+    void RtlInitAnsiString(STRING *pDestinationString, const char *sourceString);
+
+    uint32_t XamGetCurrentTitleId();
+
+    HRESULT XexLoadImage(const char *imageName, XEX_LOADING_FLAG flags, uint32_t minVersion, HANDLE *pHandle);
+
+    HRESULT XexUnloadImage(HANDLE handle);
 }
