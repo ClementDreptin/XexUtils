@@ -74,6 +74,10 @@
       <DeploymentType>CopyToHardDrive</DeploymentType>
       <DeploymentFiles>$(RemoteRoot)=$(ImagePath);$(RemoteRoot)\Media=$(OutDir)Media</DeploymentFiles>
     </Deploy>
+    <PostBuildEvent Condition="'$(Configuration)'=='Release'">
+      <Command>"$(XEDK)\bin\win32\xbreboot.exe" $(RemotePath)</Command>
+      <Message>Launch $(RemotePath) after it's built</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Console.h" />
