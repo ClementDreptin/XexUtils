@@ -97,6 +97,8 @@ void Reboot();
 
 HRESULT MountHdd();
 
+HRESULT MountUsb();
+
 bool IsDevkit();
 
 bool InXenia();

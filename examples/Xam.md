@@ -99,6 +99,26 @@ void Init()
 }
 ```
 
+Allow games to access the first USB device:
+
+```C++
+void Init()
+{
+    HRESULT hr = XexUtils::Xam::MountUsb();
+    if (FAILED(hr))
+    {
+        XexUtils::Log::Print("Could not mount USB");
+        return;
+    }
+
+    std::ofstream file("usb:\\file.txt");
+    if (file.is_open()) // Would return false if XexUtils::Xam::MountUsb didn't get called
+    {
+        // Write something to the file..
+    }
+}
+```
+
 Detect if the console is a devkit:
 
 ```C++
