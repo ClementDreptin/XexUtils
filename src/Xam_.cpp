@@ -64,23 +64,24 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
     return overlappedResult;
 }
 
-uint32_t ShowMessageBox(const wchar_t *title, const wchar_t *text, const wchar_t **buttonLabels, size_t numberOfButtons, uint32_t *pButtonPressedIndex, uint32_t messageBoxType, uint32_t focusedButtonIndex)
+uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType, uint32_t *pButtonPressedIndex, uint32_t focusedButtonIndex)
 {
-    XASSERT(title != nullptr);
-    XASSERT(text != nullptr);
-    XASSERT(buttonLabels != nullptr);
-    XASSERT(buttonLabels[0] != nullptr);
-
     MESSAGEBOX_RESULT messageBoxResult = {};
     XOVERLAPPED overlapped = {};
+
+    // Create the vector of const wchar_t * from the vector of std::wstring
+    std::vector<const wchar_t *> cbuttonLabels;
+    cbuttonLabels.reserve(buttonLabels.size());
+    for (size_t i = 0; i < buttonLabels.size(); i++)
+        cbuttonLabels.push_back(buttonLabels[i].c_str());
 
     // Open the message box
     XShowMessageBoxUI(
         0,
-        title,
-        text,
-        numberOfButtons,
-        buttonLabels,
+        title.c_str(),
+        text.c_str(),
+        cbuttonLabels.size(),
+        cbuttonLabels.data(),
         focusedButtonIndex,
         messageBoxType,
         &messageBoxResult,
