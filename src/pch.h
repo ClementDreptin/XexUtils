@@ -7,7 +7,9 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <string>
+#include <vector>
 
 // Functions used in a lot of places
 #include "Assert.h"

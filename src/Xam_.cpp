@@ -20,32 +20,28 @@ void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
     XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, Formatter::ToWide(text).c_str(), nullptr);
 }
 
-uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wchar_t *defaultText, std::string &result, size_t maxLength, uint32_t keyboardType)
+uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description, const std::wstring &defaultText, std::string &result, size_t maxLength, uint32_t keyboardType)
 {
-    XASSERT(title != nullptr);
-    XASSERT(description != nullptr);
-    XASSERT(defaultText != nullptr);
-
     // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
     size_t realMaxLength = maxLength + 1;
     XOVERLAPPED overlapped = {};
 
     // Create the buffers
-    wchar_t *wideBuffer = new wchar_t[realMaxLength];
-    char *buffer = new char[realMaxLength];
+    std::unique_ptr<wchar_t[]> wideBuffer(new wchar_t[realMaxLength]);
+    std::unique_ptr<char[]> buffer(new char[realMaxLength]);
 
     // Zero the buffers
-    ZeroMemory(wideBuffer, sizeof(wideBuffer));
-    ZeroMemory(buffer, sizeof(buffer));
+    ZeroMemory(wideBuffer.get(), sizeof(wideBuffer));
+    ZeroMemory(buffer.get(), sizeof(buffer));
 
     // Open the keyboard
     XShowKeyboardUI(
         0,
         keyboardType,
-        defaultText,
-        title,
-        description,
-        wideBuffer,
+        defaultText.c_str(),
+        title.c_str(),
+        description.c_str(),
+        wideBuffer.get(),
         realMaxLength,
         &overlapped
     );
@@ -59,15 +55,11 @@ uint32_t ShowKeyboard(const wchar_t *title, const wchar_t *description, const wc
     if (overlappedResult == ERROR_SUCCESS)
     {
         // Convert the wide string to a narrow string
-        wcstombs_s(nullptr, buffer, realMaxLength, wideBuffer, realMaxLength * sizeof(wchar_t));
+        wcstombs_s(nullptr, buffer.get(), realMaxLength, wideBuffer.get(), realMaxLength * sizeof(wchar_t));
 
         // Populate the out string with the narrow string
-        result = buffer;
+        result = buffer.get();
     }
-
-    // Cleanup
-    delete[] wideBuffer;
-    delete[] buffer;
 
     return overlappedResult;
 }
