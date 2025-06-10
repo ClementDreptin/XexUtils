@@ -33,16 +33,17 @@ Open a message box:
 ```C++
 void Init()
 {
-    const wchar_t *buttonLabels[] = { L"Yes", L"No" };
+    std::vector<std::wstring> buttonLabels(2);
+    buttonLabels[0] = L"Yes";
+    buttonLabels[1] = L"No";
     uint32_t buttonPressedIndex = 0;
 
     uint32_t result = XexUtils::Xam::ShowMessageBox(
         L"Sandwich",
         L"Do you want a sandwich?",
         buttonLabels,
-        ARRAYSIZE(buttonLabels),
-        &buttonPressedIndex,
-        XMB_ALERTICON
+        XMB_ALERTICON,
+        &buttonPressedIndex
     );
 
     if (result == ERROR_CANCELLED)
