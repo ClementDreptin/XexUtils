@@ -166,7 +166,7 @@ bool InXenia()
     void *xamFirstExport = Memory::ResolveFunction("xam.xex", 1);
 #ifndef NDEBUG
     if (xamFirstExport == nullptr)
-        DebugPrint("[XexUtils][Xam]: Could not find the first function exported by xam.xex, this should not happen.");
+        DebugPrint("[XexUtils][Xam]: Error: Could not find the first function exported by xam.xex, this should not happen.");
 #endif
 
     // If Xam is not in the typical memory address space, we're in an emulator
