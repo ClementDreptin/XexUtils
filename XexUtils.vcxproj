@@ -65,6 +65,7 @@
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Math_.h" />
     <ClInclude Include="src\Memory.h" />
+    <ClInclude Include="src\Path.h" />
     <ClInclude Include="src\SMC.h" />
     <ClInclude Include="src\Socket.h" />
     <ClInclude Include="src\ValueOrPtr.h" />
@@ -83,6 +84,7 @@
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math_.cpp" />
     <ClCompile Include="src\Memory.cpp" />
+    <ClCompile Include="src\Path.cpp" />
     <ClCompile Include="src\SMC.cpp" />
     <ClCompile Include="src\Socket.cpp" />
     <ClCompile Include="src\Vec2.cpp" />

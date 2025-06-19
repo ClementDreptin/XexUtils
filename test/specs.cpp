@@ -465,6 +465,66 @@ static void Memory()
     });
 }
 
+static void Path()
+{
+    Describe("Path");
+
+    It("parses simple absolute paths", []() {
+        XexUtils::Path path("C:\\Windows\\System32\\");
+
+        TEST_EQ(path.Drive().String(), "C:");
+        TEST_EQ(path.Directory().String(), "\\Windows\\System32\\");
+        TEST_EQ(path.Basename().String(), "");
+        TEST_EQ(path.Extension().String(), "");
+        TEST_EQ(path.Filename().String(), "");
+        TEST_EQ(path.Parent().String(), "C:\\Windows\\");
+    });
+
+    It("parses simple relative paths", []() {
+        XexUtils::Path path("Documents\\File.txt");
+
+        TEST_EQ(path.Drive().String(), "");
+        TEST_EQ(path.Directory().String(), "Documents\\");
+        TEST_EQ(path.Basename().String(), "File");
+        TEST_EQ(path.Extension().String(), ".txt");
+        TEST_EQ(path.Filename().String(), "File.txt");
+        TEST_EQ(path.Parent().String(), "Documents\\");
+    });
+
+    It("parses paths with dots", []() {
+        XexUtils::Path path(".\\Relative\\..\\Path\\file.txt");
+
+        TEST_EQ(path.Drive().String(), "");
+        TEST_EQ(path.Directory().String(), ".\\Relative\\..\\Path\\");
+        TEST_EQ(path.Basename().String(), "file");
+        TEST_EQ(path.Extension().String(), ".txt");
+        TEST_EQ(path.Filename().String(), "file.txt");
+        TEST_EQ(path.Parent().String(), ".\\Relative\\..\\Path\\");
+    });
+
+    It("parses root directories", []() {
+        XexUtils::Path path("drive:\\");
+
+        TEST_EQ(path.Drive().String(), "drive:");
+        TEST_EQ(path.Directory().String(), "\\");
+        TEST_EQ(path.Basename().String(), "");
+        TEST_EQ(path.Extension().String(), "");
+        TEST_EQ(path.Filename().String(), "");
+        TEST_EQ(path.Parent().String(), "drive:\\");
+    });
+
+    It("parses paths with only a drive", []() {
+        XexUtils::Path path("drive:");
+
+        TEST_EQ(path.Drive().String(), "drive:");
+        TEST_EQ(path.Directory().String(), "");
+        TEST_EQ(path.Basename().String(), "");
+        TEST_EQ(path.Extension().String(), "");
+        TEST_EQ(path.Filename().String(), "");
+        TEST_EQ(path.Parent().String(), "drive:");
+    });
+}
+
 static void ValueOrPtr()
 {
     Describe("ValueOrPtr");
@@ -507,6 +567,7 @@ void RunTests()
     ::Vec4();
     ::Math();
     ::Memory();
+    ::Path();
     ::ValueOrPtr();
     ::Xam();
 
