@@ -2,6 +2,30 @@
 
 // Most of those were taken from xkelib
 
+typedef long NTSTATUS;
+
+#define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
+
+#define EXPORTNUM(module, x)
+
+typedef enum _EXCREATETHREAD_FLAG
+{
+    EXCREATETHREAD_SUSPENDED = 1 << 0,
+    EXCREATETHREAD_SYSTEM = 1 << 1,
+    EXCREATETHREAD_TLS_STATIC = 1 << 3,
+    EXCREATETHREAD_PRIORITY1 = 1 << 5,
+    EXCREATETHREAD_PRIORITY0 = 1 << 6,
+    EXCREATETHREAD_RETURN_KTHREAD = 1 << 7,
+    EXCREATETHREAD_TITLE_EXEC = 1 << 8,
+    EXCREATETHREAD_HIDDEN = 1 << 10,
+    EXCREATETHREAD_CORE0 = 1 << 24,
+    EXCREATETHREAD_CORE1 = 1 << 25,
+    EXCREATETHREAD_CORE2 = 1 << 26,
+    EXCREATETHREAD_CORE3 = 1 << 27,
+    EXCREATETHREAD_CORE4 = 1 << 28,
+    EXCREATETHREAD_CORE5 = 1 << 29,
+} EXCREATETHREAD_FLAG;
+
 struct STRING
 {
     uint16_t Length;
@@ -100,23 +124,29 @@ typedef enum _XNCALLER_TYPE
     NUM_XNCALLER_TYPES = 4,
 } XNCALLER_TYPE;
 
-typedef enum _EXCREATETHREAD_FLAG
+typedef struct _OBJECT_ATTRIBUTES
 {
-    EXCREATETHREAD_SUSPENDED = 1 << 0,
-    EXCREATETHREAD_SYSTEM = 1 << 1,
-    EXCREATETHREAD_TLS_STATIC = 1 << 3,
-    EXCREATETHREAD_PRIORITY1 = 1 << 5,
-    EXCREATETHREAD_PRIORITY0 = 1 << 6,
-    EXCREATETHREAD_RETURN_KTHREAD = 1 << 7,
-    EXCREATETHREAD_TITLE_EXEC = 1 << 8,
-    EXCREATETHREAD_HIDDEN = 1 << 10,
-    EXCREATETHREAD_CORE0 = 1 << 24,
-    EXCREATETHREAD_CORE1 = 1 << 25,
-    EXCREATETHREAD_CORE2 = 1 << 26,
-    EXCREATETHREAD_CORE3 = 1 << 27,
-    EXCREATETHREAD_CORE4 = 1 << 28,
-    EXCREATETHREAD_CORE5 = 1 << 29,
-} EXCREATETHREAD_FLAG;
+    HANDLE RootDirectory;
+    STRING *ObjectName;
+    uint32_t Attributes;
+} OBJECT_ATTRIBUTES;
+
+typedef struct _IO_STATUS_BLOCK
+{
+    union {
+        NTSTATUS Status;
+        void *Pointer;
+    } st;
+
+    uintptr_t Information;
+} IO_STATUS_BLOCK;
+
+#define InitializeObjectAttributes(p, name, attrib, root) \
+    { \
+        (p)->RootDirectory = root; \
+        (p)->Attributes = attrib; \
+        (p)->ObjectName = name; \
+    }
 
 typedef enum _XEX_LOADING_FLAG
 {
@@ -144,6 +174,7 @@ typedef enum _XEX_LOADING_FLAG
 
 extern "C"
 {
+    EXPORTNUM("xboxkrnl.exe", 13)
     uint32_t ExCreateThread(
         HANDLE *pHandle,
         uint32_t stackSize,
@@ -154,47 +185,182 @@ extern "C"
         EXCREATETHREAD_FLAG creationFlags
     );
 
-    void HalReturnToFirmware(FIRMWARE_REENTRY powerDownMode);
+    EXPORTNUM("xboxkrnl.exe", 40)
+    void HalReturnToFirmware(
+        FIRMWARE_REENTRY powerDownMode
+    );
 
-    void HalSendSMCMessage(void *pInput, void *pOutput);
+    EXPORTNUM("xboxkrnl.exe", 41)
+    void HalSendSMCMessage(
+        void *pInput,
+        void *pOutput
+    );
 
-    PROC_TYPE KeGetCurrentProcessType();
+    EXPORTNUM("xboxkrnl.exe", 102)
+    PROC_TYPE KeGetCurrentProcessType(
+        void
+    );
 
-    void *MmGetPhysicalAddress(void *pAddress);
+    EXPORTNUM("xboxkrnl.exe", 190)
+    void *MmGetPhysicalAddress(
+        void *pAddress
+    );
 
-    bool MmIsAddressValid(void *pAddress);
+    EXPORTNUM("xboxkrnl.exe", 191)
+    bool MmIsAddressValid(
+        void *pAddress
+    );
 
-    int NetDll_WSACleanup(XNCALLER_TYPE xnCaller);
+    EXPORTNUM("xam.xex", 2)
+    int NetDll_WSACleanup(
+        XNCALLER_TYPE xnCaller
+    );
 
-    int NetDll_WSAStartupEx(XNCALLER_TYPE xnCaller, uint16_t versionRequested, WSAData *pWSAData, uint32_t versionReq);
+    EXPORTNUM("xam.xex", 36)
+    int NetDll_WSAStartupEx(
+        XNCALLER_TYPE xnCaller,
+        uint16_t versionRequested,
+        WSAData *pWSAData,
+        uint32_t versionReq
+    );
 
-    int NetDll_XNetStartup(XNCALLER_TYPE xnCaller, const XNetStartupParams *pXNetParams);
+    EXPORTNUM("xam.xex", 51)
+    int NetDll_XNetStartup(
+        XNCALLER_TYPE xnCaller,
+        const XNetStartupParams *pXNetParams
+    );
 
-    int NetDll_closesocket(XNCALLER_TYPE xnCaller, SOCKET s);
+    EXPORTNUM("xam.xex", 4)
+    int NetDll_closesocket(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s
+    );
 
-    int NetDll_connect(XNCALLER_TYPE xnCaller, SOCKET s, const struct sockaddr *name, int namelen);
+    EXPORTNUM("xam.xex", 12)
+    int NetDll_connect(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const struct sockaddr *name,
+        int namelen
+    );
 
-    uint32_t NetDll_inet_addr(const char *ipAddress);
+    EXPORTNUM("xam.xex", 26)
+    uint32_t NetDll_inet_addr(
+        const char *ipAddress
+    );
 
-    int NetDll_recv(XNCALLER_TYPE xnc, SOCKET s, char *buf, int len, int flags);
+    EXPORTNUM("xam.xex", 18)
+    int NetDll_recv(
+        XNCALLER_TYPE xnc,
+        SOCKET s,
+        char *buf,
+        int len,
+        int flags
+    );
 
-    int NetDll_send(XNCALLER_TYPE xnc, SOCKET s, const char *buf, int len, int flags);
+    EXPORTNUM("xam.xex", 22)
+    int NetDll_send(
+        XNCALLER_TYPE xnc,
+        SOCKET s,
+        const char *buf,
+        int len,
+        int flags
+    );
 
-    int NetDll_setsockopt(XNCALLER_TYPE xnCaller, SOCKET s, int level, int optname, const char *optval, int optlen);
+    EXPORTNUM("xam.xex", 7)
+    int NetDll_setsockopt(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int level,
+        int optname,
+        const char *optval,
+        int optlen
+    );
 
-    int NetDll_shutdown(XNCALLER_TYPE xnCaller, SOCKET s, int how);
+    EXPORTNUM("xam.xex", 5)
+    int NetDll_shutdown(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int how
+    );
 
-    SOCKET NetDll_socket(XNCALLER_TYPE xnCaller, int af, int type, int protocol);
+    EXPORTNUM("xam.xex", 3)
+    SOCKET NetDll_socket(
+        XNCALLER_TYPE xnCaller,
+        int af,
+        int type,
+        int protocol
+    );
 
-    HRESULT ObCreateSymbolicLink(STRING *pLinkName, STRING *pDevicePath);
+    EXPORTNUM("xboxkrnl.exe", 207)
+    NTSTATUS NtClose(
+        HANDLE Handle
+    );
 
-    void *RtlImageXexHeaderField(void *pXexHeaderBase, uint32_t imageField);
+    EXPORTNUM("xboxkrnl.exe", 223)
+    NTSTATUS NtOpenFile(
+        HANDLE *pHandle,
+        ACCESS_MASK desiredAccess,
+        OBJECT_ATTRIBUTES *pObjectAttributes,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        uint32_t shareAccess,
+        uint32_t openOptions
+    );
 
-    void RtlInitAnsiString(STRING *pDestinationString, const char *sourceString);
+    EXPORTNUM("xboxkrnl.exe", 240)
+    NTSTATUS NtReadFile(
+        HANDLE handle,
+        HANDLE event,
+        void *pApcRoutine,
+        void *pApcContext,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        void *buffer,
+        uint32_t length,
+        LARGE_INTEGER *pByteOffset
+    );
 
-    uint32_t XamGetCurrentTitleId();
+    EXPORTNUM("xboxkrnl.exe", 255)
+    NTSTATUS NtWriteFile(
+        HANDLE handle,
+        HANDLE event,
+        void *pApcRoutine,
+        void *pApcContext,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        void *buffer,
+        uint32_t length,
+        LARGE_INTEGER *pByteOffset
+    );
 
-    HRESULT XexLoadImage(const char *imageName, XEX_LOADING_FLAG flags, uint32_t minVersion, HANDLE *pHandle);
+    EXPORTNUM("xboxkrnl.exe", 259)
+    HRESULT ObCreateSymbolicLink(
+        STRING *pLinkName,
+        STRING *pDevicePath
+    );
 
-    HRESULT XexUnloadImage(HANDLE handle);
+    EXPORTNUM("xboxkrnl.exe", 299)
+    void *RtlImageXexHeaderField(
+        void *pXexHeaderBase,
+        uint32_t imageField
+    );
+
+    EXPORTNUM("xboxkrnl.exe", 300)
+    void RtlInitAnsiString(
+        STRING *pDestinationString,
+        const char *sourceString
+    );
+
+    EXPORTNUM("xam.xex", 463)
+    uint32_t XamGetCurrentTitleId(
+        void
+    );
+
+    EXPORTNUM("xboxkrnl.exe", 409)
+    HRESULT XexLoadImage(
+        const char *imageName, XEX_LOADING_FLAG flags, uint32_t minVersion, HANDLE *pHandle
+    );
+
+    EXPORTNUM("xboxkrnl.exe", 417)
+    HRESULT XexUnloadImage(
+        HANDLE handle
+    );
 }
