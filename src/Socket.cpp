@@ -50,8 +50,7 @@ Socket::~Socket()
 
 HRESULT Socket::Connect()
 {
-    if (!s_Initialized)
-        return E_FAIL;
+    XASSERT(s_Initialized == true);
 
     sockaddr_in addrInfo = {};
 
@@ -61,17 +60,24 @@ HRESULT Socket::Connect()
     addrInfo.sin_addr.s_addr = inet_addr(m_IpAddress.c_str());
 
     if (addrInfo.sin_addr.s_addr == INADDR_NONE)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: \"%s\" is not a valid IP address.");
         return E_FAIL;
+    }
 
     // Create the socket
     m_Socket = socket(addrInfo.sin_family, SOCK_STREAM, IPPROTO_TCP);
     if (m_Socket == INVALID_SOCKET)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: Failed to create socket: %d.", WSAGetLastError());
         return E_FAIL;
+    }
 
     // Disable encryption
     BOOL yes = TRUE;
     if (setsockopt(m_Socket, SOL_SOCKET, 0x5801, reinterpret_cast<const char *>(&yes), sizeof(yes)) != 0)
     {
+        DebugPrint("[XexUtils][Socket]: Error: Failed to disable encryption with setsockopt: %d.", WSAGetLastError());
         Disconnect();
         return E_FAIL;
     }
@@ -80,6 +86,7 @@ HRESULT Socket::Connect()
     timeval tv = { 2, 0 };
     if (setsockopt(m_Socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&tv), sizeof(timeval)) != 0)
     {
+        DebugPrint("[XexUtils][Socket]: Error: Failed to set the socket timeout with setsockopt: %d.", WSAGetLastError());
         Disconnect();
         return E_FAIL;
     }
@@ -87,6 +94,7 @@ HRESULT Socket::Connect()
     // Connect to the server
     if (connect(m_Socket, reinterpret_cast<sockaddr *>(&addrInfo), sizeof(addrInfo)) == SOCKET_ERROR)
     {
+        DebugPrint("[XexUtils][Socket]: Error: Failed to connect: %d.", WSAGetLastError());
         Disconnect();
         return E_FAIL;
     }
