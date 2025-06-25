@@ -4,6 +4,10 @@
 
 typedef long NTSTATUS;
 
+// Found here:
+// https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55
+#define STATUS_OBJECT_NAME_COLLISION 0xC0000035
+
 #define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
 
 #define EXPORTNUM(module, x)
