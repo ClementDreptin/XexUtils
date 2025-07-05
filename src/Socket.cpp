@@ -3,17 +3,17 @@
 
 #include "Kernel.h"
 
-#define WSAStartup(pWSAData) NetDll_WSAStartupEx(XNCALLER_SYSAPP, MAKEWORD(2, 2), pWSAData, 2)
-#define WSACleanup() NetDll_WSACleanup(XNCALLER_SYSAPP)
-#define XNetStartup(pXNetStartupParams) NetDll_XNetStartup(XNCALLER_SYSAPP, pXNetStartupParams)
+#define WSAStartup(version, pWSAData) NetDll_WSAStartupEx((XNCALLER_TYPE)KeGetCurrentProcessType(), version, pWSAData, 2)
+#define WSACleanup() NetDll_WSACleanup((XNCALLER_TYPE)KeGetCurrentProcessType())
+#define XNetStartup(pXNetStartupParams) NetDll_XNetStartup((XNCALLER_TYPE)KeGetCurrentProcessType(), pXNetStartupParams)
 #define inet_addr(ipAddress) NetDll_inet_addr(ipAddress)
-#define socket(af, type, protocol) NetDll_socket(XNCALLER_SYSAPP, af, type, protocol)
-#define setsockopt(s, level, optname, optval, optlen) NetDll_setsockopt(XNCALLER_SYSAPP, s, level, optname, optval, optlen)
-#define shutdown(s, how) NetDll_shutdown(XNCALLER_SYSAPP, s, how)
-#define closesocket(s) NetDll_closesocket(XNCALLER_SYSAPP, s)
-#define connect(s, name, namelen) NetDll_connect(XNCALLER_SYSAPP, s, name, namelen)
-#define send(s, buf, len, flags) NetDll_send(XNCALLER_SYSAPP, s, buf, len, flags)
-#define recv(s, buf, len, flags) NetDll_recv(XNCALLER_SYSAPP, s, buf, len, flags)
+#define socket(af, type, protocol) NetDll_socket((XNCALLER_TYPE)KeGetCurrentProcessType(), af, type, protocol)
+#define setsockopt(s, level, optname, optval, optlen) NetDll_setsockopt((XNCALLER_TYPE)KeGetCurrentProcessType(), s, level, optname, optval, optlen)
+#define shutdown(s, how) NetDll_shutdown((XNCALLER_TYPE)KeGetCurrentProcessType(), s, how)
+#define closesocket(s) NetDll_closesocket((XNCALLER_TYPE)KeGetCurrentProcessType(), s)
+#define connect(s, name, namelen) NetDll_connect((XNCALLER_TYPE)KeGetCurrentProcessType(), s, name, namelen)
+#define send(s, buf, len, flags) NetDll_send((XNCALLER_TYPE)KeGetCurrentProcessType(), s, buf, len, flags)
+#define recv(s, buf, len, flags) NetDll_recv((XNCALLER_TYPE)KeGetCurrentProcessType(), s, buf, len, flags)
 
 namespace XexUtils
 {
@@ -166,7 +166,7 @@ HRESULT Socket::Init()
     }
 
     // Initialize Winsock
-    err = WSAStartup(&wsaData);
+    err = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (err != 0)
     {
         DebugPrint("[XexUtils][Socket]: Error: WSAStartup failed with code %d.", err);
