@@ -7,7 +7,7 @@ class Socket
 {
 public:
     Socket();
-    Socket(const std::string &ipAddress, uint16_t port);
+    Socket(const std::string &domain, uint16_t port);
     Socket(const Socket &other);
     ~Socket();
 
@@ -21,12 +21,14 @@ public:
 
 private:
     SOCKET m_Socket;
-    std::string m_IpAddress;
+    std::string m_Domain;
     uint16_t m_Port;
 
     bool m_Connected;
 
-    void InitInternal(const std::string &ipAddress, uint16_t port);
+    IN_ADDR DnsLookup();
+
+    void InitInternal(const std::string &domain, uint16_t port);
 
 private:
     static bool s_Initialized;

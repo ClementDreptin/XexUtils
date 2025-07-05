@@ -26,14 +26,14 @@ Socket::Socket()
     InitInternal("", 0);
 }
 
-Socket::Socket(const std::string &ipAddress, uint16_t port)
+Socket::Socket(const std::string &domain, uint16_t port)
 {
-    InitInternal(ipAddress, port);
+    InitInternal(domain, port);
 }
 
 Socket::Socket(const Socket &other)
 {
-    InitInternal(other.m_IpAddress, other.m_Port);
+    InitInternal(other.m_Domain, other.m_Port);
 }
 
 Socket::~Socket()
@@ -52,18 +52,16 @@ HRESULT Socket::Connect()
 {
     XASSERT(s_Initialized == true);
 
-    sockaddr_in addrInfo = {};
+    // Resolve domain to IP address
+    IN_ADDR ipAddress = DnsLookup();
+    if (ipAddress.s_addr == INADDR_NONE)
+        return E_FAIL;
 
     // Set up the address info of the server
+    sockaddr_in addrInfo = {};
     addrInfo.sin_family = AF_INET;
     addrInfo.sin_port = htons(m_Port);
-    addrInfo.sin_addr.s_addr = inet_addr(m_IpAddress.c_str());
-
-    if (addrInfo.sin_addr.s_addr == INADDR_NONE)
-    {
-        DebugPrint("[XexUtils][Socket]: Error: \"%s\" is not a valid IP address.");
-        return E_FAIL;
-    }
+    addrInfo.sin_addr = ipAddress;
 
     // Create the socket
     m_Socket = socket(addrInfo.sin_family, SOCK_STREAM, IPPROTO_TCP);
@@ -78,15 +76,6 @@ HRESULT Socket::Connect()
     if (setsockopt(m_Socket, SOL_SOCKET, 0x5801, reinterpret_cast<const char *>(&yes), sizeof(yes)) != 0)
     {
         DebugPrint("[XexUtils][Socket]: Error: Failed to disable encryption with setsockopt: %d.", WSAGetLastError());
-        Disconnect();
-        return E_FAIL;
-    }
-
-    // Set the socket timeout to 2 seconds
-    timeval tv = { 2, 0 };
-    if (setsockopt(m_Socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&tv), sizeof(timeval)) != 0)
-    {
-        DebugPrint("[XexUtils][Socket]: Error: Failed to set the socket timeout with setsockopt: %d.", WSAGetLastError());
         Disconnect();
         return E_FAIL;
     }
@@ -131,13 +120,62 @@ int Socket::Receive(char *buffer, size_t maxSize)
     return recv(m_Socket, buffer, maxSize, 0);
 }
 
-void Socket::InitInternal(const std::string &ipAddress, uint16_t port)
+IN_ADDR Socket::DnsLookup()
 {
-    XASSERT(port != 0);
+    XASSERT(s_Initialized == true);
+    XASSERT(m_Domain.empty() == false);
 
+    IN_ADDR address = {};
+    address.s_addr = INADDR_NONE;
+
+    XNDNS *pXNDns = nullptr;
+    HANDLE hEvent = CreateEvent(nullptr, false, false, nullptr);
+
+    // Start the domain resolution, this task is asynchronous
+    int error = XNetDnsLookup(m_Domain.c_str(), hEvent, &pXNDns);
+    if (error != 0)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: XNetDnsLookup failed with code %d.", error);
+        CloseHandle(hEvent);
+        return address;
+    }
+
+    // Error case
+    if (pXNDns->iStatus != 0 && pXNDns->iStatus != WSAEINPROGRESS)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: Unexpected XNDNS::iStatus value: %d.", error);
+        XNetDnsRelease(pXNDns);
+        CloseHandle(hEvent);
+        return address;
+    }
+
+    // Wait at most 5 seconds for completion
+    if (pXNDns->iStatus == WSAEINPROGRESS)
+        WaitForSingleObject(hEvent, 5000);
+
+    // Check for timeout
+    if (pXNDns->iStatus != 0)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: DNS lookup for %s timed out.", m_Domain.c_str());
+        XNetDnsRelease(pXNDns);
+        CloseHandle(hEvent);
+        return address;
+    }
+
+    address = pXNDns->aina[0];
+
+    // Cleanup
+    XNetDnsRelease(pXNDns);
+    CloseHandle(hEvent);
+
+    return address;
+}
+
+void Socket::InitInternal(const std::string &domain, uint16_t port)
+{
     // Initialize the members
     m_Socket = INVALID_SOCKET;
-    m_IpAddress = ipAddress;
+    m_Domain = domain;
     m_Port = port;
     m_Connected = false;
 
