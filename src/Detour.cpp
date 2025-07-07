@@ -234,7 +234,7 @@ void *Detour::GetModuleImport(const std::string &baseModuleName, const std::stri
 
     // Get the import descriptor of the base module
     LDR_DATA_TABLE_ENTRY *pDataTable = reinterpret_cast<LDR_DATA_TABLE_ENTRY *>(moduleHandle);
-    XEX_IMPORT_DESCRIPTOR *pImportDesc = static_cast<XEX_IMPORT_DESCRIPTOR *>(RtlImageXexHeaderField(pDataTable->XexHeaderBase, 0x000103FF));
+    XEX_IMPORT_DESCRIPTOR *pImportDesc = static_cast<XEX_IMPORT_DESCRIPTOR *>(RtlImageXexHeaderField(pDataTable->XexHeaderBase, XEX_HEADER_IMPORT_DESCRIPTOR));
 
     XASSERT(pImportDesc != nullptr);
 

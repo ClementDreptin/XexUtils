@@ -12,6 +12,10 @@ typedef long NTSTATUS;
 
 #define EXPORTNUM(module, x)
 
+// Disable the C4201 warning for nameless union/struct
+#pragma warning(push)
+#pragma warning(disable : 4201)
+
 typedef enum _EXCREATETHREAD_FLAG
 {
     EXCREATETHREAD_SUSPENDED = 1 << 0,
@@ -73,8 +77,8 @@ struct LDR_DATA_TABLE_ENTRY
         {
             void *ClosureRoot;
             void *TraversalParent;
-        } asEntry;
-    } inf;
+        };
+    };
 };
 
 struct XEX_IMPORT_TABLE
@@ -94,6 +98,45 @@ struct XEX_IMPORT_DESCRIPTOR
     uint32_t Size;
     uint32_t NameTableSize;
     uint32_t ModuleCount;
+};
+
+#pragma pack(push, 1)
+
+union XBOX32VER {
+    struct
+    {
+        uint8_t Major : 4;
+        uint8_t Minor : 4;
+        uint16_t Build;
+        uint8_t Qfe;
+    };
+
+    uint32_t asULong;
+};
+
+#pragma pack(pop)
+
+struct XEX_EXECUTION_ID
+{
+    uint32_t MediaId;
+    XBOX32VER Version;
+    XBOX32VER BaseVersion;
+
+    union {
+        uint32_t TitleId;
+
+        struct
+        {
+            uint16_t PublisherId;
+            uint16_t GameId;
+        };
+    };
+
+    uint8_t Platform;
+    uint8_t ExecutableType;
+    uint8_t DiscNum;
+    uint8_t DiscsInSet;
+    uint32_t SaveGameId;
 };
 
 typedef enum _FIRMWARE_REENTRY
@@ -128,22 +171,22 @@ typedef enum _XNCALLER_TYPE
     NUM_XNCALLER_TYPES = 4,
 } XNCALLER_TYPE;
 
-typedef struct _OBJECT_ATTRIBUTES
+struct OBJECT_ATTRIBUTES
 {
     HANDLE RootDirectory;
     STRING *ObjectName;
     uint32_t Attributes;
-} OBJECT_ATTRIBUTES;
+};
 
-typedef struct _IO_STATUS_BLOCK
+struct IO_STATUS_BLOCK
 {
     union {
         NTSTATUS Status;
         void *Pointer;
-    } st;
+    };
 
     uintptr_t Information;
-} IO_STATUS_BLOCK;
+};
 
 #define InitializeObjectAttributes(p, name, attrib, root) \
     { \
@@ -151,6 +194,12 @@ typedef struct _IO_STATUS_BLOCK
         (p)->Attributes = attrib; \
         (p)->ObjectName = name; \
     }
+
+typedef enum _XEX_HEADER_FIELD
+{
+    XEX_HEADER_IMPORT_DESCRIPTOR = 0x103FF,
+    XEX_HEADER_EXECUTION_ID = 0x40006
+} XEX_HEADER_FIELD;
 
 typedef enum _XEX_LOADING_FLAG
 {
@@ -168,6 +217,8 @@ typedef enum _XEX_LOADING_FLAG
     XEX_LOADING_TYPE_SYSTEM_APP = XEX_LOADING_FLAG_DLL,
     XEX_LOADING_TYPE_SYSTEM_DLL = XEX_LOADING_FLAG_DLL | XEX_LOADING_FLAG_TITLE_IMPORTS,
 } XEX_LOADING_FLAG;
+
+#pragma warning(pop) // Disable C4201
 
 #define __isync() __emit(0x4C00012C)
 
@@ -344,7 +395,7 @@ extern "C"
     EXPORTNUM("xboxkrnl.exe", 299)
     void *RtlImageXexHeaderField(
         void *pXexHeaderBase,
-        uint32_t imageField
+        XEX_HEADER_FIELD imageField
     );
 
     EXPORTNUM("xboxkrnl.exe", 300)
