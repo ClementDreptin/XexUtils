@@ -4,6 +4,7 @@
             "name": "Debug",
             "includePath": [
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/deps/BearSSL/inc",
                 "${env:XEDK}/Source/Samples/Common",
                 "${env:XEDK}/include/xbox"
             ],
@@ -14,6 +15,7 @@
             "name": "Release",
             "includePath": [
                 "${workspaceFolder}/include",
+                "${workspaceFolder}/deps/BearSSL/inc",
                 "${env:XEDK}/Source/Samples/Common",
                 "${env:XEDK}/include/xbox"
             ],

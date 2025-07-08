@@ -4,6 +4,7 @@
 #include <xtl.h>
 
 // C++ standard library
+#include <array>
 #include <cstdint>
 #include <fstream>
 #include <functional>

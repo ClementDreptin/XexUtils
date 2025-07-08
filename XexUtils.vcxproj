@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Xbox 360">
@@ -14,6 +14,12 @@
     <ProjectGuid>{C598D106-4F6D-4505-95DE-AA896A0AC7FA}</ProjectGuid>
     <Keyword>Xbox360Proj</Keyword>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="deps\BearSSL.vcxproj">
+      <Project>{3accdae6-bd87-4b74-8b7d-81184d11b7f3}</Project>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
@@ -33,6 +39,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemDefinitionGroup>
     <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)\deps\BearSSL\inc</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -71,6 +78,8 @@
     <ClInclude Include="src\Memory.h" />
     <ClInclude Include="src\SMC.h" />
     <ClInclude Include="src\Socket.h" />
+    <ClInclude Include="src\SystemSocket.h" />
+    <ClInclude Include="src\TlsSession.h" />
     <ClInclude Include="src\ValueOrPtr.h" />
     <ClInclude Include="src\Vec2.h" />
     <ClInclude Include="src\Vec3.h" />
@@ -89,6 +98,7 @@
     <ClCompile Include="src\Memory.cpp" />
     <ClCompile Include="src\SMC.cpp" />
     <ClCompile Include="src\Socket.cpp" />
+    <ClCompile Include="src\TlsSession.cpp" />
     <ClCompile Include="src\Vec2.cpp" />
     <ClCompile Include="src\Vec3.cpp" />
     <ClCompile Include="src\Vec4.cpp" />

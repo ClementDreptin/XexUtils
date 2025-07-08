@@ -1,15 +1,19 @@
 # Socket
 
-Connect to a server through insecure sockets and exchange data:
+Connect to a server and exchange data:
+
+> [!NOTE]
+> When using sockets from a title (so not a system DLL), the title needs to have the insecure socket privilege.
 
 ```C++
 void Init()
 {
     HRESULT hr = S_OK;
 
-    // Create the socket
-    uint16_t port = 12345;
-    XexUtils::Socket socket("<ip_address>", port);
+    // Create a socket with TLS enabled (this is the default)
+    uint16_t port = 443;
+    bool secure = true;
+    XexUtils::Socket socket("example.com", port, secure);
 
     // Connect to the server
     hr = socket.Connect();
@@ -20,22 +24,22 @@ void Init()
     }
 
     // Send a packet
-    const char packet[] = "hello world";
-    int bytesSent = socket.Send(packet, sizeof(packet));
-    if (bytesSent != sizeof(packet))
+    const char request[] =
+        "GET /somepage.html HTTP/1.1\r\n"
+        "Host: example.com\r\n"
+        "Connection: close\r\n\r\n";
+    int bytesSent = socket.Send(request, sizeof(request));
+    if (bytesSent != sizeof(request))
     {
         XexUtils::Log::Print("Not all packets were sent");
         socket.Disconnect();
         return;
     }
 
-    // Wait for the server to process the request and send a response
-    Sleep(500);
-
     // Receive the response
     char buffer[4096] = {};
     int bytesReceived = socket.Receive(buffer, sizeof(buffer));
-    if (bytesReceive == -1)
+    if (bytesReceive <= 0)
     {
         XexUtils::Log::Print("Couldn't receive the server response");
         socket.Disconnect();
@@ -44,6 +48,7 @@ void Init()
 
     // Do something with what is inside buffer
 
+    // The destructor calls Disconnect so this is optional
     socket.Disconnect();
 }
 ```

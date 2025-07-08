@@ -1,19 +1,8 @@
 #include "pch.h"
 #include "Socket.h"
 
-#include "Kernel.h"
-
-#define WSAStartup(version, pWSAData) NetDll_WSAStartupEx((XNCALLER_TYPE)KeGetCurrentProcessType(), version, pWSAData, 2)
-#define WSACleanup() NetDll_WSACleanup((XNCALLER_TYPE)KeGetCurrentProcessType())
-#define XNetStartup(pXNetStartupParams) NetDll_XNetStartup((XNCALLER_TYPE)KeGetCurrentProcessType(), pXNetStartupParams)
-#define inet_addr(ipAddress) NetDll_inet_addr(ipAddress)
-#define socket(af, type, protocol) NetDll_socket((XNCALLER_TYPE)KeGetCurrentProcessType(), af, type, protocol)
-#define setsockopt(s, level, optname, optval, optlen) NetDll_setsockopt((XNCALLER_TYPE)KeGetCurrentProcessType(), s, level, optname, optval, optlen)
-#define shutdown(s, how) NetDll_shutdown((XNCALLER_TYPE)KeGetCurrentProcessType(), s, how)
-#define closesocket(s) NetDll_closesocket((XNCALLER_TYPE)KeGetCurrentProcessType(), s)
-#define connect(s, name, namelen) NetDll_connect((XNCALLER_TYPE)KeGetCurrentProcessType(), s, name, namelen)
-#define send(s, buf, len, flags) NetDll_send((XNCALLER_TYPE)KeGetCurrentProcessType(), s, buf, len, flags)
-#define recv(s, buf, len, flags) NetDll_recv((XNCALLER_TYPE)KeGetCurrentProcessType(), s, buf, len, flags)
+#include "SystemSocket.h"
+#include "TlsSession.h"
 
 namespace XexUtils
 {
@@ -23,17 +12,17 @@ size_t Socket::s_ReferenceCounter = 0;
 
 Socket::Socket()
 {
-    InitInternal("", 0);
+    InitInternal("", 0, false);
 }
 
-Socket::Socket(const std::string &domain, uint16_t port)
+Socket::Socket(const std::string &domain, uint16_t port, bool secure)
 {
-    InitInternal(domain, port);
+    InitInternal(domain, port, secure);
 }
 
 Socket::Socket(const Socket &other)
 {
-    InitInternal(other.m_Domain, other.m_Port);
+    InitInternal(other.m_Domain, other.m_Port, other.m_Secure);
 }
 
 Socket::~Socket()
@@ -73,7 +62,7 @@ HRESULT Socket::Connect()
 
     // Disable encryption
     BOOL yes = TRUE;
-    if (setsockopt(m_Socket, SOL_SOCKET, 0x5801, reinterpret_cast<const char *>(&yes), sizeof(yes)) != 0)
+    if (setsockopt(m_Socket, SOL_SOCKET, 0x5801, reinterpret_cast<const char *>(&yes), sizeof(yes)) == SOCKET_ERROR)
     {
         DebugPrint("[XexUtils][Socket]: Error: Failed to disable encryption with setsockopt: %d.", WSAGetLastError());
         Disconnect();
@@ -87,6 +76,10 @@ HRESULT Socket::Connect()
         Disconnect();
         return E_FAIL;
     }
+
+    // Start TLS session if requested
+    if (m_Secure)
+        TlsSession::Start(m_Socket, m_Domain);
 
     m_Connected = true;
 
@@ -108,7 +101,10 @@ int Socket::Send(const char *buffer, size_t size)
 {
     XASSERT(m_Connected == true);
 
-    // Send the bytes from buffer in the socket
+    // Let the TLS session handle sending packets when in secure mode
+    if (m_Secure)
+        return TlsSession::Send(buffer, size);
+
     return send(m_Socket, buffer, size, 0);
 }
 
@@ -116,8 +112,33 @@ int Socket::Receive(char *buffer, size_t maxSize)
 {
     XASSERT(m_Connected == true);
 
-    // Receive at most maxSize bytes in buffer.
+    // Let the TLS session handle receiving packets when in secure mode
+    if (m_Secure)
+        return TlsSession::Receive(buffer, maxSize);
+
     return recv(m_Socket, buffer, maxSize, 0);
+}
+
+HRESULT Socket::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, TlsSession::EllipticCurveType curveType)
+{
+    if (!m_Secure)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: This socket is not in secure mode, trust anchors can't be added");
+        return E_FAIL;
+    }
+
+    return TlsSession::AddECTrustAnchor(dn, dnSize, q, qSize, curveType);
+}
+
+HRESULT Socket::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize)
+{
+    if (!m_Secure)
+    {
+        DebugPrint("[XexUtils][Socket]: Error: This socket is not in secure mode, trust anchors can't be added");
+        return E_FAIL;
+    }
+
+    return TlsSession::AddRsaTrustAnchor(dn, dnSize, n, nSize, e, eSize);
 }
 
 IN_ADDR Socket::DnsLookup()
@@ -171,12 +192,13 @@ IN_ADDR Socket::DnsLookup()
     return address;
 }
 
-void Socket::InitInternal(const std::string &domain, uint16_t port)
+void Socket::InitInternal(const std::string &domain, uint16_t port, bool secure)
 {
     // Initialize the members
     m_Socket = INVALID_SOCKET;
     m_Domain = domain;
     m_Port = port;
+    m_Secure = secure;
     m_Connected = false;
 
     s_ReferenceCounter++;
@@ -219,6 +241,7 @@ HRESULT Socket::Init()
 void Socket::Cleanup()
 {
     WSACleanup();
+    XNetCleanup();
 }
 
 }

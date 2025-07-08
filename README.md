@@ -17,6 +17,8 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
     Right click on the solution name in the solution explorer then `Add > Existing Project...` and select `XexUtils.vcxproj` in `\path\to\XexUtils`.
 -   Add it as a reference to your main project:&nbsp;
     Right click on your main project in the solution explorer then `Add > Reference...`, tick `XexUtils` and click OK.
+-   Add BearSSL as a project in Visual Studio:&nbsp;
+    Right click on the solution name in the solution explorer then `Add > Existing Project...` and select `BearSSL.vcxproj` in `\path\to\XexUtils\deps\BearSSL.vcxproj`.
 
 ## Running the tests
 

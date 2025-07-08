@@ -266,25 +266,6 @@ extern "C"
         void *pAddress
     );
 
-    EXPORTNUM("xam.xex", 2)
-    int NetDll_WSACleanup(
-        XNCALLER_TYPE xnCaller
-    );
-
-    EXPORTNUM("xam.xex", 36)
-    int NetDll_WSAStartupEx(
-        XNCALLER_TYPE xnCaller,
-        uint16_t versionRequested,
-        WSAData *pWSAData,
-        uint32_t versionReq
-    );
-
-    EXPORTNUM("xam.xex", 51)
-    int NetDll_XNetStartup(
-        XNCALLER_TYPE xnCaller,
-        const XNetStartupParams *pXNetParams
-    );
-
     EXPORTNUM("xam.xex", 4)
     int NetDll_closesocket(
         XNCALLER_TYPE xnCaller,
@@ -301,12 +282,12 @@ extern "C"
 
     EXPORTNUM("xam.xex", 26)
     uint32_t NetDll_inet_addr(
-        const char *ipAddress
+        const char *cp
     );
 
     EXPORTNUM("xam.xex", 18)
     int NetDll_recv(
-        XNCALLER_TYPE xnc,
+        XNCALLER_TYPE xnCaller,
         SOCKET s,
         char *buf,
         int len,
@@ -315,7 +296,7 @@ extern "C"
 
     EXPORTNUM("xam.xex", 22)
     int NetDll_send(
-        XNCALLER_TYPE xnc,
+        XNCALLER_TYPE xnCaller,
         SOCKET s,
         const char *buf,
         int len,
@@ -345,6 +326,44 @@ extern "C"
         int af,
         int type,
         int protocol
+    );
+
+    EXPORTNUM("xam.xex", 2)
+    int NetDll_WSACleanup(
+        XNCALLER_TYPE xnCaller
+    );
+
+    EXPORTNUM("xam.xex", 36)
+    int NetDll_WSAStartupEx(
+        XNCALLER_TYPE xnCaller,
+        uint16_t versionRequested,
+        WSAData *pWSAData,
+        uint32_t versionReq
+    );
+
+    EXPORTNUM("xam.xex", 52)
+    int NetDll_XNetCleanup(
+        XNCALLER_TYPE xnCaller
+    );
+
+    EXPORTNUM("xam.xex", 67)
+    int NetDll_XNetDnsLookup(
+        XNCALLER_TYPE xnCaller,
+        const char *pszHost,
+        HANDLE hEvent,
+        XNDNS **ppxndns
+    );
+
+    EXPORTNUM("xam.xex", 68)
+    int NetDll_XNetDnsRelease(
+        XNCALLER_TYPE xnCaller,
+        XNDNS *pxndns
+    );
+
+    EXPORTNUM("xam.xex", 51)
+    int NetDll_XNetStartup(
+        XNCALLER_TYPE xnCaller,
+        const XNetStartupParams *pxnsp
     );
 
     EXPORTNUM("xboxkrnl.exe", 207)
@@ -409,9 +428,18 @@ extern "C"
         void
     );
 
+    EXPORTNUM("xboxkrnl.exe", 394)
+    void XeCryptRandom(
+        uint8_t *pBytes,
+        size_t count
+    );
+
     EXPORTNUM("xboxkrnl.exe", 409)
     HRESULT XexLoadImage(
-        const char *imageName, XEX_LOADING_FLAG flags, uint32_t minVersion, HANDLE *pHandle
+        const char *imageName,
+        XEX_LOADING_FLAG flags,
+        uint32_t minVersion,
+        HANDLE *pHandle
     );
 
     EXPORTNUM("xboxkrnl.exe", 417)
