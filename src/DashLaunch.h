@@ -2,7 +2,7 @@
 
 namespace XexUtils
 {
-namespace DashLaunch
+namespace Dashlaunch
 {
 
 typedef BOOL (*DLAUNCHGETOPTVALBYNAME)(const char *optionName, uint32_t *pOptionValue);

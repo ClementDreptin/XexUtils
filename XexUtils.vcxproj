@@ -67,7 +67,7 @@
   <ItemGroup>
     <ClInclude Include="include\XexUtils.h" />
     <ClInclude Include="src\Assert.h" />
-    <ClInclude Include="src\DashLaunch.h" />
+    <ClInclude Include="src\Dashlaunch.h" />
     <ClInclude Include="src\Detour.h" />
     <ClInclude Include="src\Formatter.h" />
     <ClInclude Include="src\Hypervisor.h" />
@@ -88,7 +88,7 @@
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DashLaunch.cpp" />
+    <ClCompile Include="src\Dashlaunch.cpp" />
     <ClCompile Include="src\Detour.cpp" />
     <ClCompile Include="src\Formatter.cpp" />
     <ClCompile Include="src\Hypervisor.cpp" />
