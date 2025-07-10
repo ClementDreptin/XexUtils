@@ -1,5 +1,11 @@
 #pragma once
 
+/// @file SystemSocket.h
+///
+/// Macros to override the standard socket functions with their internal version and run
+/// them with the proper process type, either title of system (`XNCALLER_TITLE` or
+/// `XNCALLER_SYSAPP` respectively).
+
 #include "Kernel.h"
 
 #define closesocket(s) NetDll_closesocket((XNCALLER_TYPE)KeGetCurrentProcessType(), s)

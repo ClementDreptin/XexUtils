@@ -15,6 +15,16 @@ void Init()
     bool secure = true;
     XexUtils::Socket socket("example.com", port, secure);
 
+    // Add an Elliptic Curve trust anchor (only necessary when using a secure socket)
+    const uint8_t dn[] { 0x1, 0x2, 0x3 };
+    const uint8_t q[] { 0x1, 0x2, 0x3 };
+    hr = socket.AddECTrustAnchor(dn, sizeof(dn), q, sizeof(q), XexUtils::TlsSession::Curve_secp384r1);
+    if (FAILED(hr))
+    {
+        XexUtils::Log::Print("Couldn't add elliptic curve trust anchor");
+        return;
+    }
+
     // Connect to the server
     hr = socket.Connect();
     if (FAILED(hr))
@@ -52,3 +62,11 @@ void Init()
     socket.Disconnect();
 }
 ```
+
+To generate C byte arrays from a certificate, you can use the `brssl` command-line tool like so:
+
+```
+brssl ta ./cert.pem
+```
+
+The `brssl` command-line tool can be built from the [BearSSL source](https://bearssl.org/#download-and-installation). On a Linux system, simply clone the repository and run `make`. The output binary will be in `build/brssl`. The same process might work on Windows, but I never tried.

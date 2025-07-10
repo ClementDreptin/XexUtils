@@ -1,6 +1,9 @@
 #pragma once
 
-// Most of those were taken from xkelib
+/// @file Kernel.h
+///
+/// A list of functions exported by `xboxkrnl.exe` and `xam.xex` and the associated
+/// structures to use them. Most of those were taken from xkelib.
 
 typedef long NTSTATUS;
 

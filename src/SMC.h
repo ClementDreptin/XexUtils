@@ -21,8 +21,16 @@ typedef enum _PowerLEDMode
     PowerLED_Blink = 0x10,
 } PowerLEDMode;
 
+/// @brief Sets the behavior of the power LED.
+/// @param mode The behavior to set.
+/// @param animate Wether to trigger the power LED animation or not.
 void SetPowerLED(PowerLEDMode mode, bool animate);
 
+/// @brief Changes the colors of the different power LED segments.
+/// @param topLeft The color of the top left segment.
+/// @param topRight The color of the top right segment.
+/// @param bottomLeft The color of the bottom left segment.
+/// @param bottomRight The color of the bottom right segment.
 void SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft, LEDColor bottomRight);
 
 }

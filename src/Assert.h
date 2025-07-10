@@ -1,9 +1,10 @@
 #pragma once
 
-// The assert macro from the standard library doesn't trigger a breakpoint, even with a debugger attached
-// in Visual Studio so we need create our own.
-
 #ifndef NDEBUG
+    /// @brief Triggers a breakpoint in debug builds when a condition is false.
+    ///
+    /// The assert macro from the standard library doesn't trigger a breakpoint,
+    /// even with a debugger attached in Visual Studio so we need create our own.
     #define XASSERT(expr) \
         { \
             if (!(expr)) \

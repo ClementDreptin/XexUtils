@@ -74,7 +74,7 @@
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Kernel.h" />
     <ClInclude Include="src\Log.h" />
-    <ClInclude Include="src\Math_.h" />
+    <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\Memory.h" />
     <ClInclude Include="src\SMC.h" />
     <ClInclude Include="src\Socket.h" />
@@ -84,7 +84,7 @@
     <ClInclude Include="src\Vec2.h" />
     <ClInclude Include="src\Vec3.h" />
     <ClInclude Include="src\Vec4.h" />
-    <ClInclude Include="src\Xam_.h" />
+    <ClInclude Include="src\Xam.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -94,7 +94,7 @@
     <ClCompile Include="src\Hypervisor.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\Math_.cpp" />
+    <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Memory.cpp" />
     <ClCompile Include="src\SMC.cpp" />
     <ClCompile Include="src\Socket.cpp" />
@@ -102,7 +102,7 @@
     <ClCompile Include="src\Vec2.cpp" />
     <ClCompile Include="src\Vec3.cpp" />
     <ClCompile Include="src\Vec4.cpp" />
-    <ClCompile Include="src\Xam_.cpp" />
+    <ClCompile Include="src\Xam.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

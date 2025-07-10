@@ -1,6 +1,6 @@
 # Assert
 
-Use an assertion trigger a breakpoint when a condition is false, only in debug builds:
+Use an assertion to trigger a breakpoint when a condition is false, only in debug builds:
 
 ```C++
 #define ARRAY_SIZE 3

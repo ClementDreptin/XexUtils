@@ -5,6 +5,7 @@ namespace XexUtils
 namespace Xam
 {
 
+/// @brief The notification icon.
 typedef enum _XNOTIFYQUEUEUI_TYPE
 {
     XNOTIFYUI_TYPE_FRIENDONLINE = 0,
@@ -81,26 +82,70 @@ typedef enum _XNOTIFYQUEUEUI_TYPE
     XNOTIFYUI_TYPE_SMARTGLASSAVAILABLE = 77,
 } XNOTIFYQUEUEUI_TYPE;
 
+/// @brief Displays a system notification.
+/// @param text The text to display.
+/// @param type The notification icon.
 void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type = XNOTIFYUI_TYPE_PREFERRED_REVIEW);
 
-// Note: Blocks the current thread while waiting for the user to finish typing.
+/// @brief Opens a system keyboard.
+///
+/// This function blocks the calling thread while the keyboard is open.
+///
+/// @param title The title.
+/// @param description The description.
+/// @param defaultText The text written by default in the input.
+/// @param result What was typed by the user.
+/// @param maxLength The max amount of characters the user can type.
+/// @param keyboardType The keyboard type (e.g. email, phone, password, etc.).
+/// @return How the keyboard was closed.
 uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description, const std::wstring &defaultText, std::string &result, size_t maxLength = 15, uint32_t keyboardType = VKBD_DEFAULT);
 
-// Note: Blocks the current thread while waiting for the user to close the message box.
+/// @brief Opens a system message box.
+///
+/// This function blocks the calling thread while the message box is open.
+///
+/// @param title The title.
+/// @param text The main content.
+/// @param buttonLabels A vector of label buttons.
+/// @param messageBoxType The type of message box (e.g. error, info, warning).
+/// @param pButtonPressedIndex A pointer to a `uint32_t` to store the index in `buttonLabels`
+/// of the button that was clicked.
+/// @param focusedButtonIndex Index in `buttonLabels` of the button to focus by default.
+/// @return How the message box was closed.
 uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType = XMB_NOICON, uint32_t *pButtonPressedIndex = nullptr, uint32_t focusedButtonIndex = 0);
 
+/// @brief Gets the currently running title ID.
+///
+/// This function simply calls `XamGetCurrentTitleId`.
+///
+/// @return The current title ID.
 uint32_t GetCurrentTitleId();
 
+/// @brief Checks wether `pAddress` is accessible by the current process or not.
+///
+/// This function is simply a const version of `MmIsAddressValid`.
+///
+/// @param pAddress The address to check.
+/// @return `true` if `pAddress` is accessible, `false` otherwise.
 bool IsAddressValid(const void *pAddress);
 
+/// @brief Reboots the console.
 void Reboot();
 
+/// @brief Allows the current process to access the hard drive using the `hdd:` drive name.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
 HRESULT MountHdd();
 
+/// @brief Allows the current process to access the first USB stick using the `usb:` drive name.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
 HRESULT MountUsb();
 
+/// @brief Checks wether the console is running the debug kernel or not.
+/// @return `true` if the console is running the debug kernel, `false` otherwise.
 bool IsDevkit();
 
+/// @brief Checks wether the current title is running in the Xenia emulator or not.
+/// @return `true` if the current title is running in the Xenia emulator, `false` otherwise.
 bool InXenia();
 
 }
