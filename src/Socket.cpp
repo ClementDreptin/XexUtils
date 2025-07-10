@@ -11,35 +11,34 @@ bool Socket::s_Initialized = false;
 size_t Socket::s_ReferenceCounter = 0;
 
 Socket::Socket()
+    : m_Socket(INVALID_SOCKET), m_Port(0), m_Secure(false), m_Connected(false)
 {
-    InitInternal("", 0, false);
 }
 
 Socket::Socket(const std::string &domain, uint16_t port, bool secure)
+    : m_Socket(INVALID_SOCKET), m_Domain(domain), m_Port(port), m_Secure(secure), m_Connected(false)
 {
-    InitInternal(domain, port, secure);
 }
 
 Socket::Socket(const Socket &other)
+    : m_Socket(INVALID_SOCKET), m_Domain(other.m_Domain), m_Port(other.m_Port), m_Secure(other.m_Secure), m_Connected(false)
 {
-    InitInternal(other.m_Domain, other.m_Port, other.m_Secure);
 }
 
 Socket::~Socket()
 {
     Disconnect();
-
-    if (s_ReferenceCounter != 0)
-        s_ReferenceCounter--;
-
-    // Once the amount of instances hits 0, execute the global cleanup
-    if (s_ReferenceCounter == 0)
-        Cleanup();
 }
 
 HRESULT Socket::Connect()
 {
-    XASSERT(s_Initialized == true);
+    // Execute the global initialization when connecting with a socket for the first time
+    if (s_ReferenceCounter == 0 && s_Initialized == false)
+    {
+        HRESULT hr = GlobalInit();
+        if (FAILED(hr))
+            return hr;
+    }
 
     // Resolve domain to IP address
     IN_ADDR ipAddress = DnsLookup();
@@ -83,11 +82,14 @@ HRESULT Socket::Connect()
 
     m_Connected = true;
 
+    s_ReferenceCounter++;
+
     return S_OK;
 }
 
 void Socket::Disconnect()
 {
+    // Disconnect the socket
     if (m_Socket != INVALID_SOCKET)
     {
         shutdown(m_Socket, SD_BOTH);
@@ -95,6 +97,13 @@ void Socket::Disconnect()
     }
 
     m_Connected = false;
+
+    if (s_ReferenceCounter != 0)
+        s_ReferenceCounter--;
+
+    // Once the amount of connected sockets hits 0, execute the global cleanup
+    if (s_ReferenceCounter == 0 && s_Initialized == true)
+        GlobalCleanup();
 }
 
 int Socket::Send(const char *buffer, size_t size)
@@ -192,23 +201,7 @@ IN_ADDR Socket::DnsLookup()
     return address;
 }
 
-void Socket::InitInternal(const std::string &domain, uint16_t port, bool secure)
-{
-    // Initialize the members
-    m_Socket = INVALID_SOCKET;
-    m_Domain = domain;
-    m_Port = port;
-    m_Secure = secure;
-    m_Connected = false;
-
-    s_ReferenceCounter++;
-
-    // Execute the global initialization when creating the first Socket instance
-    if (s_ReferenceCounter == 1)
-        Init();
-}
-
-HRESULT Socket::Init()
+HRESULT Socket::GlobalInit()
 {
     WSADATA wsaData = {};
     XNetStartupParams xNetStartupParams = {};
@@ -238,10 +231,11 @@ HRESULT Socket::Init()
     return S_OK;
 }
 
-void Socket::Cleanup()
+void Socket::GlobalCleanup()
 {
     WSACleanup();
     XNetCleanup();
+    s_Initialized = false;
 }
 
 }

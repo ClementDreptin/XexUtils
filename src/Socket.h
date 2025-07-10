@@ -99,15 +99,13 @@ private:
 
     IN_ADDR DnsLookup();
 
-    void InitInternal(const std::string &domain, uint16_t port, bool secure);
-
 private:
     static bool s_Initialized;
     static size_t s_ReferenceCounter;
 
-    static HRESULT Init();
+    static HRESULT GlobalInit();
 
-    static void Cleanup();
+    static void GlobalCleanup();
 };
 
 }
