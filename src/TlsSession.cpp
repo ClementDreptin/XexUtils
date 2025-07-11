@@ -75,7 +75,7 @@ HRESULT AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, si
     s_TrustAnchors[s_TrustAnchorCount].dn.data = const_cast<uint8_t *>(dn);
     s_TrustAnchors[s_TrustAnchorCount].dn.len = dnSize;
     s_TrustAnchors[s_TrustAnchorCount].flags = BR_X509_TA_CA;
-    s_TrustAnchors[s_TrustAnchorCount].pkey.key_type = BR_KEYTYPE_EC;
+    s_TrustAnchors[s_TrustAnchorCount].pkey.key_type = BR_KEYTYPE_RSA;
     s_TrustAnchors[s_TrustAnchorCount].pkey.key.rsa.n = const_cast<uint8_t *>(n);
     s_TrustAnchors[s_TrustAnchorCount].pkey.key.rsa.nlen = nSize;
     s_TrustAnchors[s_TrustAnchorCount].pkey.key.rsa.e = const_cast<uint8_t *>(e);
