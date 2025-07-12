@@ -374,6 +374,19 @@ extern "C"
         HANDLE Handle
     );
 
+    EXPORTNUM("xboxkrnl.exe", 210)
+    NTSTATUS NtCreateFile(
+        HANDLE *pHandle,
+        ACCESS_MASK desiredAccess,
+        OBJECT_ATTRIBUTES *pObjectAttributes,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        LARGE_INTEGER *pAllocationSize,
+        uint32_t fileAttributes,
+        uint32_t shareAccess,
+        uint32_t createDisposition,
+        uint32_t createOptions
+    );
+
     EXPORTNUM("xboxkrnl.exe", 223)
     NTSTATUS NtOpenFile(
         HANDLE *pHandle,
