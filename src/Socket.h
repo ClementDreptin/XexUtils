@@ -1,14 +1,52 @@
 #pragma once
 
-#include "TlsSession.h"
-
 namespace XexUtils
 {
+
+// `TlsSession` is forward declared so that its header doesn't need to be included in a
+// public API. This is meant to abstract away BearSSL so that users don't need to configure
+// their compiler to resolve its includes.
+class TlsSession;
 
 /// @brief A class representing a socket connection.
 class Socket
 {
 public:
+    /// @brief Elliptic curve identifiers used with EC trust anchors (aligned with BearSSL).
+    typedef enum
+    {
+        Curve_sect163k1 = 1,
+        Curve_sect163r1,
+        Curve_sect163r2,
+        Curve_sect193r1,
+        Curve_sect193r2,
+        Curve_sect233k1,
+        Curve_sect233r1,
+        Curve_sect239k1,
+        Curve_sect283k1,
+        Curve_sect283r1,
+        Curve_sect409k1,
+        Curve_sect409r1,
+        Curve_sect571k1,
+        Curve_sect571r1,
+        Curve_secp160k1,
+        Curve_secp160r1,
+        Curve_secp160r2,
+        Curve_secp192k1,
+        Curve_secp192r1,
+        Curve_secp224k1,
+        Curve_secp224r1,
+        Curve_secp256k1,
+        Curve_secp256r1,
+        Curve_secp384r1,
+        Curve_secp521r1,
+        Curve_brainpoolP256r1,
+        Curve_brainpoolP384r1,
+        Curve_brainpoolP512r1,
+        Curve_curve25519,
+        Curve_curve448
+    } EllipticCurveType;
+
     /// @brief Creates an empty `Socket`.
     Socket();
 
@@ -73,7 +111,7 @@ public:
     /// @param qSize The amount of bytes in `q`.
     /// @param curveType The curve type.
     /// @return `S_OK` on success, `E_FAIL` on error.
-    HRESULT AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, TlsSession::EllipticCurveType curveType);
+    HRESULT AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, EllipticCurveType curveType);
 
     /// @brief Adds an RSA trust anchor.
     ///
@@ -94,8 +132,8 @@ private:
     std::string m_Domain;
     uint16_t m_Port;
     bool m_Secure;
-
     bool m_Connected;
+    TlsSession *m_pTlsSession;
 
     IN_ADDR DnsLookup();
 

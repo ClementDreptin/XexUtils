@@ -522,7 +522,7 @@ static void Socket()
         HRESULT hr = S_OK;
 
         XexUtils::Socket secureSocket(domain, 443, true);
-        hr = secureSocket.AddECTrustAnchor(EC_DN.data(), sizeof(EC_DN), EC_Q.data(), sizeof(EC_Q), XexUtils::TlsSession::Curve_secp384r1);
+        hr = secureSocket.AddECTrustAnchor(EC_DN.data(), sizeof(EC_DN), EC_Q.data(), sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
         TEST_EQ(hr, S_OK);
 
         hr = secureSocket.Connect();
@@ -540,7 +540,7 @@ static void Socket()
         HRESULT hr = S_OK;
 
         XexUtils::Socket secureSocket(domain, 443, true);
-        hr = secureSocket.AddECTrustAnchor(EC_DN.data(), sizeof(EC_DN), EC_Q.data(), sizeof(EC_Q), XexUtils::TlsSession::Curve_secp384r1);
+        hr = secureSocket.AddECTrustAnchor(EC_DN.data(), sizeof(EC_DN), EC_Q.data(), sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
         TEST_EQ(hr, S_OK);
 
         hr = secureSocket.Connect();
