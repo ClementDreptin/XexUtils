@@ -102,8 +102,7 @@ public:
 
     /// @brief Adds an Elliptic Curve trust anchor.
     ///
-    /// This function can fail if TLS is disabled or if the total amount of trust anchors
-    /// exceeds `MAX_ANCHORS`.
+    /// This function can fail if TLS is disabled.
     ///
     /// @param dn The distinguished name.
     /// @param dnSize The amount of bytes in `dn`.
@@ -115,8 +114,7 @@ public:
 
     /// @brief Adds an RSA trust anchor.
     ///
-    /// This function can fail if TLS is disabled or if the total amount of trust anchors
-    /// exceeds `MAX_ANCHORS`.
+    /// This function can fail if TLS is disabled.
     ///
     /// @param dn The distinguished name.
     /// @param dnSize The amount of bytes in `dn`.
