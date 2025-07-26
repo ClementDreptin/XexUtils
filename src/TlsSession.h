@@ -25,21 +25,14 @@ public:
     void Start(const SOCKET &socket, const std::string &domain);
 
     /// @brief Adds an Elliptic Curve trust anchor.
-    ///
-    /// This function can fail if the total amount of trust anchors exceeds `MAX_ANCHORS`.
-    ///
     /// @param dn The distinguished name.
     /// @param dnSize The amount of bytes in `dn`.
     /// @param q The public key curve point.
     /// @param qSize The amount of bytes in `q`.
     /// @param curveType The curve type.
-    /// @return `S_OK` on success, `E_FAIL` on error.
-    HRESULT AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, int curveType);
+    void AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, int curveType);
 
     /// @brief Adds an RSA trust anchor.
-    ///
-    /// This function can fail if the total amount of trust anchors exceeds `MAX_ANCHORS`.
-    ///
     /// @param dn The distinguished name.
     /// @param dnSize The amount of bytes in `dn`.
     /// @param n The public key modulus.
@@ -47,7 +40,7 @@ public:
     /// @param e The public key exponent.
     /// @param eSize The amount of bytes in `e`.
     /// @return `S_OK` on success, `E_FAIL` on error.
-    HRESULT AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize);
+    void AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize);
 
     /// @brief Sends `size` bytes from `buffer` into the socket associated with the TLS session.
     ///

@@ -144,7 +144,9 @@ HRESULT Socket::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t
         return E_FAIL;
     }
 
-    return m_pTlsSession->AddECTrustAnchor(dn, dnSize, q, qSize, curveType);
+    m_pTlsSession->AddECTrustAnchor(dn, dnSize, q, qSize, curveType);
+
+    return S_OK;
 }
 
 HRESULT Socket::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize)
@@ -155,7 +157,9 @@ HRESULT Socket::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_
         return E_FAIL;
     }
 
-    return m_pTlsSession->AddRsaTrustAnchor(dn, dnSize, n, nSize, e, eSize);
+    m_pTlsSession->AddRsaTrustAnchor(dn, dnSize, n, nSize, e, eSize);
+
+    return S_OK;
 }
 
 IN_ADDR Socket::DnsLookup()

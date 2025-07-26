@@ -37,7 +37,7 @@ void TlsSession::Start(const SOCKET &sock, const std::string &domain)
     );
 }
 
-HRESULT TlsSession::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, int curveType)
+void TlsSession::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, int curveType)
 {
     XASSERT(dn != nullptr);
     XASSERT(q != nullptr);
@@ -50,12 +50,11 @@ HRESULT TlsSession::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uin
     trustAnchor.pkey.key.ec.curve = curveType;
     trustAnchor.pkey.key.ec.q = const_cast<uint8_t *>(q);
     trustAnchor.pkey.key.ec.qlen = qSize;
-    m_TrustAnchors.emplace_back(trustAnchor);
 
-    return S_OK;
+    m_TrustAnchors.emplace_back(trustAnchor);
 }
 
-HRESULT TlsSession::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize)
+void TlsSession::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize)
 {
     XASSERT(dn != nullptr);
     XASSERT(n != nullptr);
@@ -70,9 +69,8 @@ HRESULT TlsSession::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const ui
     trustAnchor.pkey.key.rsa.nlen = nSize;
     trustAnchor.pkey.key.rsa.e = const_cast<uint8_t *>(e);
     trustAnchor.pkey.key.rsa.elen = eSize;
-    m_TrustAnchors.emplace_back(trustAnchor);
 
-    return S_OK;
+    m_TrustAnchors.emplace_back(trustAnchor);
 }
 
 int TlsSession::Send(const char *buffer, size_t size)
