@@ -269,6 +269,22 @@ extern "C"
         void *pAddress
     );
 
+    EXPORTNUM("xam.xex", 14)
+    SOCKET NetDll_accept(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        sockaddr *addr,
+        int *addrlen
+    );
+
+    EXPORTNUM("xam.xex", 11)
+    int NetDll_bind(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const sockaddr *name,
+        int namelen
+    );
+
     EXPORTNUM("xam.xex", 4)
     int NetDll_closesocket(
         XNCALLER_TYPE xnCaller,
@@ -279,13 +295,54 @@ extern "C"
     int NetDll_connect(
         XNCALLER_TYPE xnCaller,
         SOCKET s,
-        const struct sockaddr *name,
+        const sockaddr *name,
         int namelen
+    );
+
+    EXPORTNUM("xam.xex", 10)
+    int NetDll_getpeername(
+        XNCALLER_TYPE xnc,
+        SOCKET s,
+        sockaddr *name,
+        int *namelen
+    );
+
+    EXPORTNUM("xam.xex", 9)
+    int NetDll_getsockname(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        sockaddr *name,
+        int *namelen
+    );
+
+    EXPORTNUM("xam.xex", 8)
+    int NetDll_getsockopt(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int level,
+        int optname,
+        char *optval,
+        int *optlen
     );
 
     EXPORTNUM("xam.xex", 26)
     uint32_t NetDll_inet_addr(
         const char *cp
+    );
+
+    EXPORTNUM("xam.xex", 6)
+    int NetDll_ioctlsocket(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int cmd,
+        uint32_t *argp
+    );
+
+    EXPORTNUM("xam.xex", 13)
+    int NetDll_listen(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int backlog
     );
 
     EXPORTNUM("xam.xex", 18)
@@ -295,6 +352,16 @@ extern "C"
         char *buf,
         int len,
         int flags
+    );
+
+    EXPORTNUM("xam.xex", 15)
+    int NetDll_select(
+        IN XNCALLER_TYPE xnCaller,
+        int nfds,
+        fd_set *readfds,
+        fd_set *writefds,
+        fd_set *exceptfds,
+        const timeval *timeout
     );
 
     EXPORTNUM("xam.xex", 22)
