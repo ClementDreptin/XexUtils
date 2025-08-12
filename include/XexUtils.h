@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <vector>
 
 // XexUtils
 #include "../src/Assert.h"
