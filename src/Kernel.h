@@ -354,6 +354,17 @@ extern "C"
         int flags
     );
 
+    EXPORTNUM("xam.xex", 20)
+    int NetDll_recvfrom(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const char *buf,
+        int len,
+        int flags,
+        sockaddr *from,
+        int *fromlen
+    );
+
     EXPORTNUM("xam.xex", 15)
     int NetDll_select(
         IN XNCALLER_TYPE xnCaller,
@@ -371,6 +382,17 @@ extern "C"
         const char *buf,
         int len,
         int flags
+    );
+
+    EXPORTNUM("xam.xex", 24)
+    int NetDll_sendto(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const char *buf,
+        int len,
+        int flags,
+        const sockaddr *to,
+        int tolen
     );
 
     EXPORTNUM("xam.xex", 7)
