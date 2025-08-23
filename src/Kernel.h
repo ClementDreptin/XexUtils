@@ -221,6 +221,18 @@ typedef enum _XEX_LOADING_FLAG
     XEX_LOADING_TYPE_SYSTEM_DLL = XEX_LOADING_FLAG_DLL | XEX_LOADING_FLAG_TITLE_IMPORTS,
 } XEX_LOADING_FLAG;
 
+struct KEXCEPTION_FRAME
+{
+    uint32_t Status;
+    uint32_t Unknown1;
+    uint32_t Unknown2;
+    uint32_t Unknown3;
+    BOOL Continuable;
+    uint32_t ExceptionInformation[32];
+};
+
+typedef BOOL (*TRAPHANDLER)(void *pUnknown, KEXCEPTION_FRAME *pExceptionFrame, CONTEXT *pContext, BOOL secondChance);
+
 #pragma warning(pop) // Disable C4201
 
 #define __isync() __emit(0x4C00012C)

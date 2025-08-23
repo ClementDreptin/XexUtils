@@ -1,15 +1,34 @@
 # Dashlaunch
 
+Access the global Dashlaunch data:
+
+```C++
+void Init()
+{
+    // Initialize the Dashlaunch exports
+    HRESULT hr = XexUtils::Dashlaunch::Init();
+    if (FAILED(hr))
+    {
+        XexUtils::Log::Print("Couldn't get exports from Dashlaunch");
+        return;
+    }
+
+    // Get the kernel version that Dashlaunch supports
+    uint16_t supportedKernelVersion = XexUtils::Dashlaunch::pLaunchData->TargetKernel;
+    XexUtils::Log::Print("Dashlaunch supports kernel: %d", supportedKernelVersion);
+}
+```
+
 Get and set a Dashlaunch option value by its name:
 
 ```C++
 void Init()
 {
-    // Initialize the Dashlaunch functions
+    // Initialize the Dashlaunch exports
     HRESULT hr = XexUtils::Dashlaunch::Init();
     if (FAILED(hr))
     {
-        XexUtils::Log::Print("Couldn't get functions from Dashlaunch");
+        XexUtils::Log::Print("Couldn't get exports from Dashlaunch");
         return;
     }
 

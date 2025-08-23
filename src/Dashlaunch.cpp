@@ -12,15 +12,24 @@ namespace Dashlaunch
 
 typedef enum _DL_ORDINALS
 {
+    DL_ORDINALS_LDAT = 1,
     DL_ORDINALS_GETOPTVALBYNAME = 9,
     DL_ORDINALS_SETOPTVALBYNAME = 10,
 } DL_ORDINALS;
 
+LaunchData *pLaunchData = nullptr;
 DLAUNCHGETOPTVALBYNAME GetOptionValueByName = nullptr;
 DLAUNCHSETOPTVALBYNAME SetOptionValueByName = nullptr;
 
 HRESULT Init()
 {
+    pLaunchData = static_cast<LaunchData *>(Memory::ResolveFunction(LAUNCH_MODULE, DL_ORDINALS_LDAT));
+    if (pLaunchData == nullptr)
+    {
+        DebugPrint("[XexUtils][Dashlaunch]: Error: Could not resolve the Dashlaunch data.");
+        return E_FAIL;
+    }
+
     GetOptionValueByName = static_cast<DLAUNCHGETOPTVALBYNAME>(Memory::ResolveFunction(LAUNCH_MODULE, DL_ORDINALS_GETOPTVALBYNAME));
     if (GetOptionValueByName == nullptr)
     {
