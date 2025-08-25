@@ -118,9 +118,8 @@ void Reboot()
     HalReturnToFirmware(HalRebootRoutine);
 }
 
-static HRESULT MountPath(const std::string &linkName, const std::string &devicePath)
+HRESULT MountPath(const std::string &linkName, const std::string &devicePath)
 {
-    // Allow the game to access other storage devices or partitions.
     // The system only allows executables to access the directory they live in and binds it to
     // the "game:" drive. Nothing else is accessible unless you create a symbolic link.
 

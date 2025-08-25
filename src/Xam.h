@@ -132,6 +132,12 @@ bool IsAddressValid(const void *pAddress);
 /// @brief Reboots the console.
 void Reboot();
 
+/// @brief Allows the current process to access other storage devices or partitions.
+/// @param linkName The symbolic link name (e.g. hdd:).
+/// @param devicePath The full device path (e.g. \Device\Harddisk0\Partition1\).
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT MountPath(const std::string &linkName, const std::string &devicePath);
+
 /// @brief Allows the current process to access the hard drive using the `hdd:` drive name.
 /// @return `S_OK` on success, an `NTSTATUS` error on error.
 HRESULT MountHdd();
