@@ -156,3 +156,216 @@ bool InXenia();
 
 }
 }
+
+/// A list of functions exported by `xam.xex` and the associated structures to use them.
+/// Most of those were taken from xkelib.
+
+#define EXPORTNUM(x)
+
+typedef enum _XNCALLER_TYPE
+{
+    XNCALLER_INVALID = 0,
+    XNCALLER_TITLE = 1,
+    XNCALLER_SYSAPP = 2,
+    XNCALLER_XBDM = 3,
+    XNCALLER_PERSISTING = 3,
+    XNCALLER_TEST = 4,
+    NUM_XNCALLER_TYPES = 4,
+} XNCALLER_TYPE;
+
+extern "C"
+{
+    EXPORTNUM(14)
+    SOCKET NetDll_accept(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        sockaddr *addr,
+        int *addrlen
+    );
+
+    EXPORTNUM(11)
+    int NetDll_bind(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const sockaddr *name,
+        int namelen
+    );
+
+    EXPORTNUM(4)
+    int NetDll_closesocket(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s
+    );
+
+    EXPORTNUM(12)
+    int NetDll_connect(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const sockaddr *name,
+        int namelen
+    );
+
+    EXPORTNUM(10)
+    int NetDll_getpeername(
+        XNCALLER_TYPE xnc,
+        SOCKET s,
+        sockaddr *name,
+        int *namelen
+    );
+
+    EXPORTNUM(9)
+    int NetDll_getsockname(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        sockaddr *name,
+        int *namelen
+    );
+
+    EXPORTNUM(8)
+    int NetDll_getsockopt(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int level,
+        int optname,
+        char *optval,
+        int *optlen
+    );
+
+    EXPORTNUM(26)
+    uint32_t NetDll_inet_addr(
+        const char *cp
+    );
+
+    EXPORTNUM(6)
+    int NetDll_ioctlsocket(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int cmd,
+        uint32_t *argp
+    );
+
+    EXPORTNUM(13)
+    int NetDll_listen(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int backlog
+    );
+
+    EXPORTNUM(18)
+    int NetDll_recv(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        char *buf,
+        int len,
+        int flags
+    );
+
+    EXPORTNUM(20)
+    int NetDll_recvfrom(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const char *buf,
+        int len,
+        int flags,
+        sockaddr *from,
+        int *fromlen
+    );
+
+    EXPORTNUM(15)
+    int NetDll_select(
+        IN XNCALLER_TYPE xnCaller,
+        int nfds,
+        fd_set *readfds,
+        fd_set *writefds,
+        fd_set *exceptfds,
+        const timeval *timeout
+    );
+
+    EXPORTNUM(22)
+    int NetDll_send(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const char *buf,
+        int len,
+        int flags
+    );
+
+    EXPORTNUM(24)
+    int NetDll_sendto(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const char *buf,
+        int len,
+        int flags,
+        const sockaddr *to,
+        int tolen
+    );
+
+    EXPORTNUM(7)
+    int NetDll_setsockopt(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int level,
+        int optname,
+        const char *optval,
+        int optlen
+    );
+
+    EXPORTNUM(5)
+    int NetDll_shutdown(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int how
+    );
+
+    EXPORTNUM(3)
+    SOCKET NetDll_socket(
+        XNCALLER_TYPE xnCaller,
+        int af,
+        int type,
+        int protocol
+    );
+
+    EXPORTNUM(2)
+    int NetDll_WSACleanup(
+        XNCALLER_TYPE xnCaller
+    );
+
+    EXPORTNUM(36)
+    int NetDll_WSAStartupEx(
+        XNCALLER_TYPE xnCaller,
+        uint16_t versionRequested,
+        WSAData *pWSAData,
+        uint32_t versionReq
+    );
+
+    EXPORTNUM(52)
+    int NetDll_XNetCleanup(
+        XNCALLER_TYPE xnCaller
+    );
+
+    EXPORTNUM(67)
+    int NetDll_XNetDnsLookup(
+        XNCALLER_TYPE xnCaller,
+        const char *pszHost,
+        HANDLE hEvent,
+        XNDNS **ppxndns
+    );
+
+    EXPORTNUM(68)
+    int NetDll_XNetDnsRelease(
+        XNCALLER_TYPE xnCaller,
+        XNDNS *pxndns
+    );
+
+    EXPORTNUM(51)
+    int NetDll_XNetStartup(
+        XNCALLER_TYPE xnCaller,
+        const XNetStartupParams *pxnsp
+    );
+
+    EXPORTNUM(463)
+    uint32_t XamGetCurrentTitleId(
+        void
+    );
+}
