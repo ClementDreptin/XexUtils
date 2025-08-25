@@ -115,7 +115,7 @@ union XBOX32VER {
         uint8_t Qfe;
     };
 
-    uint32_t asULong;
+    uint32_t AsULong;
 };
 
 #pragma pack(pop)
