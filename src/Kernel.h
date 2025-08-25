@@ -10,6 +10,7 @@ typedef long NTSTATUS;
 // Found here:
 // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55
 #define STATUS_OBJECT_NAME_COLLISION 0xC0000035
+#define STATUS_NO_MORE_ENTRIES 0x8000001A
 
 #define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
 
@@ -174,11 +175,19 @@ typedef enum _XNCALLER_TYPE
     NUM_XNCALLER_TYPES = 4,
 } XNCALLER_TYPE;
 
+#define OBJ_CASE_INSENSITIVE 0x00000040L
+
 struct OBJECT_ATTRIBUTES
 {
     HANDLE RootDirectory;
     STRING *ObjectName;
     uint32_t Attributes;
+};
+
+struct OBJECT_DIRECTORY_INFORMATION
+{
+    STRING Name;
+    uint32_t Type;
 };
 
 struct IO_STATUS_BLOCK
@@ -488,6 +497,12 @@ extern "C"
         uint32_t createOptions
     );
 
+    EXPORTNUM("xboxkrnl.exe", 222)
+    NTSTATUS NtOpenDirectoryObject(
+        HANDLE *pDirectoryHandle,
+        OBJECT_ATTRIBUTES *pObjectAttributes
+    );
+
     EXPORTNUM("xboxkrnl.exe", 223)
     NTSTATUS NtOpenFile(
         HANDLE *pHandle,
@@ -496,6 +511,16 @@ extern "C"
         IO_STATUS_BLOCK *pIoStatusBlock,
         uint32_t shareAccess,
         uint32_t openOptions
+    );
+
+    EXPORTNUM("xboxkrnl.exe", 229)
+    NTSTATUS NtQueryDirectoryObject(
+        HANDLE directoryHandle,
+        void *pBuffer,
+        size_t length,
+        bool restartScan,
+        uint32_t *pContext,
+        uint32_t *pReturnLength
     );
 
     EXPORTNUM("xboxkrnl.exe", 240)
