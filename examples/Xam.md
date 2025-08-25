@@ -97,6 +97,14 @@ void Init()
     {
         // Write something to the file..
     }
+
+    // You can unmount the drive after you're done using it
+    hr = XexUtils::Xam::UnmountHdd();
+    if (FAILED(hr))
+    {
+        XexUtils::Log::Print("Could not unmount HDD");
+        return;
+    }
 }
 ```
 
@@ -116,6 +124,14 @@ void Init()
     if (file.is_open()) // Would return false if XexUtils::Xam::MountUsb didn't get called
     {
         // Write something to the file..
+    }
+
+    // You can unmount the drive after you're done using it
+    hr = XexUtils::Xam::UnmountUsb();
+    if (FAILED(hr))
+    {
+        XexUtils::Log::Print("Could not unmount USB");
+        return;
     }
 }
 ```

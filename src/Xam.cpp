@@ -150,6 +150,32 @@ HRESULT MountUsb()
     return MountPath("usb:", "\\Device\\Mass0\\");
 }
 
+HRESULT UnmountPath(const std::string &linkName)
+{
+    STRING link = {};
+    std::string userDestinationDrive = "\\??\\" + linkName;
+    std::string systemDestinationDrive = "\\System??\\" + linkName;
+
+    // Initialize the STRING structs
+    if (KeGetCurrentProcessType() == PROC_SYSTEM)
+        RtlInitAnsiString(&link, systemDestinationDrive.c_str());
+    else
+        RtlInitAnsiString(&link, userDestinationDrive.c_str());
+
+    // Remove the symbolic link
+    return ObDeleteSymbolicLink(&link);
+}
+
+HRESULT UnmountHdd()
+{
+    return UnmountPath("hdd:");
+}
+
+HRESULT UnmountUsb()
+{
+    return UnmountPath("usb:");
+}
+
 bool IsDevkit()
 {
     // Read a 32-bit unsigned int at 0x8E038610 and if the 16th is NOT set, the console is a devkit.

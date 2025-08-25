@@ -146,6 +146,19 @@ HRESULT MountHdd();
 /// @return `S_OK` on success, an `NTSTATUS` error on error.
 HRESULT MountUsb();
 
+/// @brief Removes a symbolic link previously created with `MountPath`.
+/// @param linkName The symbolic link name (e.g. hdd:).
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT UnmountPath(const std::string &linkName);
+
+/// @brief Removes the `hdd:` symbolic link previously created with `MountHdd`.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT UnmountHdd();
+
+/// @brief Removes the `usb:` symbolic link previously created with `MountUsb`.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT UnmountUsb();
+
 /// @brief Checks wether the console is running the debug kernel or not.
 /// @return `true` if the console is running the debug kernel, `false` otherwise.
 bool IsDevkit();

@@ -348,9 +348,14 @@ extern "C"
     );
 
     EXPORTNUM(259)
-    HRESULT ObCreateSymbolicLink(
+    NTSTATUS ObCreateSymbolicLink(
         STRING *pLinkName,
         STRING *pDevicePath
+    );
+
+    EXPORTNUM(260)
+    NTSTATUS ObDeleteSymbolicLink(
+        STRING *pLinkName
     );
 
     EXPORTNUM(299)
@@ -372,7 +377,7 @@ extern "C"
     );
 
     EXPORTNUM(409)
-    HRESULT XexLoadImage(
+    NTSTATUS XexLoadImage(
         const char *imageName,
         XEX_LOADING_FLAG flags,
         uint32_t minVersion,
@@ -380,7 +385,7 @@ extern "C"
     );
 
     EXPORTNUM(417)
-    HRESULT XexUnloadImage(
+    NTSTATUS XexUnloadImage(
         HANDLE handle
     );
 }
