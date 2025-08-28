@@ -164,19 +164,31 @@ typedef enum _PROC_TYPE
     PROC_SYSTEM,
 } PROC_TYPE;
 
-#define OBJ_CASE_INSENSITIVE 0x00000040L
+typedef enum _OBJECT_ATTRIBUTE
+{
+    OBJ_CASE_INSENSITIVE = 1 << 6
+} OBJECT_ATTRIBUTE;
 
 struct OBJECT_ATTRIBUTES
 {
     HANDLE RootDirectory;
     STRING *ObjectName;
-    uint32_t Attributes;
+    OBJECT_ATTRIBUTE Attributes;
 };
+
+typedef enum _OBJECT_TYPE
+{
+    OBJECT_TYPE_SYMLINK = 0x626d7953,
+    OBJECT_TYPE_DIRECTORY = 0x65726944,
+    OBJECT_TYPE_DEVICE = 0x69766544,
+    OBJECT_TYPE_EVENT = 0x76657645,
+    OBJECT_TYPE_DEBUG = 0x63706d64,
+} OBJECT_TYPE;
 
 struct OBJECT_DIRECTORY_INFORMATION
 {
     STRING Name;
-    uint32_t Type;
+    OBJECT_TYPE Type;
 };
 
 struct IO_STATUS_BLOCK
@@ -195,6 +207,9 @@ struct IO_STATUS_BLOCK
         (p)->Attributes = attrib; \
         (p)->ObjectName = name; \
     }
+
+#define FILE_DIRECTORY_FILE 0x00000001
+#define FILE_SYNCHRONOUS_IO_NONALERT 0x00000020
 
 typedef enum _XEX_HEADER_FIELD
 {
@@ -313,6 +328,12 @@ extern "C"
         uint32_t openOptions
     );
 
+    EXPORTNUM(224)
+    NTSTATUS NtOpenSymbolicLinkObject(
+        HANDLE *pLinkHandle,
+        OBJECT_ATTRIBUTES *pObjectAttributes
+    );
+
     EXPORTNUM(229)
     NTSTATUS NtQueryDirectoryObject(
         HANDLE directoryHandle,
@@ -321,6 +342,13 @@ extern "C"
         bool restartScan,
         uint32_t *pContext,
         uint32_t *pReturnLength
+    );
+
+    EXPORTNUM(236)
+    NTSTATUS NtQuerySymbolicLinkObject(
+        HANDLE linkHandle,
+        STRING *pLinkTarget,
+        uint32_t *pReturnedLength
     );
 
     EXPORTNUM(240)
