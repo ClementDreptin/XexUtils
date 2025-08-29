@@ -671,6 +671,18 @@ static void Xam()
 
         TEST_EQ(file.is_open(), true);
     });
+
+    It("removes the hdd: symbolic link previously created with MountHdd", []() {
+        Xam::MountHdd();
+        std::ifstream file("hdd:\\launch.ini");
+        TEST_EQ(file.is_open(), true);
+
+        file.close();
+        Xam::UnmountHdd();
+        file.open("hdd:\\launch.ini");
+
+        TEST_EQ(file.is_open(), false);
+    });
 }
 
 void RunTests()
