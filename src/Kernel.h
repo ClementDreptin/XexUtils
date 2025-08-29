@@ -4,13 +4,37 @@
 ///
 /// A list of functions exported by `xboxkrnl.exe` and the associated structures to use
 /// them. Most of those were taken from xkelib.
-
-typedef long NTSTATUS;
+///
+///
+/// Notes about flag naming conventions:
+///
+/// A common pattern for flags is to create a `typedef` between `uint32_t` and the flag
+/// type name, define an enum named like the flag but follow by an underscore (_), and then
+/// the flag values are all prefixed by the enum name. For example:
+/// ```
+/// typedef uint32_t MY_FLAG;
+/// enum MY_FLAG_
+/// {
+///     MY_FLAG_NONE = 0,
+///     MY_FLAG_FIRST = 1 << 0,
+///     MY_FLAG_SECOND = 1 << 1,
+/// };
+/// ```
+/// The whole point of this convention is to be autocompletion friendly. If a function
+/// takes a `MY_FLAG` argument, the user should be able to type `MY_FLAG_` and see all the
+/// possible values. This convention is inspired by how Dear ImGui names its flags.
+/// It isn't 100% applied for flags taken from Win32/NT APIs because I wanted to preserve
+/// the name Microsoft gave them, so that values can also be found from the official
+/// Microsoft documentation.
 
 // Found here:
 // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55
-#define STATUS_OBJECT_NAME_COLLISION 0xC0000035
-#define STATUS_NO_MORE_ENTRIES 0x8000001A
+typedef enum _NTSTATUS
+{
+    STATUS_SUCESS = 0x00000000,
+    STATUS_OBJECT_NAME_COLLISION = 0xC0000035,
+    STATUS_NO_MORE_ENTRIES = 0x8000001A,
+} NTSTATUS;
 
 #define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
 
@@ -20,23 +44,25 @@ typedef long NTSTATUS;
 #pragma warning(push)
 #pragma warning(disable : 4201)
 
-typedef enum _EXCREATETHREAD_FLAG
+typedef uint32_t EXCREATETHREAD_FLAG;
+
+enum EXCREATETHREAD_FLAG_
 {
-    EXCREATETHREAD_SUSPENDED = 1 << 0,
-    EXCREATETHREAD_SYSTEM = 1 << 1,
-    EXCREATETHREAD_TLS_STATIC = 1 << 3,
-    EXCREATETHREAD_PRIORITY1 = 1 << 5,
-    EXCREATETHREAD_PRIORITY0 = 1 << 6,
-    EXCREATETHREAD_RETURN_KTHREAD = 1 << 7,
-    EXCREATETHREAD_TITLE_EXEC = 1 << 8,
-    EXCREATETHREAD_HIDDEN = 1 << 10,
-    EXCREATETHREAD_CORE0 = 1 << 24,
-    EXCREATETHREAD_CORE1 = 1 << 25,
-    EXCREATETHREAD_CORE2 = 1 << 26,
-    EXCREATETHREAD_CORE3 = 1 << 27,
-    EXCREATETHREAD_CORE4 = 1 << 28,
-    EXCREATETHREAD_CORE5 = 1 << 29,
-} EXCREATETHREAD_FLAG;
+    EXCREATETHREAD_FLAG_SUSPENDED = 1 << 0,
+    EXCREATETHREAD_FLAG_SYSTEM = 1 << 1,
+    EXCREATETHREAD_FLAG_TLS_STATIC = 1 << 3,
+    EXCREATETHREAD_FLAG_PRIORITY1 = 1 << 5,
+    EXCREATETHREAD_FLAG_PRIORITY0 = 1 << 6,
+    EXCREATETHREAD_FLAG_RETURN_KTHREAD = 1 << 7,
+    EXCREATETHREAD_FLAG_TITLE_EXEC = 1 << 8,
+    EXCREATETHREAD_FLAG_HIDDEN = 1 << 10,
+    EXCREATETHREAD_FLAG_CORE0 = 1 << 24,
+    EXCREATETHREAD_FLAG_CORE1 = 1 << 25,
+    EXCREATETHREAD_FLAG_CORE2 = 1 << 26,
+    EXCREATETHREAD_FLAG_CORE3 = 1 << 27,
+    EXCREATETHREAD_FLAG_CORE4 = 1 << 28,
+    EXCREATETHREAD_FLAG_CORE5 = 1 << 29,
+};
 
 struct STRING
 {
@@ -164,10 +190,12 @@ typedef enum _PROC_TYPE
     PROC_SYSTEM,
 } PROC_TYPE;
 
-typedef enum _OBJECT_ATTRIBUTE
+typedef uint32_t OBJECT_ATTRIBUTE;
+
+enum OBJECT_ATTRIBUTE_
 {
-    OBJ_CASE_INSENSITIVE = 1 << 6
-} OBJECT_ATTRIBUTE;
+    OBJ_CASE_INSENSITIVE = 1 << 6,
+};
 
 struct OBJECT_ATTRIBUTES
 {
@@ -208,16 +236,27 @@ struct IO_STATUS_BLOCK
         (p)->ObjectName = name; \
     }
 
-#define FILE_DIRECTORY_FILE 0x00000001
-#define FILE_SYNCHRONOUS_IO_NONALERT 0x00000020
+typedef uint32_t FILE_ATTRIBUTE;
+typedef uint32_t FILE_SHARE;
+
+typedef uint32_t CREATE_OPTION;
+typedef CREATE_OPTION OPEN_OPTION;
+
+enum CREATE_OPTION_
+{
+    FILE_DIRECTORY_FILE = 0x00000001,
+    FILE_SYNCHRONOUS_IO_NONALERT = 0x00000020,
+};
 
 typedef enum _XEX_HEADER_FIELD
 {
     XEX_HEADER_IMPORT_DESCRIPTOR = 0x103FF,
-    XEX_HEADER_EXECUTION_ID = 0x40006
+    XEX_HEADER_EXECUTION_ID = 0x40006,
 } XEX_HEADER_FIELD;
 
-typedef enum _XEX_LOADING_FLAG
+typedef uint32_t XEX_LOADING_FLAG;
+
+enum XEX_LOADING_FLAG_
 {
     XEX_LOADING_FLAG_TITLE_PROCESS = 1 << 0,
     XEX_LOADING_FLAG_TITLE_IMPORTS = 1 << 1,
@@ -232,7 +271,7 @@ typedef enum _XEX_LOADING_FLAG
     XEX_LOADING_TYPE_TITLE_DLL = XEX_LOADING_FLAG_TITLE_PROCESS | XEX_LOADING_FLAG_DLL,
     XEX_LOADING_TYPE_SYSTEM_APP = XEX_LOADING_FLAG_DLL,
     XEX_LOADING_TYPE_SYSTEM_DLL = XEX_LOADING_FLAG_DLL | XEX_LOADING_FLAG_TITLE_IMPORTS,
-} XEX_LOADING_FLAG;
+};
 
 struct KEXCEPTION_FRAME
 {
@@ -306,10 +345,10 @@ extern "C"
         OBJECT_ATTRIBUTES *pObjectAttributes,
         IO_STATUS_BLOCK *pIoStatusBlock,
         LARGE_INTEGER *pAllocationSize,
-        uint32_t fileAttributes,
-        uint32_t shareAccess,
+        FILE_ATTRIBUTE fileAttributes,
+        FILE_SHARE shareAccess,
         uint32_t createDisposition,
-        uint32_t createOptions
+        CREATE_OPTION createOptions
     );
 
     EXPORTNUM(222)
@@ -324,8 +363,8 @@ extern "C"
         ACCESS_MASK desiredAccess,
         OBJECT_ATTRIBUTES *pObjectAttributes,
         IO_STATUS_BLOCK *pIoStatusBlock,
-        uint32_t shareAccess,
-        uint32_t openOptions
+        FILE_SHARE shareAccess,
+        OPEN_OPTION openOptions
     );
 
     EXPORTNUM(224)
