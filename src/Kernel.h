@@ -169,6 +169,22 @@ struct XEX_EXECUTION_ID
     uint32_t SaveGameId;
 };
 
+struct IMAGE_XEX_HEADER
+{
+    char Magic[4];
+    uint32_t ModuleFlags;
+    uint32_t SizeOfHeaders;
+    uint32_t SizeOfDiscardableHeaders;
+    uint32_t SecurityInfo;
+    uint32_t HeaderDirectoryEntryCount;
+};
+
+struct XEX_VITAL_STATS
+{
+    uint32_t Checksum;
+    uint32_t Timestamp;
+};
+
 typedef enum _FIRMWARE_REENTRY
 {
     HalHaltRoutine,
@@ -251,6 +267,7 @@ enum CREATE_OPTION_
 typedef enum _XEX_HEADER_FIELD
 {
     XEX_HEADER_IMPORT_DESCRIPTOR = 0x103FF,
+    XEX_HEADER_VITAL_STATS = 0x18002,
     XEX_HEADER_EXECUTION_ID = 0x40006,
 } XEX_HEADER_FIELD;
 
@@ -293,6 +310,9 @@ typedef BOOL (*TRAPHANDLER)(void *pUnknown, KEXCEPTION_FRAME *pExceptionFrame, C
     __dcbst(0, addr); \
     __sync(); \
     __isync()
+
+extern "C" HANDLE *XexExecutableModuleHandle;
+extern "C" const char *ExLoadedImageName;
 
 extern "C"
 {
