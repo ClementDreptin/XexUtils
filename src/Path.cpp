@@ -99,6 +99,11 @@ Path Path::Parent() const
     return Path(m_Path.substr(0, lastSeparatorPos));
 }
 
+Path Path::RelativePath() const
+{
+    return m_Path.substr(Drive().Size());
+}
+
 Path &Path::Append(const Path &path)
 {
     if (!IsEmpty() && m_Path.back() != s_Separator && path.String().front() != s_Separator)

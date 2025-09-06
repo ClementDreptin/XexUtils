@@ -472,68 +472,102 @@ static void Path()
     It("parses simple absolute paths", []() {
         XexUtils::Path path("C:\\Windows\\System32\\");
 
-        TEST_EQ(path.Drive().String(), "C:");
-        TEST_EQ(path.Basename().String(), "");
-        TEST_EQ(path.Extension().String(), "");
-        TEST_EQ(path.Filename().String(), "");
-        TEST_EQ(path.Parent().String(), "C:\\Windows");
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "");
+        TEST_EQ(path.Extension(), "");
+        TEST_EQ(path.Filename(), "");
+        TEST_EQ(path.Parent(), "C:\\Windows");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\");
         TEST_EQ(path.IsRoot(), false);
     });
 
     It("parses simple relative paths", []() {
         XexUtils::Path path("Documents\\File.txt");
 
-        TEST_EQ(path.Drive().String(), "");
-        TEST_EQ(path.Basename().String(), "File");
-        TEST_EQ(path.Extension().String(), ".txt");
-        TEST_EQ(path.Filename().String(), "File.txt");
-        TEST_EQ(path.Parent().String(), "Documents");
+        TEST_EQ(path.Drive(), "");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "Documents");
+        TEST_EQ(path.RelativePath(), "Documents\\File.txt");
         TEST_EQ(path.IsRoot(), false);
     });
 
     It("parses paths with dots", []() {
         XexUtils::Path path(".\\Relative\\..\\Path\\file.txt");
 
-        TEST_EQ(path.Drive().String(), "");
-        TEST_EQ(path.Basename().String(), "file");
-        TEST_EQ(path.Extension().String(), ".txt");
-        TEST_EQ(path.Filename().String(), "file.txt");
-        TEST_EQ(path.Parent().String(), ".\\Relative\\..\\Path");
+        TEST_EQ(path.Drive(), "");
+        TEST_EQ(path.Basename(), "file");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "file.txt");
+        TEST_EQ(path.Parent(), ".\\Relative\\..\\Path");
+        TEST_EQ(path.RelativePath(), ".\\Relative\\..\\Path\\file.txt");
         TEST_EQ(path.IsRoot(), false);
     });
 
     It("parses root directories", []() {
         XexUtils::Path path("drive:\\");
 
-        TEST_EQ(path.Drive().String(), "drive:");
-        TEST_EQ(path.Basename().String(), "");
-        TEST_EQ(path.Extension().String(), "");
-        TEST_EQ(path.Filename().String(), "");
-        TEST_EQ(path.Parent().String(), "drive:\\");
+        TEST_EQ(path.Drive(), "drive:");
+        TEST_EQ(path.Basename(), "");
+        TEST_EQ(path.Extension(), "");
+        TEST_EQ(path.Filename(), "");
+        TEST_EQ(path.Parent(), "drive:\\");
+        TEST_EQ(path.RelativePath(), "\\");
         TEST_EQ(path.IsRoot(), true);
     });
 
     It("parses paths with only a drive", []() {
         XexUtils::Path path("drive:");
 
-        TEST_EQ(path.Drive().String(), "drive:");
-        TEST_EQ(path.Basename().String(), "");
-        TEST_EQ(path.Extension().String(), "");
-        TEST_EQ(path.Filename().String(), "");
-        TEST_EQ(path.Parent().String(), "drive:");
+        TEST_EQ(path.Drive(), "drive:");
+        TEST_EQ(path.Basename(), "");
+        TEST_EQ(path.Extension(), "");
+        TEST_EQ(path.Filename(), "");
+        TEST_EQ(path.Parent(), "drive:");
+        TEST_EQ(path.RelativePath(), "");
         TEST_EQ(path.IsRoot(), true);
     });
 
     It("appends to a path", []() {
         XexUtils::Path path("C:\\Windows\\System32");
-        path /= XexUtils::Path("Documents\\File.txt");
+        path /= "Documents\\File.txt";
 
-        TEST_EQ(path.Drive().String(), "C:");
-        TEST_EQ(path.Basename().String(), "File");
-        TEST_EQ(path.Extension().String(), ".txt");
-        TEST_EQ(path.Filename().String(), "File.txt");
-        TEST_EQ(path.Parent().String(), "C:\\Windows\\System32\\Documents");
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "C:\\Windows\\System32\\Documents");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\Documents\\File.txt");
         TEST_EQ(path.IsRoot(), false);
+    });
+
+    It("adds a final separator when appending an empty path to a path without a final separator", []() {
+        XexUtils::Path path("C:\\Windows\\System32");
+        path /= "";
+
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "");
+        TEST_EQ(path.Extension(), "");
+        TEST_EQ(path.Filename(), "");
+        TEST_EQ(path.Parent(), "C:\\Windows");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "C:\\Windows\\System32\\");
+    });
+
+    It("doesn't do anything when appending an empty path to a path with a final separator", []() {
+        XexUtils::Path path("C:\\Windows\\System32\\");
+        path /= "";
+
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "");
+        TEST_EQ(path.Extension(), "");
+        TEST_EQ(path.Filename(), "");
+        TEST_EQ(path.Parent(), "C:\\Windows");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "C:\\Windows\\System32\\");
     });
 }
 

@@ -154,6 +154,11 @@ public:
     /// @return The parent directory part of the `Path`.
     Path Parent() const;
 
+    /// @brief Gets a `Path` that is relative to the drive. In other words, `*this`
+    /// without the drive.
+    /// @return A `Path` relative to the drive.
+    Path RelativePath() const;
+
     /// @brief Appends a `Path` to the current `Path` object.
     /// @param path The `Path` to append.
     /// @return A reference to the modified `Path` object.
