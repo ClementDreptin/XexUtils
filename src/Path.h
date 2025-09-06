@@ -172,6 +172,14 @@ public:
     /// @return `true` if the `Path` is a root path, `false` otherwise.
     bool IsRoot() const;
 
+    /// @brief Calls `.c_str()` on the underlying `std::string`.
+    /// @return The result of `.c_str()` on the underlying `std::string`.
+    const char *c_str() const;
+
+    /// @brief Returns the size of the underlying `std::string`.
+    /// @return The size of the underlying `std::string`.
+    size_t Size() const;
+
 private:
     std::string m_Path;
 

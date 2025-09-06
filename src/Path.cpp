@@ -134,4 +134,13 @@ bool Path::IsRoot() const
     return colonPos == m_Path.size() - 1 || lastSeparatorPos == colonPos + 1;
 }
 
+const char *Path::c_str() const
+{
+    return m_Path.c_str();
+}
+
+size_t Path::Size() const
+{
+    return m_Path.size();
+}
 }
