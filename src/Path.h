@@ -71,19 +71,63 @@ public:
     /// @brief Compares two `Path` objects for equality.
     /// @param left The left `Path` object.
     /// @param right The right `Path` object.
-    /// @return True if the `Path` objects are equal, false otherwise.
+    /// @return `true` if the `Path` objects are equal, `false` otherwise.
     inline friend bool operator==(const Path &left, const Path &right)
     {
         return left.Compare(right);
     }
 
+    /// @brief Compares a generic type with a `Path` for equality.
+    /// @tparam T The type of left operand.
+    /// @param left The left operand of the comparison.
+    /// @param right The `Path` to compare.
+    /// @return `true` if the operands are equal, `false` otherwise.
+    template<typename T>
+    inline friend bool operator==(const T &left, const Path &right)
+    {
+        return left == right.String();
+    }
+
+    /// @brief Compares a `Path` with a generic type for equality.
+    /// @tparam T The type of right operand.
+    /// @param left The `Path` to compare.
+    /// @param right The right operand of the comparison.
+    /// @return `true` if the operands are equal, `false` otherwise.
+    template<typename T>
+    inline friend bool operator==(const Path &left, const T &right)
+    {
+        return left.String() == right;
+    }
+
     /// @brief Compares two `Path` objects for inequality.
     /// @param left The left `Path` object.
     /// @param right The right `Path` object.
-    /// @return True if the `Path` objects are not equal, false otherwise.
+    /// @return `true` if the `Path` objects are not equal, `false` otherwise.
     inline friend bool operator!=(const Path &left, const Path &right)
     {
         return !(left == right);
+    }
+
+    /// @brief Compares a generic type with a `Path` for inequality.
+    /// @tparam T The type of left operand.
+    /// @param left The left operand of the comparison.
+    /// @param right The `Path` to compare.
+    /// @return `true` if the operands are not equal, `false` otherwise.
+    template<typename T>
+    inline friend bool operator!=(const T &left, const Path &right)
+    {
+        return left != right.String();
+    }
+
+    /// @brief Compares a `Path` with a generic type for inequality.
+    /// @tparam T The type of right operand.
+    /// @param left The `Path` to compare.
+    /// @param right The right operand of the comparison.
+    /// @return `true` if the operands are not equal, `false` otherwise.
+    template<typename T>
+    inline friend bool operator!=(const Path &left, const T &right)
+    {
+        return left.String() != right;
     }
 
     /// @brief Gets the string representation of the `Path`.
@@ -117,7 +161,7 @@ public:
 
     /// @brief Compares the current `Path` object with another `Path` object.
     /// @param other The other `Path` object to compare with.
-    /// @return True if the `Path` objects are equal, false otherwise.
+    /// @return `true` if the `Path` objects are equal, `false` otherwise.
     bool Compare(const Path &other) const;
 
     /// @brief Checks if the `Path` is empty.
