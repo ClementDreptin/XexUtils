@@ -14,6 +14,10 @@ public:
     /// @param path The string representing the path.
     Path(const std::string &path);
 
+    /// @brief Creates a `Path` object from a given string.
+    /// @param path The string representing the path.
+    Path(const char *path);
+
     /// @brief Concatenates a generic type with a `Path` object.
     /// @tparam T The type of the left operand.
     /// @param left The left operand of the concatenation.

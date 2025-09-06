@@ -15,6 +15,11 @@ Path::Path(const std::string &path)
 {
 }
 
+Path::Path(const char *path)
+    : m_Path(path)
+{
+}
+
 Path Path::Drive() const
 {
     size_t colonPos = m_Path.find_first_of(':');
