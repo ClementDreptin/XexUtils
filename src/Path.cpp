@@ -101,7 +101,7 @@ Path Path::Parent() const
 
 Path &Path::Append(const Path &path)
 {
-    if (!IsEmpty() && m_Path.back() != s_Separator)
+    if (!IsEmpty() && m_Path.back() != s_Separator && path.String().front() != s_Separator)
         m_Path += s_Separator;
 
     m_Path += path.String();
