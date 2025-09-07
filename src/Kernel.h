@@ -264,6 +264,27 @@ enum CREATE_OPTION_
     FILE_SYNCHRONOUS_IO_NONALERT = 0x00000020,
 };
 
+struct FILE_FS_SIZE_INFORMATION
+{
+    LARGE_INTEGER TotalAllocationUnits;
+    LARGE_INTEGER AvailableAllocationUnits;
+    uint32_t SectorsPerAllocationUnit;
+    uint32_t BytesPerSector;
+};
+
+typedef enum _FS_INFORMATION_CLASS
+{
+    FileFsVolumeInformation = 1,
+    FileFsLabelInformation,
+    FileFsSizeInformation,
+    FileFsDeviceInformation,
+    FileFsAttributeInformation,
+    FileFsControlInformation,
+    FileFsFullSizeInformation,
+    FileFsObjectIdInformation,
+    FileFsMaximumInformation
+} FS_INFORMATION_CLASS;
+
 typedef enum _XEX_HEADER_FIELD
 {
     XEX_HEADER_IMPORT_DESCRIPTOR = 0x103FF,
@@ -408,6 +429,15 @@ extern "C"
         HANDLE linkHandle,
         STRING *pLinkTarget,
         uint32_t *pReturnedLength
+    );
+
+    EXPORTNUM(239)
+    NTSTATUS NtQueryVolumeInformationFile(
+        HANDLE handle,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        void *pFsInformation,
+        uint32_t length,
+        FS_INFORMATION_CLASS fsInformationClass
     );
 
     EXPORTNUM(240)
