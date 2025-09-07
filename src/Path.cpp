@@ -106,7 +106,9 @@ Path Path::RelativePath() const
 
 Path &Path::Append(const Path &path)
 {
-    if (!IsEmpty() && m_Path.back() != s_Separator && path.String().front() != s_Separator)
+    bool currentDoesntEndWithSeparator = !IsEmpty() && m_Path.back() != s_Separator;
+    bool otherDoesntStartWithSeparator = !path.IsEmpty() && path.String().front() != s_Separator;
+    if (currentDoesntEndWithSeparator && otherDoesntStartWithSeparator)
         m_Path += s_Separator;
 
     m_Path += path.String();
