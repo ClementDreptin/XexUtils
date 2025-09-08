@@ -106,12 +106,11 @@ Path Path::RelativePath() const
 
 Path &Path::Append(const Path &path)
 {
-    bool currentDoesntEndWithSeparator = !IsEmpty() && m_Path.back() != s_Separator;
-    bool otherDoesntStartWithSeparator = !path.IsEmpty() && path.String().front() != s_Separator;
-    if (currentDoesntEndWithSeparator && otherDoesntStartWithSeparator)
-        m_Path += s_Separator;
+    const std::string &otherAsString = path.String();
+    const std::string &currentWithoutFinalSeparator = !IsEmpty() && m_Path.back() == s_Separator ? m_Path.substr(0, m_Path.size() - 1) : m_Path;
+    const std::string &otherWithoutFirstSeparator = !path.IsEmpty() && otherAsString.front() == s_Separator ? otherAsString.substr(1) : otherAsString;
 
-    m_Path += path.String();
+    m_Path = currentWithoutFinalSeparator + s_Separator + otherWithoutFirstSeparator;
 
     return *this;
 }

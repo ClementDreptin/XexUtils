@@ -529,7 +529,21 @@ static void Path()
         TEST_EQ(path.IsRoot(), true);
     });
 
-    It("appends to a path", []() {
+    It("appends a path with a leading separator to a path without a trailing separator", []() {
+        XexUtils::Path path("C:\\Windows\\System32");
+        path /= "\\Documents\\File.txt";
+
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "C:\\Windows\\System32\\Documents");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\Documents\\File.txt");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+    });
+
+    It("appends a path without a leading separator to a path without a trailing separator", []() {
         XexUtils::Path path("C:\\Windows\\System32");
         path /= "Documents\\File.txt";
 
@@ -540,9 +554,38 @@ static void Path()
         TEST_EQ(path.Parent(), "C:\\Windows\\System32\\Documents");
         TEST_EQ(path.RelativePath(), "\\Windows\\System32\\Documents\\File.txt");
         TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
     });
 
-    It("adds a final separator when appending an empty path to a path without a final separator", []() {
+    It("appends a path with a leading separator to a path with a trailing separator", []() {
+        XexUtils::Path path("C:\\Windows\\System32\\");
+        path /= "\\Documents\\File.txt";
+
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "C:\\Windows\\System32\\Documents");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\Documents\\File.txt");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+    });
+
+    It("appends a path without a leading separator to a path with a trailing separator", []() {
+        XexUtils::Path path("C:\\Windows\\System32\\");
+        path /= "Documents\\File.txt";
+
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "C:\\Windows\\System32\\Documents");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\Documents\\File.txt");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+    });
+
+    It("appends an empty path to a path without a trailing separator", []() {
         XexUtils::Path path("C:\\Windows\\System32");
         path /= "";
 
@@ -556,7 +599,7 @@ static void Path()
         TEST_EQ(path.String(), "C:\\Windows\\System32\\");
     });
 
-    It("doesn't do anything when appending an empty path to a path with a final separator", []() {
+    It("appends an empty path to a path with a trailing separator", []() {
         XexUtils::Path path("C:\\Windows\\System32\\");
         path /= "";
 
@@ -568,6 +611,34 @@ static void Path()
         TEST_EQ(path.RelativePath(), "\\Windows\\System32\\");
         TEST_EQ(path.IsRoot(), false);
         TEST_EQ(path.String(), "C:\\Windows\\System32\\");
+    });
+
+    It("appends a path without a leading separator to an empty path", []() {
+        XexUtils::Path path("");
+        path /= "Documents\\File.txt";
+
+        TEST_EQ(path.Drive(), "");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "\\Documents");
+        TEST_EQ(path.RelativePath(), "\\Documents\\File.txt");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "\\Documents\\File.txt");
+    });
+
+    It("appends a path with a leading separator to an empty path", []() {
+        XexUtils::Path path("");
+        path /= "\\Documents\\File.txt";
+
+        TEST_EQ(path.Drive(), "");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "\\Documents");
+        TEST_EQ(path.RelativePath(), "\\Documents\\File.txt");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "\\Documents\\File.txt");
     });
 }
 
