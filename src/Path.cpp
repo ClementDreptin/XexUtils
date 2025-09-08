@@ -55,6 +55,7 @@ Path Path::Extension() const
     size_t colonPos = m_Path.find_first_of(':');
     size_t characterBeforeFileNamePos = lastSeparatorPos != std::string::npos ? lastSeparatorPos : colonPos;
 
+    // No dot or dot is the first character of the file name (like .gitignore)
     if (lastDotPos == std::string::npos || lastDotPos == characterBeforeFileNamePos + 1)
         return Path();
 

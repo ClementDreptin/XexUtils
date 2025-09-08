@@ -24,7 +24,7 @@ public:
     /// @param path The `Path` object to concatenate.
     /// @return The resulting string from the concatenation.
     template<typename T>
-    inline friend std::string operator+(const T &left, const Path &path)
+    inline friend Path operator+(const T &left, const Path &path)
     {
         return left + path.String();
     }
@@ -35,7 +35,7 @@ public:
     /// @param right The right operand of the concatenation.
     /// @return The resulting string from the concatenation.
     template<typename T>
-    inline friend std::string operator+(const Path &path, const T &right)
+    inline friend Path operator+(const Path &path, const T &right)
     {
         return path.String() + right;
     }
