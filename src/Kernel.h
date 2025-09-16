@@ -34,6 +34,7 @@ typedef enum _NTSTATUS
     STATUS_SUCESS = 0x00000000,
     STATUS_NO_MORE_FILES = 0x80000006,
     STATUS_OBJECT_NAME_COLLISION = 0xC0000035,
+    STATUS_DIRECTORY_NOT_EMPTY = 0xC0000101,
     STATUS_NO_MORE_ENTRIES = 0x8000001A,
 } NTSTATUS;
 
@@ -406,6 +407,11 @@ extern "C"
         FILE_SHARE shareAccess,
         uint32_t createDisposition,
         CREATE_OPTION createOptions
+    );
+
+    EXPORTNUM(216)
+    NTSTATUS NtDeleteFile(
+        OBJECT_ATTRIBUTES *pObjectAttributes
     );
 
     EXPORTNUM(222)
