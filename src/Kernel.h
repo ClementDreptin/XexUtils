@@ -32,6 +32,7 @@
 typedef enum _NTSTATUS
 {
     STATUS_SUCESS = 0x00000000,
+    STATUS_NO_MORE_FILES = 0x80000006,
     STATUS_OBJECT_NAME_COLLISION = 0xC0000035,
     STATUS_NO_MORE_ENTRIES = 0x8000001A,
 } NTSTATUS;
@@ -285,6 +286,21 @@ typedef enum _FS_INFORMATION_CLASS
     FileFsMaximumInformation
 } FS_INFORMATION_CLASS;
 
+struct FILE_DIRECTORY_INFORMATION
+{
+    uint32_t NextEntryOffset;
+    uint32_t FileIndex;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER EndOfFile;
+    LARGE_INTEGER AllocationSize;
+    FILE_ATTRIBUTE FileAttributes;
+    uint32_t FileNameLength;
+    char FileName[1];
+};
+
 typedef enum _XEX_HEADER_FIELD
 {
     XEX_HEADER_IMPORT_DESCRIPTOR = 0x103FF,
@@ -412,6 +428,19 @@ extern "C"
     NTSTATUS NtOpenSymbolicLinkObject(
         HANDLE *pLinkHandle,
         OBJECT_ATTRIBUTES *pObjectAttributes
+    );
+
+    EXPORTNUM(228)
+    NTSTATUS NtQueryDirectoryFile(
+        HANDLE handle,
+        HANDLE event,
+        void *pApcRoutine,
+        void *pApcContext,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        void *pFileInformation,
+        uint32_t length,
+        STRING *pFileMask,
+        BOOL restartScan
     );
 
     EXPORTNUM(229)
