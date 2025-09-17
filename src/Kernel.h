@@ -266,6 +266,17 @@ enum CREATE_OPTION_
     FILE_SYNCHRONOUS_IO_NONALERT = 0x00000020,
 };
 
+typedef enum _CREATE_DISPOSITION
+{
+    FILE_SUPERSEDE = 0x00000000,
+    FILE_OPEN = 0x00000001,
+    FILE_CREATE = 0x00000002,
+    FILE_OPEN_IF = 0x00000003,
+    FILE_OVERWRITE = 0x00000004,
+    FILE_OVERWRITE_IF = 0x00000005,
+    FILE_MAXIMUM_DISPOSITION = 0x00000005,
+} CREATE_DISPOSITION;
+
 struct FILE_FS_SIZE_INFORMATION
 {
     LARGE_INTEGER TotalAllocationUnits;
@@ -453,7 +464,7 @@ extern "C"
         LARGE_INTEGER *pAllocationSize,
         FILE_ATTRIBUTE fileAttributes,
         FILE_SHARE shareAccess,
-        uint32_t createDisposition,
+        CREATE_DISPOSITION createDisposition,
         CREATE_OPTION createOptions
     );
 
