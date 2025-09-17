@@ -284,7 +284,7 @@ typedef enum _FS_INFORMATION_CLASS
     FileFsControlInformation,
     FileFsFullSizeInformation,
     FileFsObjectIdInformation,
-    FileFsMaximumInformation
+    FileFsMaximumInformation,
 } FS_INFORMATION_CLASS;
 
 struct FILE_DIRECTORY_INFORMATION
@@ -301,6 +301,54 @@ struct FILE_DIRECTORY_INFORMATION
     uint32_t FileNameLength;
     char FileName[1];
 };
+
+struct FILE_RENAME_INFORMATION
+{
+    bool ReplaceIfExists;
+    HANDLE RootDirectory;
+    STRING FileName;
+};
+
+typedef enum _FILE_INFORMATION_CLASS
+{
+    FileDirectoryInformation = 1,
+    FileFullDirectoryInformation,
+    FileBothDirectoryInformation,
+    FileBasicInformation,
+    FileStandardInformation,
+    FileInternalInformation,
+    FileEaInformation,
+    FileAccessInformation,
+    FileNameInformation,
+    FileRenameInformation,
+    FileLinkInformation,
+    FileNamesInformation,
+    FileDispositionInformation,
+    FilePositionInformation,
+    FileFullEaInformation,
+    FileModeInformation,
+    FileAlignmentInformation,
+    FileAllInformation,
+    FileAllocationInformation,
+    FileEndOfFileInformation,
+    FileAlternateNameInformation,
+    FileStreamInformation,
+    FilePipeInformation,
+    FilePipeLocalInformation,
+    FilePipeRemoteInformation,
+    FileMailslotQueryInformation,
+    FileMailslotSetInformation,
+    FileCompressionInformation,
+    FileObjectIdInformation,
+    FileCompletionInformation,
+    FileMoveClusterInformation,
+    FileQuotaInformation,
+    FileReparsePointInformation,
+    FileNetworkOpenInformation,
+    FileAttributeTagInformation,
+    FileTrackingInformation,
+    FileMaximumInformation,
+} FILE_INFORMATION_CLASS;
 
 typedef enum _XEX_HEADER_FIELD
 {
@@ -485,6 +533,15 @@ extern "C"
         void *buffer,
         uint32_t length,
         LARGE_INTEGER *pByteOffset
+    );
+
+    EXPORTNUM(247)
+    NTSTATUS NtSetInformationFile(
+        HANDLE handle,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        void *pFileInformation,
+        uint32_t length,
+        FILE_INFORMATION_CLASS FileInformationClass
     );
 
     EXPORTNUM(255)
