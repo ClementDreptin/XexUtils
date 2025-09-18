@@ -320,6 +320,17 @@ struct FILE_RENAME_INFORMATION
     STRING FileName;
 };
 
+struct FILE_NETWORK_OPEN_INFORMATION
+{
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    FILE_ATTRIBUTE FileAttributes;
+};
+
 typedef enum _FILE_INFORMATION_CLASS
 {
     FileDirectoryInformation = 1,
@@ -518,6 +529,15 @@ extern "C"
         uint32_t *pReturnLength
     );
 
+    EXPORTNUM(232)
+    NTSTATUS NtQueryInformationFile(
+        HANDLE handle,
+        IO_STATUS_BLOCK *pIoStatusBlock,
+        void *pFileInformation,
+        uint32_t Length,
+        FILE_INFORMATION_CLASS fileInformationClass
+    );
+
     EXPORTNUM(236)
     NTSTATUS NtQuerySymbolicLinkObject(
         HANDLE linkHandle,
@@ -552,7 +572,7 @@ extern "C"
         IO_STATUS_BLOCK *pIoStatusBlock,
         void *pFileInformation,
         uint32_t length,
-        FILE_INFORMATION_CLASS FileInformationClass
+        FILE_INFORMATION_CLASS fileInformationClass
     );
 
     EXPORTNUM(255)
