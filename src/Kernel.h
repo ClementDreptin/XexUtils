@@ -529,6 +529,12 @@ extern "C"
         uint32_t *pReturnLength
     );
 
+    EXPORTNUM(231)
+    NTSTATUS NtQueryFullAttributesFile(
+        OBJECT_ATTRIBUTES *pObjectAttributes,
+        FILE_NETWORK_OPEN_INFORMATION *pAttributes
+    );
+
     EXPORTNUM(232)
     NTSTATUS NtQueryInformationFile(
         HANDLE handle,
