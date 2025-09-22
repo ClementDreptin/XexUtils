@@ -43,36 +43,32 @@ static void Formatter()
     });
 }
 
-static void Kernel()
+static void General()
 {
-    Describe("Kernel::MountHdd");
+    Describe("ResolveExport");
 
-    It("allows a game to access the hard drive", []() {
-        std::ifstream file("hdd:\\launch.ini");
-        TEST_EQ(file.is_open(), false);
+    It("returns a valid pointer when given a valid module name and ordinal", []() {
+        void *pFunc = ResolveExport("xam.xex", 656); // XNotifyQueueUI
 
-        Kernel::MountHdd();
-        file.open("hdd:\\launch.ini");
-
-        TEST_EQ(file.is_open(), true);
+        TEST_NEQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
     });
 
-    It("removes the hdd: symbolic link previously created with MountHdd", []() {
-        Kernel::MountHdd();
-        std::ifstream file("hdd:\\launch.ini");
-        TEST_EQ(file.is_open(), true);
+    It("returns nullptr when given an invalid module name", []() {
+        void *pFunc = ResolveExport("invalid.xex", 1);
 
-        file.close();
-        Kernel::UnmountHdd();
-        file.open("hdd:\\launch.ini");
+        TEST_EQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
+    });
 
-        TEST_EQ(file.is_open(), false);
+    It("returns nullptr when given an invalid ordinal", []() {
+        void *pFunc = ResolveExport("xam.xex", 0xFFFFFF);
+
+        TEST_EQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
     });
 }
 
 static void Vec2()
 {
-    Describe("vec2");
+    Describe("Math::vec2");
 
     Math::vec2 v1(1.0f, 2.0f);
     Math::vec2 v2(3.0f, 4.0f);
@@ -181,7 +177,7 @@ static void Vec2()
 
 static void Vec3()
 {
-    Describe("vec3");
+    Describe("Math::vec3");
 
     Math::vec3 v1(1.0f, 2.0f, 3.0f);
     Math::vec3 v2(4.0f, 5.0f, 6.0f);
@@ -295,7 +291,7 @@ static void Vec3()
 
 static void Vec4()
 {
-    Describe("vec4");
+    Describe("Math::vec4");
 
     Math::vec4 v1(1.0f, 2.0f, 3.0f, 4.0f);
     Math::vec4 v2(5.0f, 6.0f, 7.0f, 8.0f);
@@ -444,26 +440,6 @@ static void Math()
 
 static void Memory()
 {
-    Describe("Memory::ResolveExport");
-
-    It("returns a valid pointer when given a valid module name and ordinal", []() {
-        void *pFunc = Memory::ResolveExport("xam.xex", 656); // XNotifyQueueUI
-
-        TEST_NEQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
-    });
-
-    It("returns nullptr when given an invalid module name", []() {
-        void *pFunc = Memory::ResolveExport("invalid.xex", 1);
-
-        TEST_EQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
-    });
-
-    It("returns nullptr when given an invalid ordinal", []() {
-        void *pFunc = Memory::ResolveExport("xam.xex", 0xFFFFFF);
-
-        TEST_EQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
-    });
-
     Describe("Memory::Write");
 
     It("doesn't do anything when trying to write to an invalid address", []() {
@@ -973,7 +949,7 @@ void RunTests()
 {
     ::Formatter();
 
-    ::Kernel();
+    ::General();
 
     ::Vec2();
 

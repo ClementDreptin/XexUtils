@@ -7,6 +7,7 @@
 /// `XNCALLER_SYSAPP` respectively).
 
 #include "Kernel.h"
+#include "Xam.h"
 
 #define accept(s, addr, addrlen) NetDll_accept((XNCALLER_TYPE)KeGetCurrentProcessType(), s, addr, addrlen)
 #define bind(s, name, namelen) NetDll_bind((XNCALLER_TYPE)KeGetCurrentProcessType(), s, name, namelen)

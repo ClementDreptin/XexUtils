@@ -2,8 +2,7 @@
 #include "Xam.h"
 
 #include "Formatter.h"
-#include "Kernel.h"
-#include "Memory.h"
+#include "General.h"
 
 namespace XexUtils
 {
@@ -13,7 +12,7 @@ namespace Xam
 // Create a pointer to XNotifyQueueUI in xam.xex
 
 typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE type, uint32_t userIndex, uint64_t areas, const wchar_t *displayText, void *pContextData);
-static XNOTIFYQUEUEUI XNotifyQueueUI = static_cast<XNOTIFYQUEUEUI>(Memory::ResolveExport("xam.xex", 656));
+static XNOTIFYQUEUEUI XNotifyQueueUI = static_cast<XNOTIFYQUEUEUI>(ResolveExport("xam.xex", 656));
 
 void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
 {

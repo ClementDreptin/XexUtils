@@ -15,6 +15,7 @@
 #include "../src/Dashlaunch.h"
 #include "../src/Detour.h"
 #include "../src/Formatter.h"
+#include "../src/General.h"
 #include "../src/Hypervisor.h"
 #include "../src/Input.h"
 #include "../src/Kernel.h"

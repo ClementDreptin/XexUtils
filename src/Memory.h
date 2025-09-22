@@ -8,30 +8,6 @@ namespace XexUtils
 namespace Memory
 {
 
-/// @brief Gets a pointer to the `ordinal`th function exported by `moduleName`.
-///
-/// This function can fail if no module with the name `moduleName` is currently loaded,
-/// or if `ordinal` is greater than the amount of functions exported by `moduleName`.
-///
-/// @param moduleName The name of the module.
-/// @param ordinal The ordinal number of the function.
-/// @return A generic `void *` to the function on success, `nullptr` on error.
-void *ResolveExport(const std::string &moduleName, uint32_t ordinal);
-
-/// @brief Simple wrapper around `CreateThread` to only pass a function and its arguments.
-/// @param pStartAddress A pointer to the function to run in a separate thread.
-/// @param pArgs A pointer to the arguments to pass to the function at `pStartAddress`.
-/// @return The `HANDLE` of the newly created thread.
-HANDLE Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs = nullptr);
-
-/// @brief Simple wrapper around `ExCreateThread` to pass less arguments.
-/// @param pStartAddress A pointer to the function to run in a separate thread.
-/// @param pArgs A pointer to the arguments to pass to the function at `pStartAddress`.
-/// @param creationFlags The thread creation flags.
-/// @param pThreadId A pointer to a `uint32_t` to store the thread ID.
-/// @return The `HANDLE` of the newly created thread.
-HANDLE ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags, uint32_t *pThreadId = nullptr);
-
 /// @brief Safely writes an instance of `T` at `pDestination` (without access violations).
 /// @tparam T The type of data to write.
 /// @param pDestination A pointer to where to write `data`.
