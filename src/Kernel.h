@@ -458,7 +458,7 @@ extern "C"
 
     EXPORTNUM(191)
     bool MmIsAddressValid(
-        void *pAddress
+        const void *pAddress
     );
 
     EXPORTNUM(207)

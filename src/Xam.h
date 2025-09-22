@@ -114,14 +114,6 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
 /// @return How the message box was closed.
 uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType = XMB_NOICON, uint32_t *pButtonPressedIndex = nullptr, uint32_t focusedButtonIndex = 0);
 
-/// @brief Checks wether `pAddress` is accessible by the current process or not.
-///
-/// This function is simply a const version of `MmIsAddressValid`.
-///
-/// @param pAddress The address to check.
-/// @return `true` if `pAddress` is accessible, `false` otherwise.
-bool IsAddressValid(const void *pAddress);
-
 /// @brief Reboots the console.
 void Reboot();
 

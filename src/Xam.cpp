@@ -103,11 +103,6 @@ uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, con
     return overlappedResult;
 }
 
-bool IsAddressValid(const void *pAddress)
-{
-    return MmIsAddressValid(const_cast<void *>(pAddress));
-}
-
 void Reboot()
 {
     HalReturnToFirmware(HalRebootRoutine);

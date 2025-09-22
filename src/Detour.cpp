@@ -96,7 +96,7 @@ HRESULT Detour::Install()
 void Detour::Remove()
 {
     // Restore the original instructions if needed
-    if (m_HookIndex != -1 && m_pSource != nullptr && Xam::IsAddressValid(m_pSource))
+    if (m_HookIndex != -1 && m_pSource != nullptr && MmIsAddressValid(m_pSource))
         Memory::Write<Jump>(m_pSource, m_Original);
 
     m_pSource = nullptr;

@@ -39,7 +39,7 @@ HANDLE ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD
 template<typename T>
 void Write(void *pDestination, const T &data)
 {
-    if (pDestination == nullptr || !Xam::IsAddressValid(pDestination))
+    if (pDestination == nullptr || !MmIsAddressValid(pDestination))
     {
         DebugPrint("[XexUtils][Memory]: Error: Invalid address: %p.", pDestination);
         return;
@@ -65,7 +65,7 @@ inline void Write(uintptr_t address, const T &data)
 template<typename T>
 inline T Read(void *pSource)
 {
-    if (pSource == nullptr || !Xam::IsAddressValid(pSource))
+    if (pSource == nullptr || !MmIsAddressValid(pSource))
     {
         DebugPrint("[XexUtils][Memory]: Error: Invalid address: %p.", pSource);
         return T();

@@ -53,20 +53,6 @@ void Init()
 }
 ```
 
-Check if a pointer is valid before dereferencing it:
-
-```C++
-void Init()
-{
-    uint32_t *pRandomPointer = reinterpret_cast<uint32_t *>(0x12345678);
-
-    if (XexUtils::Xam::IsAddressValid(pRandomPointer))
-        *pRandomPointer = 0x123;
-    else
-        XexUtils::Log::Print("Segfault prevented at address: %#010x", pRandomPointer);
-}
-```
-
 Allow games to access the hard drive:
 
 ```C++
