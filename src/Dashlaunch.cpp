@@ -23,21 +23,21 @@ DLAUNCHSETOPTVALBYNAME SetOptionValueByName = nullptr;
 
 HRESULT Init()
 {
-    pLaunchData = static_cast<LaunchData *>(Memory::ResolveFunction(LAUNCH_MODULE, DL_ORDINALS_LDAT));
+    pLaunchData = static_cast<LaunchData *>(Memory::ResolveExport(LAUNCH_MODULE, DL_ORDINALS_LDAT));
     if (pLaunchData == nullptr)
     {
         DebugPrint("[XexUtils][Dashlaunch]: Error: Could not resolve the Dashlaunch data.");
         return E_FAIL;
     }
 
-    GetOptionValueByName = static_cast<DLAUNCHGETOPTVALBYNAME>(Memory::ResolveFunction(LAUNCH_MODULE, DL_ORDINALS_GETOPTVALBYNAME));
+    GetOptionValueByName = static_cast<DLAUNCHGETOPTVALBYNAME>(Memory::ResolveExport(LAUNCH_MODULE, DL_ORDINALS_GETOPTVALBYNAME));
     if (GetOptionValueByName == nullptr)
     {
         DebugPrint("[XexUtils][Dashlaunch]: Error: Could not resolve the GetOptionValueByName function.");
         return E_FAIL;
     }
 
-    SetOptionValueByName = static_cast<DLAUNCHSETOPTVALBYNAME>(Memory::ResolveFunction(LAUNCH_MODULE, DL_ORDINALS_SETOPTVALBYNAME));
+    SetOptionValueByName = static_cast<DLAUNCHSETOPTVALBYNAME>(Memory::ResolveExport(LAUNCH_MODULE, DL_ORDINALS_SETOPTVALBYNAME));
     if (SetOptionValueByName == nullptr)
     {
         DebugPrint("[XexUtils][Dashlaunch]: Error: Could not resolve the SetOptionValueByName function.");

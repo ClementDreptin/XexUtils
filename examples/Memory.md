@@ -6,7 +6,7 @@ Get a function pointer from a module through its ordinal:
 void Init()
 {
     typedef void (*FunctionPointerType)(int param1, int param2);
-    FunctionPointerType function = static_cast<FunctionPointerType>(XexUtils::Memory::ResolveFunction("xam.xex", 123));
+    FunctionPointerType function = static_cast<FunctionPointerType>(XexUtils::Memory::ResolveExport("xam.xex", 123));
 
     function();
 }

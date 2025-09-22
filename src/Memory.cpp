@@ -6,7 +6,7 @@ namespace XexUtils
 namespace Memory
 {
 
-void *ResolveFunction(const std::string &moduleName, uint32_t ordinal)
+void *ResolveExport(const std::string &moduleName, uint32_t ordinal)
 {
     HMODULE moduleHandle = GetModuleHandle(moduleName.c_str());
     if (moduleHandle == nullptr)

@@ -36,7 +36,7 @@ Detour::Detour(uintptr_t sourceAddress, const void *pDestination)
 }
 
 Detour::Detour(const std::string &moduleName, uint32_t ordinal, const void *pDestination)
-    : m_pSource(Memory::ResolveFunction(moduleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
+    : m_pSource(Memory::ResolveExport(moduleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
 {
     XASSERT(m_pSource != nullptr);
     XASSERT(m_pDestination != nullptr);
@@ -219,7 +219,7 @@ void *Detour::GetModuleImport(const std::string &baseModuleName, const std::stri
 
     // Get a pointer to the function we're looking for but from our module (so the one
     // this code is running in, not the base module)
-    void *pFunc = Memory::ResolveFunction(importedModuleName, ordinal);
+    void *pFunc = Memory::ResolveExport(importedModuleName, ordinal);
     if (pFunc == nullptr)
     {
         DebugPrint(

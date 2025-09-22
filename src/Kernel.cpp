@@ -83,7 +83,7 @@ bool InXenia()
     // Inspired by this
     // https://github.com/RBEnhanced/RB3Enhanced/blob/master/source/xbox360.c#L16
 
-    void *xamFirstExport = Memory::ResolveFunction("xam.xex", 1);
+    void *xamFirstExport = Memory::ResolveExport("xam.xex", 1);
 #ifndef NDEBUG
     if (xamFirstExport == nullptr)
         DebugPrint("[XexUtils][Xam]: Error: Could not find the first function exported by xam.xex, this should not happen.");

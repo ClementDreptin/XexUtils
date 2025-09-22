@@ -444,22 +444,22 @@ static void Math()
 
 static void Memory()
 {
-    Describe("Memory::ResolveFunction");
+    Describe("Memory::ResolveExport");
 
     It("returns a valid pointer when given a valid module name and ordinal", []() {
-        void *pFunc = Memory::ResolveFunction("xam.xex", 656); // XNotifyQueueUI
+        void *pFunc = Memory::ResolveExport("xam.xex", 656); // XNotifyQueueUI
 
         TEST_NEQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
     });
 
     It("returns nullptr when given an invalid module name", []() {
-        void *pFunc = Memory::ResolveFunction("invalid.xex", 1);
+        void *pFunc = Memory::ResolveExport("invalid.xex", 1);
 
         TEST_EQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
     });
 
     It("returns nullptr when given an invalid ordinal", []() {
-        void *pFunc = Memory::ResolveFunction("xam.xex", 0xFFFFFF);
+        void *pFunc = Memory::ResolveExport("xam.xex", 0xFFFFFF);
 
         TEST_EQ(reinterpret_cast<uintptr_t>(pFunc), reinterpret_cast<uintptr_t>(nullptr));
     });

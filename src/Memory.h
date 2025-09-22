@@ -16,7 +16,7 @@ namespace Memory
 /// @param moduleName The name of the module.
 /// @param ordinal The ordinal number of the function.
 /// @return A generic `void *` to the function on success, `nullptr` on error.
-void *ResolveFunction(const std::string &moduleName, uint32_t ordinal);
+void *ResolveExport(const std::string &moduleName, uint32_t ordinal);
 
 /// @brief Simple wrapper around `CreateThread` to only pass a function and its arguments.
 /// @param pStartAddress A pointer to the function to run in a separate thread.
