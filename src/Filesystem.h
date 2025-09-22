@@ -2,6 +2,35 @@
 
 namespace XexUtils
 {
+namespace Fs
+{
+
+/// @brief Allows the current process to access other storage devices or partitions.
+/// @param linkName The symbolic link name (e.g. hdd:).
+/// @param devicePath The full device path (e.g. \Device\Harddisk0\Partition1\).
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT MountPath(const std::string &linkName, const std::string &devicePath);
+
+/// @brief Allows the current process to access the hard drive using the `hdd:` drive name.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT MountHdd();
+
+/// @brief Allows the current process to access the first USB stick using the `usb:` drive name.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT MountUsb();
+
+/// @brief Removes a symbolic link previously created with `MountPath`.
+/// @param linkName The symbolic link name (e.g. hdd:).
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT UnmountPath(const std::string &linkName);
+
+/// @brief Removes the `hdd:` symbolic link previously created with `MountHdd`.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT UnmountHdd();
+
+/// @brief Removes the `usb:` symbolic link previously created with `MountUsb`.
+/// @return `S_OK` on success, an `NTSTATUS` error on error.
+HRESULT UnmountUsb();
 
 /// @brief A class representing a file system path.
 class Path
@@ -191,4 +220,5 @@ private:
     static const char s_Separator;
 };
 
+}
 }

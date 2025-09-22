@@ -1,8 +1,70 @@
 #include "pch.h"
-#include "Path.h"
+#include "Filesystem.h"
+
+#include "Kernel.h"
 
 namespace XexUtils
 {
+namespace Fs
+{
+
+HRESULT MountPath(const std::string &linkName, const std::string &devicePath)
+{
+    // The system only allows executables to access the directory they live in and binds it to
+    // the "game:" drive. Nothing else is accessible unless you create a symbolic link.
+
+    STRING link = {};
+    STRING device = {};
+    std::string userDestinationDrive = "\\??\\" + linkName;
+    std::string systemDestinationDrive = "\\System??\\" + linkName;
+
+    // Initialize the STRING structs
+    if (KeGetCurrentProcessType() == PROC_SYSTEM)
+        RtlInitAnsiString(&link, systemDestinationDrive.c_str());
+    else
+        RtlInitAnsiString(&link, userDestinationDrive.c_str());
+
+    RtlInitAnsiString(&device, devicePath.c_str());
+
+    // Bind devicePath to the linkName.
+    return ObCreateSymbolicLink(&link, &device);
+}
+
+HRESULT MountHdd()
+{
+    return MountPath("hdd:", "\\Device\\Harddisk0\\Partition1\\");
+}
+
+HRESULT MountUsb()
+{
+    return MountPath("usb:", "\\Device\\Mass0\\");
+}
+
+HRESULT UnmountPath(const std::string &linkName)
+{
+    STRING link = {};
+    std::string userDestinationDrive = "\\??\\" + linkName;
+    std::string systemDestinationDrive = "\\System??\\" + linkName;
+
+    // Initialize the STRING structs
+    if (KeGetCurrentProcessType() == PROC_SYSTEM)
+        RtlInitAnsiString(&link, systemDestinationDrive.c_str());
+    else
+        RtlInitAnsiString(&link, userDestinationDrive.c_str());
+
+    // Remove the symbolic link
+    return ObDeleteSymbolicLink(&link);
+}
+
+HRESULT UnmountHdd()
+{
+    return UnmountPath("hdd:");
+}
+
+HRESULT UnmountUsb()
+{
+    return UnmountPath("usb:");
+}
 
 const char Path::s_Separator = '\\';
 
@@ -149,5 +211,7 @@ const char *Path::c_str() const
 size_t Path::Size() const
 {
     return m_Path.size();
+}
+
 }
 }

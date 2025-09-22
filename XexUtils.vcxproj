@@ -69,14 +69,15 @@
     <ClInclude Include="src\Assert.h" />
     <ClInclude Include="src\Dashlaunch.h" />
     <ClInclude Include="src\Detour.h" />
+    <ClInclude Include="src\Filesystem.h" />
     <ClInclude Include="src\Formatter.h" />
+    <ClInclude Include="src\General.h" />
     <ClInclude Include="src\Hypervisor.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Kernel.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\Memory.h" />
-    <ClInclude Include="src\Path.h" />
     <ClInclude Include="src\SMC.h" />
     <ClInclude Include="src\Socket.h" />
     <ClInclude Include="src\SystemSocket.h" />
@@ -91,14 +92,13 @@
   <ItemGroup>
     <ClCompile Include="src\Dashlaunch.cpp" />
     <ClCompile Include="src\Detour.cpp" />
+    <ClCompile Include="src\Filesystem.cpp" />
     <ClCompile Include="src\Formatter.cpp" />
+    <ClCompile Include="src\General.cpp" />
     <ClCompile Include="src\Hypervisor.cpp" />
     <ClCompile Include="src\Input.cpp" />
-    <ClCompile Include="src\Kernel.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math.cpp" />
-    <ClCompile Include="src\Memory.cpp" />
-    <ClCompile Include="src\Path.cpp" />
     <ClCompile Include="src\SMC.cpp" />
     <ClCompile Include="src\Socket.cpp" />
     <ClCompile Include="src\TlsSession.cpp" />
