@@ -114,13 +114,6 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
 /// @return How the message box was closed.
 uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType = XMB_NOICON, uint32_t *pButtonPressedIndex = nullptr, uint32_t focusedButtonIndex = 0);
 
-/// @brief Gets the currently running title ID.
-///
-/// This function simply calls `XamGetCurrentTitleId`.
-///
-/// @return The current title ID.
-uint32_t GetCurrentTitleId();
-
 /// @brief Checks wether `pAddress` is accessible by the current process or not.
 ///
 /// This function is simply a const version of `MmIsAddressValid`.

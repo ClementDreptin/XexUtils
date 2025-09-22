@@ -53,19 +53,6 @@ void Init()
 }
 ```
 
-Check the current title running:
-
-```C++
-void Init()
-{
-    const uint32_t dashboardTitleId = 0xFFFE07D1;
-    uint32_t currentTitleId = XexUtils::Xam::GetCurrentTitleId();
-
-    if (currentTitleId == dashboardTitleId)
-        XexUtils::Log::Print("Welcome to the dashboard!");
-}
-```
-
 Check if a pointer is valid before dereferencing it:
 
 ```C++

@@ -103,11 +103,6 @@ uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, con
     return overlappedResult;
 }
 
-uint32_t GetCurrentTitleId()
-{
-    return XamGetCurrentTitleId();
-}
-
 bool IsAddressValid(const void *pAddress)
 {
     return MmIsAddressValid(const_cast<void *>(pAddress));
