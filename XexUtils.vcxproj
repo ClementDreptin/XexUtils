@@ -94,6 +94,7 @@
     <ClCompile Include="src\Formatter.cpp" />
     <ClCompile Include="src\Hypervisor.cpp" />
     <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Kernel.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Memory.cpp" />

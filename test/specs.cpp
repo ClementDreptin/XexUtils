@@ -43,6 +43,33 @@ static void Formatter()
     });
 }
 
+static void Kernel()
+{
+    Describe("Kernel::MountHdd");
+
+    It("allows a game to access the hard drive", []() {
+        std::ifstream file("hdd:\\launch.ini");
+        TEST_EQ(file.is_open(), false);
+
+        Kernel::MountHdd();
+        file.open("hdd:\\launch.ini");
+
+        TEST_EQ(file.is_open(), true);
+    });
+
+    It("removes the hdd: symbolic link previously created with MountHdd", []() {
+        Kernel::MountHdd();
+        std::ifstream file("hdd:\\launch.ini");
+        TEST_EQ(file.is_open(), true);
+
+        file.close();
+        Kernel::UnmountHdd();
+        file.open("hdd:\\launch.ini");
+
+        TEST_EQ(file.is_open(), false);
+    });
+}
+
 static void Vec2()
 {
     Describe("vec2");
@@ -942,36 +969,11 @@ static void ValueOrPtr()
     });
 }
 
-static void Xam()
-{
-    Describe("Xam::MountHdd");
-
-    It("allows a game to access the hard drive", []() {
-        std::ifstream file("hdd:\\launch.ini");
-        TEST_EQ(file.is_open(), false);
-
-        Xam::MountHdd();
-        file.open("hdd:\\launch.ini");
-
-        TEST_EQ(file.is_open(), true);
-    });
-
-    It("removes the hdd: symbolic link previously created with MountHdd", []() {
-        Xam::MountHdd();
-        std::ifstream file("hdd:\\launch.ini");
-        TEST_EQ(file.is_open(), true);
-
-        file.close();
-        Xam::UnmountHdd();
-        file.open("hdd:\\launch.ini");
-
-        TEST_EQ(file.is_open(), false);
-    });
-}
-
 void RunTests()
 {
     ::Formatter();
+
+    ::Kernel();
 
     ::Vec2();
 
@@ -991,8 +993,6 @@ void RunTests()
         ::Socket();
 
     ::ValueOrPtr();
-
-    ::Xam();
 
     TestRunner::Run();
 }
