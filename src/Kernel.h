@@ -46,6 +46,14 @@ typedef enum _NTSTATUS
 #pragma warning(push)
 #pragma warning(disable : 4201)
 
+struct XBOX_KRNL_VERSION
+{
+    uint16_t Major;
+    uint16_t Minor;
+    uint16_t Build;
+    uint16_t Qfe;
+};
+
 typedef uint32_t EXCREATETHREAD_FLAG;
 
 enum EXCREATETHREAD_FLAG_
@@ -419,7 +427,16 @@ typedef BOOL (*TRAPHANDLER)(void *pUnknown, KEXCEPTION_FRAME *pExceptionFrame, C
     __sync(); \
     __isync()
 
+EXPORTNUM(343)
+extern "C" XBOX_KRNL_VERSION *XboxKrnlBaseVersion;
+
+EXPORTNUM(344)
+extern "C" XBOX_KRNL_VERSION *XboxKrnlVersion;
+
+EXPORTNUM(403)
 extern "C" HANDLE *XexExecutableModuleHandle;
+
+EXPORTNUM(431)
 extern "C" const char *ExLoadedImageName;
 
 extern "C"
