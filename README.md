@@ -31,7 +31,7 @@ You can look at the [examples](./examples) directory, which will show you a basi
 
 ## Running the tests
 
-The tests are an app that runs **on the console** and is deployed to the `hdd:\XexUtils\Tests` directory.
+The tests are an app that runs **on the console** and is deployed to the `devkit:\Tests` directory (same as `hdd:\DEVKIT\Tests`).
 
 ### Visual Studio 2010
 
