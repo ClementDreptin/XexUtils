@@ -19,7 +19,7 @@ HRESULT MountPath(const std::string &linkName, const std::string &devicePath)
     std::string systemDestinationDrive = "\\System??\\" + linkName;
 
     // Initialize the STRING structs
-    if (KeGetCurrentProcessType() == PROC_SYSTEM)
+    if (KeGetCurrentProcessType() == PROC_TYPE_SYSTEM)
         RtlInitAnsiString(&link, systemDestinationDrive.c_str());
     else
         RtlInitAnsiString(&link, userDestinationDrive.c_str());
@@ -47,7 +47,7 @@ HRESULT UnmountPath(const std::string &linkName)
     std::string systemDestinationDrive = "\\System??\\" + linkName;
 
     // Initialize the STRING structs
-    if (KeGetCurrentProcessType() == PROC_SYSTEM)
+    if (KeGetCurrentProcessType() == PROC_TYPE_SYSTEM)
         RtlInitAnsiString(&link, systemDestinationDrive.c_str());
     else
         RtlInitAnsiString(&link, userDestinationDrive.c_str());
