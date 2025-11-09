@@ -1,3 +1,8 @@
+﻿// NOTE: This file has a UTF-0 with BOM encoding, this is required for the
+// Formatter::ToWide and Formatter::ToNarrow tests to pass because they use multibyte
+// characters declared in the code. If those tests stop passing, make sure the encoding
+// of this file is still correct.
+
 #include "pch.h"
 #include "specs.h"
 
@@ -406,20 +411,34 @@ static void Formatter()
 
     Describe("Formatter::ToWide");
 
-    It("converts an std::string to an std::wstring", []() {
-        std::string narrow = "hello";
-        std::wstring wide = Formatter::ToWide(narrow);
+    It("converts an std::string to an std::wstring using ANSI encoding", []() {
+        std::string narrow = "é";
+        std::wstring wide = Formatter::ToWide(narrow, CP_ACP);
 
-        TEST_EQ(Formatter::ToNarrow(wide), "hello");
+        TEST_EQ_W(wide, L"é");
+    });
+
+    It("converts an std::string to an std::wstring using UTF8 encoding", []() {
+        std::string narrow = "\xE7\x9A\x84"; // 的
+        std::wstring wide = Formatter::ToWide(narrow, CP_UTF8);
+
+        TEST_EQ_W(wide, L"的");
     });
 
     Describe("Formatter::ToNarrow");
 
-    It("converts an std::wstring to an std::string", []() {
-        std::wstring wide = L"hello";
-        std::string narrow = Formatter::ToNarrow(wide);
+    It("converts an std::wstring to an std::string using ANSI encoding", []() {
+        std::wstring wide = L"é";
+        std::string narrow = Formatter::ToNarrow(wide, CP_ACP);
 
-        TEST_EQ(narrow, "hello");
+        TEST_EQ(narrow, "é");
+    });
+
+    It("converts an std::wstring to an std::string using UTF8 encoding", []() {
+        std::wstring wide = L"的";
+        std::string narrow = Formatter::ToNarrow(wide, CP_UTF8);
+
+        TEST_EQ(narrow, "\xE7\x9A\x84"); // 的
     });
 }
 

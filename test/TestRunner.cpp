@@ -47,7 +47,7 @@ static void DisplayRecap()
 {
     size_t failedTests = s_ErrorMessages.size();
 
-    g_Console.Print("");
+    g_Console.Print(L"");
 
     if (failedTests > 0)
     {
@@ -58,7 +58,7 @@ static void DisplayRecap()
             ss << GLYPH_BIG_X L"  " << s_ErrorMessages[i].c_str();
             g_Console.Print(ss.str());
         }
-        g_Console.Print("");
+        g_Console.Print(L"");
     }
 
     // Print the final recap
@@ -107,7 +107,7 @@ void TestRunner::Run()
             const std::string &sectionName = it->first;
             const std::vector<TestCase> &testCases = it->second;
 
-            g_Console.Print("");
+            g_Console.Print(L"");
             g_Console.Print(sectionName);
 
             // For each section, run its test cases
@@ -122,6 +122,11 @@ void TestRunner::Run()
 void TestRunner::PushError(const std::string &errorMessage)
 {
     s_ErrorMessages.push_back(errorMessage);
+}
+
+void PushError(const std::wstring &errorMessage)
+{
+    PushError(XexUtils::Formatter::ToNarrow(errorMessage));
 }
 
 }

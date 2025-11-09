@@ -19,13 +19,15 @@ std::wstring Format(const wchar_t *format, ...);
 
 /// @brief Converts an `std::string` into an `std::wstring`.
 /// @param narrowString The `std::string`.
+/// @param encoding The code page used to perform the conversion (`CP_ACP` by default).
 /// @return The `std::wstring`.
-std::wstring ToWide(const std::string &narrowString);
+std::wstring ToWide(const std::string &narrowString, uint32_t encoding = CP_ACP);
 
 /// @brief Converts an `std::wstring` into an `std::string`.
 /// @param wideString The `std::wstring`.
+/// @param encoding The code page used to perform the conversion (`CP_ACP` by default).
 /// @return The `std::string`.
-std::string ToNarrow(const std::wstring &wideString);
+std::string ToNarrow(const std::wstring &wideString, uint32_t encoding = CP_ACP);
 
 }
 }

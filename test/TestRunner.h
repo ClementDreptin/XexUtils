@@ -13,6 +13,8 @@ void Run();
 
 void PushError(const std::string &errorMessage);
 
+void PushError(const std::wstring &errorMessage);
+
 }
 
 #define TEST_EQ(expression, value) \
@@ -22,10 +24,24 @@ void PushError(const std::string &errorMessage);
         return; \
     }
 
+#define TEST_EQ_W(expression, value) \
+    if ((expression) != (value)) \
+    { \
+        TestRunner::PushError(static_cast<const std::wstringstream &>(std::wstringstream() << std::boolalpha << "Expected " << (expression) << " to be " << (value) << " at " << __FILE__ << ":" << __LINE__).str()); \
+        return; \
+    }
+
 #define TEST_NEQ(expression, value) \
     if ((expression) == (value)) \
     { \
         TestRunner::PushError(static_cast<const std::stringstream &>(std::stringstream() << std::boolalpha << "Expected " << (expression) << " not to be " << (value) << " at " << __FILE__ << ":" << __LINE__).str()); \
+        return; \
+    }
+
+#define TEST_NEQ_W(expression, value) \
+    if ((expression) == (value)) \
+    { \
+        TestRunner::PushError(static_cast<const std::wstringstream &>(std::wstringstream() << std::boolalpha << "Expected " << (expression) << " not to be " << (value) << " at " << __FILE__ << ":" << __LINE__).str()); \
         return; \
     }
 
