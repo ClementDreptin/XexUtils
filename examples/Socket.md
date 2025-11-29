@@ -16,9 +16,9 @@ void Init()
     XexUtils::Socket socket("example.com", port, secure);
 
     // Add an Elliptic Curve trust anchor (only necessary when using a secure socket)
-    const uint8_t dn[] { 0x1, 0x2, 0x3 };
-    const uint8_t q[] { 0x1, 0x2, 0x3 };
-    hr = socket.AddECTrustAnchor(dn, sizeof(dn), q, sizeof(q), XexUtils::TlsSession::Curve_secp384r1);
+    const uint8_t dn[] = { 0x1, 0x2, 0x3 };
+    const uint8_t q[] = { 0x1, 0x2, 0x3 };
+    hr = socket.AddECTrustAnchor(dn, sizeof(dn), q, sizeof(q), XexUtils::Socket::Curve_secp384r1);
     if (FAILED(hr))
     {
         XexUtils::Log::Print("Couldn't add elliptic curve trust anchor");

@@ -5,7 +5,7 @@ Show an Xbox notification:
 ```C++
 void Init()
 {
-    XexUtils::Xam::XNotify("You just unlocked an achievement!", XexUtils::XNOTIFYQUEUEUI_TYPE::XNOTIFYUI_TYPE_ACHIEVEMENT);
+    XexUtils::Xam::XNotify("You just unlocked an achievement!", XexUtils::Xam::XNOTIFYUI_TYPE_ACHIEVEMENT);
 }
 ```
 
