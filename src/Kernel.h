@@ -46,12 +46,14 @@ typedef enum _NTSTATUS
 #pragma warning(push)
 #pragma warning(disable : 4201)
 
-struct XBOX_HARDWARE_INFO {
-	uint32_t Flags;
-	uint8_t GpuRevision;
-	uint8_t McpRevision;
-	uint8_t Unknown3;
-	uint8_t Unknown4;
+struct XBOX_HARDWARE_INFO
+{
+    uint32_t Flags;
+    uint8_t NumberOfProcessors;
+    uint8_t PCIBridgeRevisionID;
+    uint8_t Reserved[6];
+    uint16_t BldrMagic;
+    uint16_t BldrFlags;
 };
 
 struct XBOX_KRNL_VERSION
