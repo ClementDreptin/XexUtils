@@ -46,6 +46,14 @@ typedef enum _NTSTATUS
 #pragma warning(push)
 #pragma warning(disable : 4201)
 
+struct XBOX_HARDWARE_INFO {
+	uint32_t Flags;
+	uint8_t GpuRevision;
+	uint8_t McpRevision;
+	uint8_t Unknown3;
+	uint8_t Unknown4;
+};
+
 struct XBOX_KRNL_VERSION
 {
     uint16_t Major;
@@ -426,6 +434,9 @@ typedef BOOL (*TRAPHANDLER)(void *pUnknown, KEXCEPTION_FRAME *pExceptionFrame, C
     __dcbst(0, addr); \
     __sync(); \
     __isync()
+
+EXPORTNUM(342)
+extern "C" XBOX_HARDWARE_INFO *XboxHardwareInfo;
 
 EXPORTNUM(343)
 extern "C" XBOX_KRNL_VERSION *XboxKrnlBaseVersion;
