@@ -3,9 +3,12 @@
 // characters declared in the code. If those tests stop passing, make sure the encoding
 // of this file is still correct.
 
-#include "pch.h"
-
 #include "TestRunner.h"
+
+#include <cstdint>
+#include <fstream>
+
+#include <XexUtils.h>
 
 using namespace XexUtils;
 using namespace TestRunner;
@@ -870,7 +873,7 @@ static void Socket()
 {
     Describe("Socket");
 
-    const std::array<uint8_t, 73> EC_DN = {
+    const uint8_t EC_DN[] = {
         0x30, 0x47, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
         0x02, 0x55, 0x53, 0x31, 0x22, 0x30, 0x20, 0x06, 0x03, 0x55, 0x04, 0x0A,
         0x13, 0x19, 0x47, 0x6F, 0x6F, 0x67, 0x6C, 0x65, 0x20, 0x54, 0x72, 0x75,
@@ -880,7 +883,7 @@ static void Socket()
         0x34
     };
 
-    const std::array<uint8_t, 97> EC_Q = {
+    const uint8_t EC_Q[] = {
         0x04, 0xF3, 0x74, 0x73, 0xA7, 0x68, 0x8B, 0x60, 0xAE, 0x43, 0xB8, 0x35,
         0xC5, 0x81, 0x30, 0x7B, 0x4B, 0x49, 0x9D, 0xFB, 0xC1, 0x61, 0xCE, 0xE6,
         0xDE, 0x46, 0xBD, 0x6B, 0xD5, 0x61, 0x18, 0x35, 0xAE, 0x40, 0xDD, 0x73,
@@ -919,29 +922,29 @@ static void Socket()
         return total;
     };
 
-    It("connects using a secure socket", [=]() {
+    It("connects using a secure socket", [&]() {
         HRESULT hr = S_OK;
 
         XexUtils::Socket secureSocket(domain, 443, true);
-        hr = secureSocket.AddECTrustAnchor(EC_DN.data(), sizeof(EC_DN), EC_Q.data(), sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
+        hr = secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
         TEST_EQ(hr, S_OK);
 
         hr = secureSocket.Connect();
         TEST_EQ(hr, S_OK);
     });
 
-    It("connects using an insecure socket", [=]() {
+    It("connects using an insecure socket", [&]() {
         XexUtils::Socket secureSocket(domain, 80, false);
 
         HRESULT hr = secureSocket.Connect();
         TEST_EQ(hr, S_OK);
     });
 
-    It("sends and receives data using a secure socket", [=]() {
+    It("sends and receives data using a secure socket", [&]() {
         HRESULT hr = S_OK;
 
         XexUtils::Socket secureSocket(domain, 443, true);
-        hr = secureSocket.AddECTrustAnchor(EC_DN.data(), sizeof(EC_DN), EC_Q.data(), sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
+        hr = secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
         TEST_EQ(hr, S_OK);
 
         hr = secureSocket.Connect();
@@ -954,7 +957,7 @@ static void Socket()
         TEST_EQ(received > 0, true);
     });
 
-    It("sends and receives data using an insecure socket", [=]() {
+    It("sends and receives data using an insecure socket", [&]() {
         XexUtils::Socket insecureSocket(domain, 80, false);
 
         HRESULT hr = insecureSocket.Connect();

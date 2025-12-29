@@ -1,5 +1,10 @@
-#include "pch.h"
 #include "TestRunner.h"
+
+#include <xtl.h>
+
+#include <vector>
+
+#include <XexUtils.h>
 
 namespace TestRunner
 {

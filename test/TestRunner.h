@@ -1,5 +1,9 @@
 #pragma once
 
+#include <functional>
+#include <sstream>
+#include <string>
+
 namespace TestRunner
 {
 
