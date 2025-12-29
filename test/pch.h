@@ -11,12 +11,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 // XexUtils
 #include <XexUtils.h>
-
-// AtgFramework
-#include <AtgDevice.h>
-#include <AtgFont.h>
-#include <AtgUtil.h>

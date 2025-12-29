@@ -3,13 +3,11 @@
 namespace TestRunner
 {
 
-typedef std::function<void()> TestFunction;
-
 void Describe(const std::string &sectionName);
 
-void It(const std::string &testName, TestFunction testFunction);
+void It(const std::string &testName, std::function<void()> testFunction);
 
-void Run();
+void DisplayRecap();
 
 void PushError(const std::string &errorMessage);
 

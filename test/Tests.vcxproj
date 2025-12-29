@@ -18,9 +18,6 @@
     <ProjectReference Include="..\XexUtils.vcxproj">
       <Project>{c598d106-4f6d-4505-95de-aa896a0ac7fa}</Project>
     </ProjectReference>
-    <ProjectReference Include="deps\AtgFramework\AtgFramework.vcxproj">
-      <Project>{91d208a6-9936-47fd-9659-67205c3eb0ab}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -41,7 +38,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\include;$(XEDK)\Source\Samples\Common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\include</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -63,13 +60,10 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SetChecksum>true</SetChecksum>
-      <AdditionalDependencies Condition="'$(Configuration)'=='Debug'">xapilibd.lib;d3d9d.lib;d3dx9d.lib;xgraphicsd.lib</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(Configuration)'=='Release'">xapilib.lib;d3d9.lib;d3dx9.lib;xgraphics.lib</AdditionalDependencies>
       <OptimizeReferences Condition="'$(Configuration)'=='Release'">true</OptimizeReferences>
     </Link>
     <Deploy>
       <DeploymentType>CopyToHardDrive</DeploymentType>
-      <DeploymentFiles>$(RemoteRoot)=$(ImagePath);$(RemoteRoot)\Media=$(OutDir)Media</DeploymentFiles>
     </Deploy>
     <ImageXex>
       <ConfigurationFile>$(SolutionDir)config.xml</ConfigurationFile>
@@ -80,25 +74,14 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Console.h" />
     <ClInclude Include="TestRunner.h" />
-    <ClInclude Include="specs.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Console.cpp" />
     <ClCompile Include="TestRunner.cpp" />
-    <ClCompile Include="specs.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="$(XEDK)\Source\Samples\Media\Fonts\Arial_16.rdf">
-      <Command>bundler "%(FullPath)" -o "$(OutDir)Media\Fonts\%(Filename).xpr"</Command>
-      <Message>Create a bundled resource file from %(FullPath)</Message>
-      <Outputs>$(OutDir)Media\Fonts\%(Filename).xpr</Outputs>
-    </CustomBuild>
   </ItemGroup>
 </Project>

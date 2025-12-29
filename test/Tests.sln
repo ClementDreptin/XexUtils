@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XexUtils", "..\XexUtils.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BearSSL", "..\deps\BearSSL.vcxproj", "{3ACCDAE6-BD87-4B74-8B7D-81184D11B7F3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AtgFramework", "deps\AtgFramework\AtgFramework.vcxproj", "{91D208A6-9936-47FD-9659-67205C3EB0AB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Xbox 360 = Debug|Xbox 360
@@ -33,12 +31,6 @@ Global
 		{3ACCDAE6-BD87-4B74-8B7D-81184D11B7F3}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
 		{3ACCDAE6-BD87-4B74-8B7D-81184D11B7F3}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{3ACCDAE6-BD87-4B74-8B7D-81184D11B7F3}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
-		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
-		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
-		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
-		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
-		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Release|Xbox 360.Build.0 = Release|Xbox 360
-		{91D208A6-9936-47FD-9659-67205C3EB0AB}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

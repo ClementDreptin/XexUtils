@@ -5,7 +5,6 @@
             "includePath": [
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/deps/BearSSL/inc",
-                "${env:XEDK}/Source/Samples/Common",
                 "${env:XEDK}/include/xbox"
             ],
             "defines": ["_DEBUG", "_XBOX", "_MBCS"],
@@ -16,7 +15,6 @@
             "includePath": [
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/deps/BearSSL/inc",
-                "${env:XEDK}/Source/Samples/Common",
                 "${env:XEDK}/include/xbox"
             ],
             "defines": ["NDEBUG", "_XBOX", "_MBCS"],
