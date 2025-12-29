@@ -4,6 +4,8 @@
 namespace TestRunner
 {
 
+static double s_TicksPerMillisecond;
+static LARGE_INTEGER s_StartTickCount;
 static size_t s_PassingTests;
 static std::vector<std::string> s_ErrorMessages;
 
@@ -14,28 +16,78 @@ void Describe(const std::string &sectionName)
 
 void It(const std::string &testName, std::function<void()> testFunction)
 {
+    XASSERT(s_TicksPerMillisecond != 0);
+
+    // Keep track of the fail count before running the test
     size_t previousFailCount = s_ErrorMessages.size();
+
+    // Mesure time before running the test
+    LARGE_INTEGER startTickCount = {};
+    QueryPerformanceCounter(&startTickCount);
+
+    // Run the test
     testFunction();
+
+    // Mesure time after running the test
+    LARGE_INTEGER endTickCount = {};
+    QueryPerformanceCounter(&endTickCount);
+
+    // Calculate how long the test took to run
+    double millisecondsElapsed = static_cast<double>(endTickCount.QuadPart - startTickCount.QuadPart) / s_TicksPerMillisecond;
+
+    // Get the fail count after running the test
     size_t currentFailCount = s_ErrorMessages.size();
 
+    // If the fail count hasn't changed, the test passed
     if (currentFailCount == previousFailCount)
     {
-        XexUtils::Log::Print("    [-]  %s", testName.c_str());
+        XexUtils::Log::Print(
+            "    [-]  %s (%.4fms)",
+            testName.c_str(),
+            millisecondsElapsed
+        );
         s_PassingTests++;
     }
     else
-        XexUtils::Log::Print("    [X]  %s. Error: %s", testName.c_str(), s_ErrorMessages.back().c_str());
+    {
+        XexUtils::Log::Print(
+            "    [X]  %s. Error: %s (%.4fms)",
+            testName.c_str(),
+            s_ErrorMessages.back().c_str(),
+            millisecondsElapsed
+        );
+    }
 }
 
-void DisplayRecap()
+void Start()
 {
-    size_t failedTests = s_ErrorMessages.size();
+    // Get the clock resolution
+    LARGE_INTEGER ticksPerSecond = {};
+    QueryPerformanceFrequency(&ticksPerSecond);
+    s_TicksPerMillisecond = static_cast<double>(ticksPerSecond.QuadPart) * 0.001;
+
+    // Mesure time before running any test
+    QueryPerformanceCounter(&s_StartTickCount);
+}
+
+void End()
+{
+    XASSERT(s_TicksPerMillisecond != 0);
+    XASSERT(s_StartTickCount.QuadPart != 0);
+
+    // Mesure time after running all the tests
+    LARGE_INTEGER endTickCount = {};
+    QueryPerformanceCounter(&endTickCount);
+
+    // Calculate how long the tests took to run
+    double millisecondsElapsed = static_cast<double>(endTickCount.QuadPart - s_StartTickCount.QuadPart) / s_TicksPerMillisecond;
 
     XexUtils::Log::Print("");
 
+    // Print all the errors
+    size_t failedTests = s_ErrorMessages.size();
     if (failedTests > 0)
     {
-        // Recap the error messages
         for (size_t i = 0; i < s_ErrorMessages.size(); i++)
             XexUtils::Log::Print("[X]  %s", s_ErrorMessages[i].c_str());
 
@@ -44,15 +96,16 @@ void DisplayRecap()
 
     // Print the final recap
     XexUtils::Log::Print(
-        "%d test%s passed, %d test%s failed",
+        "%d test%s passed, %d test%s failed in %.4fms",
         s_PassingTests,
         s_PassingTests != 1 ? "s" : "",
         failedTests,
-        failedTests != 1 ? "s" : ""
+        failedTests != 1 ? "s" : "",
+        millisecondsElapsed
     );
 }
 
-void TestRunner::PushError(const std::string &errorMessage)
+void PushError(const std::string &errorMessage)
 {
     s_ErrorMessages.push_back(errorMessage);
 }

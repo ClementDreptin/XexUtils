@@ -7,7 +7,9 @@ void Describe(const std::string &sectionName);
 
 void It(const std::string &testName, std::function<void()> testFunction);
 
-void DisplayRecap();
+void Start();
+
+void End();
 
 void PushError(const std::string &errorMessage);
 

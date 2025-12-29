@@ -1,4 +1,4 @@
-﻿// NOTE: This file has a UTF-0 with BOM encoding, this is required for the
+﻿// NOTE: This file has a UTF-8 with BOM encoding, this is required for the
 // Formatter::ToWide and Formatter::ToNarrow tests to pass because they use multibyte
 // characters declared in the code. If those tests stop passing, make sure the encoding
 // of this file is still correct.
@@ -989,6 +989,8 @@ static void ValueOrPtr()
 
 void __cdecl main()
 {
+    TestRunner::Start();
+
     ::Filesystem();
 
     ::Formatter();
@@ -1012,5 +1014,5 @@ void __cdecl main()
 
     ::ValueOrPtr();
 
-    TestRunner::DisplayRecap();
+    TestRunner::End();
 }
