@@ -59,7 +59,7 @@ CXX_FLAGS := -c $(addprefix -I ,$(INCLUDES)) -Zi -nologo -W4 -MP -D _XBOX -Gm- -
 
 LD_FLAGS := -ERRORREPORT:QUEUE -NOLOGO -MANIFESTUAC:"level='asInvoker' uiAccess='false'" \
 			-DEBUG -PDB:"$(OUT_DIR)/$(PROJECT_NAME).pdb" -STACK:"262144","262144" \
-			-TLBID:1 -RELEASE -IMPLIB:"$(OUT_DIR)/$(PROJECT_NAME).pdb" -XEX:NO
+			-TLBID:1 -RELEASE -IMPLIB:"$(OUT_DIR)/$(PROJECT_NAME).lib" -XEX:NO
 
 IMAGEXEX_FLAGS := -nologo -config:"config.xml"
 
@@ -113,6 +113,7 @@ $(OUT_DIR)/$(PROJECT_NAME).exe: $(OBJS) $(XEXUTILS_TARGET)
 $(INT_DIR)/%.obj: %.cpp
 	@mkdir -p $(@D)
 	@INCLUDE=$(XDK_INC_DIR) $(WINDOWS_SHIM) $(CXX) $(CXX_FLAGS) -Fo"$@" $<
+
 
 # ================================================================
 # XexUtils build

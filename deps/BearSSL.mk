@@ -44,7 +44,7 @@ DEFINES := BR_USE_WIN32_TIME=0 BR_USE_UNIX_TIME=1 inline=__inline
 
 CXX_FLAGS := -c $(addprefix -I ,$(INCLUDES)) -Zi -nologo -W3 -MP -D _XBOX $(addprefix -D ,$(DEFINES)) \
 			 -Gm- -EHsc -GS -fp:fast -fp:except- -Zc:wchar_t -Zc:forScope -GR- -openmp- \
-			 -Fd"$(INT_DIR)/vc100.pdb" -TC /wd4244 -FI"$(XDK_INC_DIR)/xbox_intellisense_platform.h"
+			 -Fd"$(INT_DIR)/vc100.pdb" -TC -wd4244 -FI"$(XDK_INC_DIR)/xbox_intellisense_platform.h"
 
 LD_FLAGS := -NOLOGO
 
