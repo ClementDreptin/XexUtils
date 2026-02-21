@@ -14,7 +14,7 @@ T Peek(uint64_t address)
 {
     void *pData = XPhysicalAlloc(sizeof(T), MAXULONG_PTR, 0, PAGE_READWRITE);
     Peek(address, pData, sizeof(T));
-    T result = *reinterpret_cast<T *>(pData);
+    T result = Memory::Read<T>(pData);
     XPhysicalFree(pData);
 
     return result;

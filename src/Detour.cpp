@@ -270,7 +270,7 @@ void *Detour::GetModuleImport(const std::string &baseModuleName, const std::stri
     {
         for (size_t j = 0; j < pImportTable->ImportCount; j++)
         {
-            void *pImportStubAddress = *reinterpret_cast<void **>(pImportTable->ImportStubAddr[j]);
+            void *pImportStubAddress = Memory::Read<void *>(pImportTable->ImportStubAddr[j]);
 
             if (pImportStubAddress == pFunc)
                 return reinterpret_cast<void *>(pImportTable->ImportStubAddr[j + 1]);
