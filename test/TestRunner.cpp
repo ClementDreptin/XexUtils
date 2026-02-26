@@ -10,7 +10,7 @@ namespace TestRunner
 {
 
 static double s_TicksPerMillisecond;
-static LARGE_INTEGER s_StartTickCount;
+static uint64_t s_TotalTickCount;
 static size_t s_PassingTests;
 static std::vector<std::string> s_ErrorMessages;
 
@@ -38,7 +38,11 @@ void It(const std::string &testName, std::function<void()> testFunction)
     QueryPerformanceCounter(&endTickCount);
 
     // Calculate how long the test took to run
-    double millisecondsElapsed = static_cast<double>(endTickCount.QuadPart - startTickCount.QuadPart) / s_TicksPerMillisecond;
+    uint64_t ticksElapsed = endTickCount.QuadPart - startTickCount.QuadPart;
+    double millisecondsElapsed = static_cast<double>(ticksElapsed) / s_TicksPerMillisecond;
+
+    // Increment the global timer
+    s_TotalTickCount += ticksElapsed;
 
     // Get the fail count after running the test
     size_t currentFailCount = s_ErrorMessages.size();
@@ -70,22 +74,15 @@ void Start()
     LARGE_INTEGER ticksPerSecond = {};
     QueryPerformanceFrequency(&ticksPerSecond);
     s_TicksPerMillisecond = static_cast<double>(ticksPerSecond.QuadPart) * 0.001;
-
-    // Mesure time before running any test
-    QueryPerformanceCounter(&s_StartTickCount);
 }
 
 void End()
 {
     XASSERT(s_TicksPerMillisecond != 0);
-    XASSERT(s_StartTickCount.QuadPart != 0);
-
-    // Mesure time after running all the tests
-    LARGE_INTEGER endTickCount = {};
-    QueryPerformanceCounter(&endTickCount);
+    XASSERT(s_TotalTickCount != 0);
 
     // Calculate how long the tests took to run
-    double millisecondsElapsed = static_cast<double>(endTickCount.QuadPart - s_StartTickCount.QuadPart) / s_TicksPerMillisecond;
+    double millisecondsElapsed = static_cast<double>(s_TotalTickCount) / s_TicksPerMillisecond;
 
     XexUtils::Log::Print("");
 
