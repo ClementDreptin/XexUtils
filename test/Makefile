@@ -83,11 +83,11 @@ build: $(TARGET)
 
 copy: $(TARGET)
 	@echo "Copying $< to console..."
-	@$(WINDOWS_SHIM) $(XBCP) -Y -X:$(CONSOLE_NAME) -T "$<" "xE:\$(PROJECT_NAME)\$(PROJECT_NAME).xex"
+	@$(WINDOWS_SHIM) $(XBCP) -Y -X:$(CONSOLE_NAME) -T "$<" "xE:\XexUtilsTests\$(PROJECT_NAME).xex"
 
 launch: $(TARGET)
 	@echo "Launching $<..."
-	@$(WINDOWS_SHIM) $(XBREBOOT) "xE:\$(PROJECT_NAME)\$(PROJECT_NAME).xex"
+	@$(WINDOWS_SHIM) $(XBREBOOT) "xE:\XexUtilsTests\$(PROJECT_NAME).xex"
 
 clean:
 	$(MAKE) -C $(XEXUTILS_DIR) $@

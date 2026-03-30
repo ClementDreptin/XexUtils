@@ -32,6 +32,7 @@
   <PropertyGroup>
     <OutDir>$(SolutionDir)build\$(Configuration)\bin\</OutDir>
     <IntDir>$(SolutionDir)build\$(Configuration)\obj\</IntDir>
+    <RemoteRoot>xE:\XexUtilsTests</RemoteRoot>
     <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     <ImageXexOutput>$(OutDir)$(ProjectName).xex</ImageXexOutput>
   </PropertyGroup>
