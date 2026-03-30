@@ -74,6 +74,16 @@
     <ClInclude Include="TestRunner.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Specs/Filesystem.cpp" />
+    <ClCompile Include="Specs/Formatter.cpp" />
+    <ClCompile Include="Specs/General.cpp" />
+    <ClCompile Include="Specs/Math.cpp" />
+    <ClCompile Include="Specs/Memory.cpp" />
+    <ClCompile Include="Specs/Socket.cpp" />
+    <ClCompile Include="Specs/ValueOrPtr.cpp" />
+    <ClCompile Include="Specs/Vec2.cpp" />
+    <ClCompile Include="Specs/Vec3.cpp" />
+    <ClCompile Include="Specs/Vec4.cpp" />
     <ClCompile Include="TestRunner.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
