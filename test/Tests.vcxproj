@@ -80,6 +80,7 @@
     <ClCompile Include="Specs/General.cpp" />
     <ClCompile Include="Specs/Math.cpp" />
     <ClCompile Include="Specs/Memory.cpp" />
+    <ClCompile Include="Specs/Optional.cpp" />
     <ClCompile Include="Specs/Socket.cpp" />
     <ClCompile Include="Specs/ValueOrPtr.cpp" />
     <ClCompile Include="Specs/Vec2.cpp" />

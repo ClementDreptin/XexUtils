@@ -10,6 +10,7 @@ void Vec3();
 void Vec4();
 void Math();
 void Memory();
+void Optional();
 void Socket();
 void ValueOrPtr();
 
@@ -17,28 +18,30 @@ void __cdecl main()
 {
     TestRunner::Start();
 
-    ::Filesystem();
+    Filesystem();
 
-    ::Formatter();
+    Formatter();
 
-    ::General();
+    General();
 
-    ::Vec2();
+    Vec2();
 
-    ::Vec3();
+    Vec3();
 
-    ::Vec4();
+    Vec4();
 
-    ::Math();
+    Math();
 
-    ::Memory();
+    Memory();
+
+    Optional();
 
     // Only run socket tests when connected to the internet
     DWORD ethernetStatus = XNetGetEthernetLinkStatus();
     if (ethernetStatus & XNET_ETHERNET_LINK_ACTIVE || ethernetStatus & XNET_ETHERNET_LINK_WIRELESS)
-        ::Socket();
+        Socket();
 
-    ::ValueOrPtr();
+    ValueOrPtr();
 
     TestRunner::End();
 }

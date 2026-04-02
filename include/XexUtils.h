@@ -23,6 +23,7 @@
 #include "../src/Log.h"
 #include "../src/Math.h"
 #include "../src/Memory.h"
+#include "../src/Optional.h"
 #include "../src/SMC.h"
 #include "../src/Socket.h"
 #include "../src/ValueOrPtr.h"
