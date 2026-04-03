@@ -128,6 +128,13 @@ void Optional()
 
     Describe("Optional: copy assignment");
 
+    It("doesn't do anything when assigning an Optional to itself", []() {
+        auto opt = XexUtils::Optional<int>(3);
+        opt = opt;
+        TEST_EQ(opt.HasValue(), true);
+        TEST_EQ(opt.Value(), 3);
+    });
+
     It("doesn't do anything if both A and B are empty", []() {
         auto A = XexUtils::Optional<int>();
         auto B = XexUtils::Optional<int>();
@@ -167,6 +174,13 @@ void Optional()
     });
 
     Describe("Optional: move assignment");
+
+    It("doesn't do anything when moving an Optional to itself", []() {
+        auto opt = XexUtils::Optional<int>(3);
+        opt = std::move(opt);
+        TEST_EQ(opt.HasValue(), true);
+        TEST_EQ(opt.Value(), 3);
+    });
 
     It("doesn't do anything if both A and B are empty", []() {
         auto A = XexUtils::Optional<int>();

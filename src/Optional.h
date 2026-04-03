@@ -121,6 +121,9 @@ public:
     /// @return A reference to the `Optional`.
     Optional &operator=(const Optional &other)
     {
+        if (this == &other)
+            return *this;
+
         if (m_HasValue && other.m_HasValue)
         {
             **this = *other;
@@ -146,6 +149,9 @@ public:
     /// @return A reference to the `Optional`.
     Optional &operator=(Optional &&other)
     {
+        if (this == &other)
+            return *this;
+
         if (m_HasValue && other.m_HasValue)
         {
             **this = std::move(*other);
