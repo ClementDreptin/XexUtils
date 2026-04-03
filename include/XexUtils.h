@@ -14,6 +14,7 @@
 #include "../src/Assert.h"
 #include "../src/Dashlaunch.h"
 #include "../src/Detour.h"
+#include "../src/Expected.h"
 #include "../src/Filesystem.h"
 #include "../src/Formatter.h"
 #include "../src/General.h"

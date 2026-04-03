@@ -68,6 +68,7 @@
     <ClInclude Include="src\Assert.h" />
     <ClInclude Include="src\Dashlaunch.h" />
     <ClInclude Include="src\Detour.h" />
+    <ClInclude Include="src\Expected.h" />
     <ClInclude Include="src\Filesystem.h" />
     <ClInclude Include="src\Formatter.h" />
     <ClInclude Include="src\General.h" />

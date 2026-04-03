@@ -2,6 +2,7 @@
 
 #include "TestRunner.h"
 
+void Expected();
 void Filesystem();
 void Formatter();
 void General();
@@ -17,6 +18,8 @@ void ValueOrPtr();
 void __cdecl main()
 {
     TestRunner::Start();
+
+    Expected();
 
     Filesystem();
 
