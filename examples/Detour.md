@@ -1,4 +1,4 @@
-# Detouring
+# Detour
 
 Detour a function:
 

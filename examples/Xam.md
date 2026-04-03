@@ -1,4 +1,4 @@
-# XAM (Xbox API)
+# Xam (Xbox Application Manager)
 
 Show an Xbox notification:
 
@@ -49,6 +49,6 @@ void Init()
     if (result == ERROR_CANCELLED)
         XexUtils::Log::Print("Message box canceled");
     else if (result == ERROR_SUCCESS)
-        wprintf_s(L"User pressed %s\n", buttonLabels[buttonPressedIndex]);
+        XexUtils::Log::Print(L"User pressed %s\n", buttonLabels[buttonPressedIndex].c_str());
 }
 ```

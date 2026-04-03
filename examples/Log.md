@@ -1,4 +1,4 @@
-# Logging
+# Log
 
 Log messages to stdout:
 

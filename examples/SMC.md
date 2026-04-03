@@ -1,4 +1,4 @@
-# System Managment Controller (SMC)
+# SMC (System Managment Controller)
 
 Change the power LED behavior (the LED in the middle of the power button):
 
