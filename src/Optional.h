@@ -20,13 +20,6 @@ public:
     {
     }
 
-    /// @brief Creates an empty `Optional` using the `NullOpt` tag.
-    /// @param nullOpt Tag to indicate an empty `Optional`.
-    Optional(NullOpt)
-        : m_HasValue(false)
-    {
-    }
-
     /// @brief Creates an `Optional` from a value.
     /// @param value The value.
     Optional(const T &value)
@@ -43,7 +36,13 @@ public:
         new (&m_Storage) T(std::move(value));
     }
 
-    /// @brief Copies `other` to the current `Optional`.
+    /// @brief Creates an empty `Optional` using the `NullOpt` tag.
+    Optional(NullOpt)
+        : m_HasValue(false)
+    {
+    }
+
+    /// @brief Copies `other` into the current `Optional`.
     /// @param other The `Optional` to copy.
     Optional(const Optional &other)
         : m_HasValue(other.m_HasValue)
@@ -71,14 +70,6 @@ public:
     ~Optional()
     {
         Destroy();
-    }
-
-    /// @brief Resets the `Optional` to an empty state.
-    /// @return A reference to the `Optional`.
-    Optional &operator=(NullOpt)
-    {
-        Destroy();
-        return *this;
     }
 
     /// @brief Assigns a value to the `Optional`.
@@ -117,7 +108,15 @@ public:
         return *this;
     }
 
-    /// @brief Copies an `Optional` to another.
+    /// @brief Resets the `Optional` to an empty state.
+    /// @return A reference to the `Optional`.
+    Optional &operator=(NullOpt)
+    {
+        Destroy();
+        return *this;
+    }
+
+    /// @brief Copies an `Optional` into another.
     /// @param other The `Optional` to copy.
     /// @return A reference to the `Optional`.
     Optional &operator=(const Optional &other)
@@ -170,13 +169,13 @@ public:
     /// @return `true` if the `Optional` contains a value, `false` otherwise.
     inline bool HasValue() const { return m_HasValue; }
 
-    /// @brief Conversion to bool operator.
+    /// @brief Checks if the `Optional` contains a value.
     /// @return `true` if the `Optional` contains a value, `false` otherwise.
     operator bool() const { return m_HasValue; }
 
     /// @brief Gets the stored value.
     ///
-    /// This function triggers a breakpoint, only debug builds, if the `Optional` is empty.
+    /// This function triggers a breakpoint, only in debug builds, if the `Optional` is empty.
     ///
     /// @return A reference to the stored value.
     T &Value()
@@ -187,29 +186,13 @@ public:
 
     /// @brief Gets the stored value (const version).
     ///
-    /// This function triggers a breakpoint, only debug builds, if the `Optional` is empty.
+    /// This function triggers a breakpoint, only in debug builds, if the `Optional` is empty.
     ///
     /// @return A const reference to the stored value.
     const T &Value() const
     {
         XASSERT(m_HasValue);
         return *reinterpret_cast<const T *>(&m_Storage);
-    }
-
-    /// @brief Gets the stored value or a default value if the `Optional` is empty.
-    /// @param defaultValue The default value to return if the `Optional` is empty.
-    /// @return The stored value if the `Optional` contains a value, `defaultValue` otherwise.
-    T ValueOr(const T &defaultValue) const
-    {
-        return m_HasValue ? Value() : defaultValue;
-    }
-
-    /// @brief Gets the stored value or a default value if the `Optional` is empty.
-    /// @param defaultValue The default value to return if the `Optional` is empty.
-    /// @return The stored value if the `Optional` contains a value, `defaultValue` otherwise.
-    T ValueOr(T &&defaultValue) const
-    {
-        return m_HasValue ? Value() : std::move(defaultValue);
     }
 
     /// @brief Gets the stored value.
@@ -232,6 +215,22 @@ public:
     {
         XASSERT(m_HasValue);
         return *reinterpret_cast<const T *>(&m_Storage);
+    }
+
+    /// @brief Gets the stored value, or `defaultValue` if the `Optional` is empty.
+    /// @param defaultValue The default value to return if the `Optional` is empty.
+    /// @return The stored value if the `Optional` contains a value, `defaultValue` otherwise.
+    T ValueOr(const T &defaultValue) const
+    {
+        return m_HasValue ? Value() : defaultValue;
+    }
+
+    /// @brief Gets the stored value, or `defaultValue` if the `Optional` is empty.
+    /// @param defaultValue The default value to return if the `Optional` is empty.
+    /// @return The stored value if the `Optional` contains a value, `defaultValue` otherwise.
+    T ValueOr(T &&defaultValue) const
+    {
+        return m_HasValue ? Value() : std::move(defaultValue);
     }
 
 private:

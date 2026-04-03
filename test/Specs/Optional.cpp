@@ -10,15 +10,8 @@ void Optional()
 {
     Describe("Optional: default constructor");
 
-    It("constructs an empty Optional with the default constructor", []() {
+    It("constructs an empty Optional", []() {
         auto opt = XexUtils::Optional<int>();
-        TEST_EQ(opt.HasValue(), false);
-    });
-
-    Describe("Optional: NullOpt constructor");
-
-    It("constructs an empty Optional from a NullOpt", []() {
-        auto opt = XexUtils::Optional<int>(NullOpt());
         TEST_EQ(opt.HasValue(), false);
     });
 
@@ -39,6 +32,13 @@ void Optional()
         TEST_EQ(opt.HasValue(), true);
         TEST_EQ(opt.Value(), "some text");
         TEST_EQ(str.size(), 0);
+    });
+
+    Describe("Optional: NullOpt constructor");
+
+    It("constructs an empty Optional from a NullOpt", []() {
+        auto opt = XexUtils::Optional<int>(NullOpt());
+        TEST_EQ(opt.HasValue(), false);
     });
 
     Describe("Optional: copy constructor");
@@ -70,88 +70,6 @@ void Optional()
         TEST_EQ(B.HasValue(), true);
         TEST_EQ(B.Value(), 3);
         TEST_EQ(A.HasValue(), false);
-    });
-
-    Describe("Optional: copy assignment");
-
-    It("doesn't do anything when copy assigning A to B if both are empty", []() {
-        auto A = XexUtils::Optional<int>();
-        auto B = XexUtils::Optional<int>();
-        TEST_EQ(A.HasValue(), false);
-        TEST_EQ(B.HasValue(), false);
-        B = A;
-        TEST_EQ(A.HasValue(), false);
-        TEST_EQ(B.HasValue(), false);
-    });
-
-    It("copies A into B when copy assigning A to B if both are valid", []() {
-        auto A = XexUtils::Optional<int>(3);
-        auto B = XexUtils::Optional<int>(4);
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 4);
-        B = A;
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 3);
-    });
-
-    It("copies A into B when copy assigning A to B if A is valid", []() {
-        auto A = XexUtils::Optional<int>(3);
-        auto B = XexUtils::Optional<int>();
-        TEST_EQ(B.HasValue(), false);
-        B = A;
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 3);
-    });
-
-    It("destroys B when copy assigning A to B if A is empty", []() {
-        auto A = XexUtils::Optional<int>();
-        auto B = XexUtils::Optional<int>(3);
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 3);
-        B = A;
-        TEST_EQ(B.HasValue(), false);
-    });
-
-    Describe("Optional: move assignment");
-
-    It("doesn't do anything when move assigning A to B if both are empty", []() {
-        auto A = XexUtils::Optional<int>();
-        auto B = XexUtils::Optional<int>();
-        TEST_EQ(A.HasValue(), false);
-        TEST_EQ(B.HasValue(), false);
-        B = std::move(A);
-        TEST_EQ(A.HasValue(), false);
-        TEST_EQ(B.HasValue(), false);
-    });
-
-    It("moves A into B when move assigning A to B if both are valid", []() {
-        auto A = XexUtils::Optional<int>(3);
-        auto B = XexUtils::Optional<int>(4);
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 4);
-        B = std::move(A);
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 3);
-        TEST_EQ(A.HasValue(), false);
-    });
-
-    It("move A into B when move assigning A to B if A is valid", []() {
-        auto A = XexUtils::Optional<int>(3);
-        auto B = XexUtils::Optional<int>();
-        TEST_EQ(B.HasValue(), false);
-        B = std::move(A);
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 3);
-        TEST_EQ(A.HasValue(), false);
-    });
-
-    It("destroys B when move assigning A to B if A is empty", []() {
-        auto A = XexUtils::Optional<int>();
-        auto B = XexUtils::Optional<int>(3);
-        TEST_EQ(B.HasValue(), true);
-        TEST_EQ(B.Value(), 3);
-        B = std::move(A);
-        TEST_EQ(B.HasValue(), false);
     });
 
     Describe("Optional: value assignment");
@@ -208,6 +126,88 @@ void Optional()
         TEST_EQ(opt.HasValue(), false);
     });
 
+    Describe("Optional: copy assignment");
+
+    It("doesn't do anything if both A and B are empty", []() {
+        auto A = XexUtils::Optional<int>();
+        auto B = XexUtils::Optional<int>();
+        TEST_EQ(A.HasValue(), false);
+        TEST_EQ(B.HasValue(), false);
+        B = A;
+        TEST_EQ(A.HasValue(), false);
+        TEST_EQ(B.HasValue(), false);
+    });
+
+    It("copies A into B if both A and B are valid", []() {
+        auto A = XexUtils::Optional<int>(3);
+        auto B = XexUtils::Optional<int>(4);
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 4);
+        B = A;
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 3);
+    });
+
+    It("copies A into B if A is valid and B is empty", []() {
+        auto A = XexUtils::Optional<int>(3);
+        auto B = XexUtils::Optional<int>();
+        TEST_EQ(B.HasValue(), false);
+        B = A;
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 3);
+    });
+
+    It("destroys B if A is empty and B is valid", []() {
+        auto A = XexUtils::Optional<int>();
+        auto B = XexUtils::Optional<int>(3);
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 3);
+        B = A;
+        TEST_EQ(B.HasValue(), false);
+    });
+
+    Describe("Optional: move assignment");
+
+    It("doesn't do anything if both A and B are empty", []() {
+        auto A = XexUtils::Optional<int>();
+        auto B = XexUtils::Optional<int>();
+        TEST_EQ(A.HasValue(), false);
+        TEST_EQ(B.HasValue(), false);
+        B = std::move(A);
+        TEST_EQ(A.HasValue(), false);
+        TEST_EQ(B.HasValue(), false);
+    });
+
+    It("moves A into B if both A and B are valid", []() {
+        auto A = XexUtils::Optional<int>(3);
+        auto B = XexUtils::Optional<int>(4);
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 4);
+        B = std::move(A);
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 3);
+        TEST_EQ(A.HasValue(), false);
+    });
+
+    It("moves A into B if A is valid and B is empty", []() {
+        auto A = XexUtils::Optional<int>(3);
+        auto B = XexUtils::Optional<int>();
+        TEST_EQ(B.HasValue(), false);
+        B = std::move(A);
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 3);
+        TEST_EQ(A.HasValue(), false);
+    });
+
+    It("destroys B if A is empty and B is valid", []() {
+        auto A = XexUtils::Optional<int>();
+        auto B = XexUtils::Optional<int>(3);
+        TEST_EQ(B.HasValue(), true);
+        TEST_EQ(B.Value(), 3);
+        B = std::move(A);
+        TEST_EQ(B.HasValue(), false);
+    });
+
     Describe("Optional: operator bool()");
 
     It("returns true when the Optional is valid", []() {
@@ -222,6 +222,13 @@ void Optional()
         TEST_EQ(valid, false);
     });
 
+    Describe("Optional: operator*");
+
+    It("returns the value", []() {
+        auto opt = XexUtils::Optional<int>(3);
+        TEST_EQ(*opt, 3);
+    });
+
     Describe("Optional: ValueOr");
 
     It("returns the value when the Optional is valid", []() {
@@ -234,12 +241,5 @@ void Optional()
         auto opt = XexUtils::Optional<int>();
         int value = opt.ValueOr(4);
         TEST_EQ(value, 4);
-    });
-
-    Describe("Optional: operator*");
-
-    It("returns the value", []() {
-        auto opt = XexUtils::Optional<int>(3);
-        TEST_EQ(*opt, 3);
     });
 }
