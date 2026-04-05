@@ -23,7 +23,7 @@ void Print(const char *format, ...)
 
 void Print(const std::string &message)
 {
-    Print(message.c_str());
+    std::cout << message << '\n';
 }
 
 void Print(const wchar_t *format, ...)
@@ -43,7 +43,7 @@ void Print(const wchar_t *format, ...)
 
 void Print(const std::wstring &message)
 {
-    Print(message.c_str());
+    std::wcout << message << '\n';
 }
 
 }
