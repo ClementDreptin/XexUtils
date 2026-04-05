@@ -22,7 +22,7 @@ void Http()
             "}";
 
         TEST_EQ(response.HasValue(), true);
-        TEST_EQ((*response).Status, 200);
-        TEST_EQ((*response).Body, expectedResponse);
+        TEST_EQ(response->Status, 200);
+        TEST_EQ(response->Body, expectedResponse);
     });
 }

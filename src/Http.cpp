@@ -18,15 +18,24 @@ Optional<Response> Client::Get(const std::string &domain, const std::string &pat
     if (FAILED(hr))
         return NullOpt();
 
-    std::string request = XexUtils::Formatter::Format(
-        "GET %s HTTP/1.1\r\n"
-        "Host: %s\r\n"
-        "User-Agent: Xbox360/1.0\r\n"
-        "Accept: */*\r\n"
-        "Connection: close\r\n\r\n",
-        path.c_str(),
-        domain.c_str()
-    );
+    std::stringstream requestStream;
+    requestStream << "GET " << path << " HTTP/1.1\r\n";
+
+    std::unordered_map<std::string, std::string> headers;
+    headers["Host"] = domain;
+    headers["User-Agent"] = "Xbox360/1.0";
+    headers["Accept"] = "*/*";
+    headers["Connection"] = "close";
+
+    for (auto it = headers.begin(); it != headers.end(); ++it)
+    {
+        const std::string &key = it->first;
+        const std::string &value = it->second;
+        requestStream << key << ": " << value << "\r\n";
+    }
+    requestStream << "\r\n";
+
+    std::string request = requestStream.str();
 
     // Send it through the socket
     int bytesSent = socket.Send(request.c_str(), request.size());
