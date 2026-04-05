@@ -8,20 +8,22 @@ Create an `Expected` in a success state and access its value:
 ```C++
 void Init()
 {
-    XexUtils::Expected<int, std::string> intOrError(3);
+    XexUtils::Expected<std::string, HRESULT> stringOrError("some text");
 
     // Using the overloaded operators
-    if (intOrError)
+    if (stringOrError)
     {
-        int value = *intOrError;
-        // Do something with value
+        std::string value = *stringOrError;
+        size_t size = stringOrError->size();
+        // Do something with value and size
     }
 
     // Using the methods
-    if (intOrError.HasValue())
+    if (stringOrError.HasValue())
     {
-        int value = intOrError.Value();
-        // Do something with value
+        std::string value = stringOrError.Value();
+        size_t value = stringOrError.Value().size();
+        // Do something with value and size
     }
 }
 ```

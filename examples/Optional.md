@@ -14,14 +14,16 @@ void Init()
     if (maybeString)
     {
         std::string value = *maybeString;
-        // Do something with value
+        size_t size = maybeString->size();
+        // Do something with value and size
     }
 
     // Using the methods
     if (maybeString.HasValue())
     {
         std::string value = maybeString.Value();
-        // Do something with value
+        size_t size = maybeString.Value().size();
+        // Do something with value and size
     }
 }
 ```

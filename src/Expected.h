@@ -251,6 +251,28 @@ public:
         return Value();
     }
 
+    /// @brief Gets a pointer to the stored value.
+    ///
+    /// This function triggers a breakpoint, only in debug builds, if the `Expected` is in an error state.
+    ///
+    /// @return A pointer to the stored value.
+    T *operator->()
+    {
+        XASSERT(m_HasValue);
+        return reinterpret_cast<T *>(&m_Storage);
+    }
+
+    /// @brief Gets a pointer to the stored value (const version).
+    ///
+    /// This function triggers a breakpoint, only in debug builds, if the `Expected` is in an error state.
+    ///
+    /// @return A pointer to the const stored value.
+    const T *operator->() const
+    {
+        XASSERT(m_HasValue);
+        return reinterpret_cast<const T *>(&m_Storage);
+    }
+
     /// @brief Gets the stored value, or `defaultValue` if the `Expected` is in an error state.
     /// @param defaultValue The default value to return if the `Expected` is in an error state.
     /// @return The stored value if the `Expected` is in a success state, `defaultValue` otherwise.

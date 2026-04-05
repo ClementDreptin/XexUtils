@@ -214,6 +214,13 @@ void Expected()
         TEST_EQ(*exp, 3);
     });
 
+    Describe("Expected: operator->");
+
+    It("returns a pointer to the value", []() {
+        auto opt = XexUtils::Expected<std::string, int>("some text");
+        TEST_EQ(opt->size(), 9);
+    });
+
     Describe("Expected: ValueOr");
 
     It("returns the value when the Expected has a value", []() {
