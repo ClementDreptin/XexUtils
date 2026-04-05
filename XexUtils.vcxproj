@@ -72,6 +72,7 @@
     <ClInclude Include="src\Filesystem.h" />
     <ClInclude Include="src\Formatter.h" />
     <ClInclude Include="src\General.h" />
+    <ClInclude Include="src\Http.h" />
     <ClInclude Include="src\Hypervisor.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Kernel.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="src\Filesystem.cpp" />
     <ClCompile Include="src\Formatter.cpp" />
     <ClCompile Include="src\General.cpp" />
+    <ClCompile Include="src\Http.cpp" />
     <ClCompile Include="src\Hypervisor.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Log.cpp" />

@@ -7,7 +7,9 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 // XexUtils
@@ -18,6 +20,7 @@
 #include "../src/Filesystem.h"
 #include "../src/Formatter.h"
 #include "../src/General.h"
+#include "../src/Http.h"
 #include "../src/Hypervisor.h"
 #include "../src/Input.h"
 #include "../src/Kernel.h"

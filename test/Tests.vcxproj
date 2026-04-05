@@ -79,6 +79,7 @@
     <ClCompile Include="Specs/Filesystem.cpp" />
     <ClCompile Include="Specs/Formatter.cpp" />
     <ClCompile Include="Specs/General.cpp" />
+    <ClCompile Include="Specs/Http.cpp" />
     <ClCompile Include="Specs/Math.cpp" />
     <ClCompile Include="Specs/Memory.cpp" />
     <ClCompile Include="Specs/Optional.cpp" />

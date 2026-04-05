@@ -6,6 +6,7 @@ void Expected();
 void Filesystem();
 void Formatter();
 void General();
+void Http();
 void Vec2();
 void Vec3();
 void Vec4();
@@ -26,6 +27,8 @@ void __cdecl main()
     Formatter();
 
     General();
+
+    Http();
 
     Vec2();
 
