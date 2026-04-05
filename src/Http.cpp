@@ -23,7 +23,7 @@ Optional<Response> Client::Get(const std::string &domain, const std::string &pat
 
     std::unordered_map<std::string, std::string> headers;
     headers["Host"] = domain;
-    headers["User-Agent"] = "Xbox360/1.0";
+    headers["User-Agent"] = "XexUtils HTTP client";
     headers["Accept"] = "*/*";
     headers["Connection"] = "close";
 
