@@ -243,6 +243,13 @@ void Optional()
         TEST_EQ(*opt, 3);
     });
 
+    Describe("Optional: operator->");
+
+    It("returns a pointer to the value", []() {
+        auto opt = XexUtils::Optional<std::string>("some text");
+        TEST_EQ(opt->size(), 9);
+    });
+
     Describe("Optional: ValueOr");
 
     It("returns the value when the Optional is valid", []() {

@@ -203,7 +203,7 @@ public:
 
     /// @brief Gets the stored value.
     ///
-    /// This function triggers a breakpoint, only debug builds, if the `Optional` is empty.
+    /// This function triggers a breakpoint, only in debug builds, if the `Optional` is empty.
     ///
     /// @return A reference to the stored value.
     T &operator*()
@@ -214,13 +214,35 @@ public:
 
     /// @brief Gets the stored value (const version).
     ///
-    /// This function triggers a breakpoint, only debug builds, if the `Optional` is empty.
+    /// This function triggers a breakpoint, only in debug builds, if the `Optional` is empty.
     ///
     /// @return A const reference to the stored value.
     const T &operator*() const
     {
         XASSERT(m_HasValue);
         return *reinterpret_cast<const T *>(&m_Storage);
+    }
+
+    /// @brief Gets a pointer to the stored value.
+    ///
+    /// This function triggers a breakpoint, only in debug builds, if the `Optional` is empty.
+    ///
+    /// @return A pointer to the stored value.
+    T *operator->()
+    {
+        XASSERT(m_HasValue);
+        return reinterpret_cast<T *>(&m_Storage);
+    }
+
+    /// @brief Gets a pointer to the stored value (const version).
+    ///
+    /// This function triggers a breakpoint, only in debug builds, if the `Optional` is empty.
+    ///
+    /// @return A pointer to the const stored value.
+    const T *operator->() const
+    {
+        XASSERT(m_HasValue);
+        return reinterpret_cast<const T *>(&m_Storage);
     }
 
     /// @brief Gets the stored value, or `defaultValue` if the `Optional` is empty.
