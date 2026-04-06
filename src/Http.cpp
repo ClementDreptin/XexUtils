@@ -11,13 +11,60 @@ namespace Http
 const std::string Client::s_NewLineDelimiter = "\r\n";
 const std::string Client::s_HeadersDelimiter = "\r\n\r\n";
 
+void Client::AddECTrustAnchor(const Socket::EllipticCurveTrustAnchor &trustAnchor)
+{
+    m_ECTrustAnchors.emplace_back(trustAnchor);
+}
+
+void Client::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, Socket::EllipticCurveType curveType)
+{
+    Socket::EllipticCurveTrustAnchor trustAnchor;
+    trustAnchor.DN = std::vector<uint8_t>(dn, dn + dnSize);
+    trustAnchor.Q = std::vector<uint8_t>(q, q + qSize);
+    trustAnchor.Type = curveType;
+    m_ECTrustAnchors.emplace_back(trustAnchor);
+}
+
+void Client::AddRsaTrustAnchor(const Socket::RsaTrustAnchor &trustAnchor)
+{
+    m_RsaTrustAnchors.emplace_back(trustAnchor);
+}
+
+void Client::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize)
+{
+    Socket::RsaTrustAnchor trustAnchor;
+    trustAnchor.DN = std::vector<uint8_t>(dn, dn + dnSize);
+    trustAnchor.N = std::vector<uint8_t>(n, n + nSize);
+    trustAnchor.E = std::vector<uint8_t>(e, e + eSize);
+    m_RsaTrustAnchors.emplace_back(trustAnchor);
+}
+
 Optional<Response> Client::Get(const std::string &domain, const std::string &path, bool secure, uint16_t port)
 {
+#ifndef NDEBUG
+    if (secure)
+        XASSERT(!m_ECTrustAnchors.empty() || !m_RsaTrustAnchors.empty())
+#endif
+
+    // Create the socket
     Socket socket(domain, port, secure);
+
+    // Add the registered trust anchors to the socket when in secure mode
+    if (secure)
+    {
+        for (size_t i = 0; i < m_ECTrustAnchors.size(); i++)
+            socket.AddECTrustAnchor(m_ECTrustAnchors[i]);
+
+        for (size_t i = 0; i < m_RsaTrustAnchors.size(); i++)
+            socket.AddRsaTrustAnchor(m_RsaTrustAnchors[i]);
+    }
+
+    // Connect to the server
     HRESULT hr = socket.Connect();
     if (FAILED(hr))
         return NullOpt();
 
+    // Create the request string
     std::stringstream requestStream;
     requestStream << "GET " << path << " HTTP/1.1\r\n";
 
@@ -37,7 +84,7 @@ Optional<Response> Client::Get(const std::string &domain, const std::string &pat
 
     std::string request = requestStream.str();
 
-    // Send it through the socket
+    // Send the request through the socket
     int bytesSent = socket.Send(request.c_str(), request.size());
     if (bytesSent < static_cast<int>(request.size()))
     {
