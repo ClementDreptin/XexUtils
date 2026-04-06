@@ -30,5 +30,6 @@
 #include "../src/Optional.h"
 #include "../src/SMC.h"
 #include "../src/Socket.h"
+#include "../src/Url.h"
 #include "../src/ValueOrPtr.h"
 #include "../src/Xam.h"

@@ -2,6 +2,7 @@
 
 #include "Optional.h"
 #include "Socket.h"
+#include "Url.h"
 
 namespace XexUtils
 {
@@ -9,7 +10,6 @@ namespace Http
 {
 
 struct Response;
-struct Url;
 
 class Client
 {
@@ -34,22 +34,6 @@ private:
     std::unordered_map<std::string, std::string> ReadHeaders(Socket &socket);
 
     std::string ReadBody(Socket &socket);
-};
-
-typedef enum _UrlScheme
-{
-    UrlScheme_Https,
-    UrlScheme_Http,
-} UrlScheme;
-
-struct Url
-{
-    UrlScheme Scheme;
-    std::string Domain;
-    std::string Path;
-    std::string Search;
-
-    static Optional<Url> Parse(const std::string &url);
 };
 
 struct Response
