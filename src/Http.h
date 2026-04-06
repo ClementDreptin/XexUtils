@@ -8,12 +8,8 @@ namespace XexUtils
 namespace Http
 {
 
-struct Response
-{
-    uint32_t Status;
-    std::unordered_map<std::string, std::string> Headers;
-    std::string Body;
-};
+struct Response;
+struct Url;
 
 class Client
 {
@@ -38,10 +34,29 @@ private:
     std::unordered_map<std::string, std::string> ReadHeaders(Socket &socket);
 
     std::string ReadBody(Socket &socket);
+};
 
-private:
-    static const std::string s_NewLineDelimiter;
-    static const std::string s_HeadersDelimiter;
+typedef enum _UrlScheme
+{
+    UrlScheme_Https,
+    UrlScheme_Http,
+} UrlScheme;
+
+struct Url
+{
+    UrlScheme Scheme;
+    std::string Domain;
+    std::string Path;
+    std::string Search;
+
+    static Optional<Url> Parse(const std::string &url);
+};
+
+struct Response
+{
+    uint32_t Status;
+    std::unordered_map<std::string, std::string> Headers;
+    std::string Body;
 };
 
 static std::string StringTrim(const std::string &str);

@@ -8,8 +8,9 @@ namespace XexUtils
 namespace Http
 {
 
-const std::string Client::s_NewLineDelimiter = "\r\n";
-const std::string Client::s_HeadersDelimiter = "\r\n\r\n";
+static const std::string s_ProtocolDelimiter = "://";
+static const std::string s_NewLineDelimiter = "\r\n";
+static const std::string s_HeadersDelimiter = "\r\n\r\n";
 
 void Client::AddECTrustAnchor(const Socket::EllipticCurveTrustAnchor &trustAnchor)
 {
@@ -248,6 +249,65 @@ std::string Client::ReadBody(Socket &socket)
     }
 
     return bodyStream.str();
+}
+
+Optional<Url> Url::Parse(const std::string &url)
+{
+    Url parsedUrl;
+
+    // Find the end of the protocol
+    size_t protocolEndPos = url.find(s_ProtocolDelimiter);
+    if (protocolEndPos == std::string::npos)
+    {
+        DebugPrint(
+            "[XexUtils][Http]: Error: \"%s\" is not a valid URL. It doesn't contain a protocol.",
+            url.c_str()
+        );
+        return NullOpt();
+    }
+
+    // Make sure the protocol is either "https" or "http"
+    std::string protocol = url.substr(0, protocolEndPos);
+    if (protocol == "https")
+    {
+        parsedUrl.Scheme = UrlScheme_Https;
+    }
+    else if (protocol == "http")
+    {
+        parsedUrl.Scheme = UrlScheme_Http;
+    }
+    else
+    {
+        DebugPrint(
+            "[XexUtils][Http]: Error: \"%s\" is not a valid URL. Unknown protocol: \"%s\".",
+            url.c_str(),
+            protocol.c_str()
+        );
+        return NullOpt();
+    }
+
+    // If the URL ends after the protocol, so the domain is empty, it's invalid
+    size_t domainStartPos = protocolEndPos + s_ProtocolDelimiter.size();
+    if (domainStartPos == url.size())
+    {
+        DebugPrint(
+            "[XexUtils][Http]: Error: \"%s\" is not a valid URL. It doesn't contain a domain.",
+            url.c_str()
+        );
+        return NullOpt();
+    }
+
+    // Extract the domain
+    size_t pathStartPos = url.find('/', domainStartPos);
+    parsedUrl.Domain =
+        pathStartPos != std::string::npos
+            ? url.substr(domainStartPos, pathStartPos - domainStartPos)
+            : url.substr(domainStartPos);
+
+    // Extract the path
+    parsedUrl.Path = pathStartPos != std::string::npos ? url.substr(pathStartPos) : "/";
+
+    return parsedUrl;
 }
 
 std::string StringTrim(const std::string &str)
