@@ -47,6 +47,32 @@ public:
         Curve_curve448
     } EllipticCurveType;
 
+    /// @brief Struct to store all in info about an Elliptic Curve trust anchor.
+    struct EllipticCurveTrustAnchor
+    {
+        /// @brief The distinguished name.
+        std::vector<uint8_t> DN;
+
+        /// @brief The public key curve point.
+        std::vector<uint8_t> Q;
+
+        /// @brief The curve type.
+        EllipticCurveType Type;
+    };
+
+    /// @brief Struct to store all in info about an RSA trust anchor.
+    struct RsaTrustAnchor
+    {
+        /// @brief The distinguished name.
+        std::vector<uint8_t> DN;
+
+        /// @brief The public key modulus.
+        std::vector<uint8_t> N;
+
+        /// @brief The public key exponent.
+        std::vector<uint8_t> E;
+    };
+
     /// @brief Creates an empty `Socket`.
     Socket();
 
@@ -104,6 +130,14 @@ public:
     ///
     /// This function can fail if TLS is disabled.
     ///
+    /// @param trustAnchor The elliptic curve trust anchor info.
+    /// @return `S_OK` on success, `E_FAIL` on error.
+    HRESULT AddECTrustAnchor(const EllipticCurveTrustAnchor &trustAnchor);
+
+    /// @brief Adds an Elliptic Curve trust anchor.
+    ///
+    /// This function can fail if TLS is disabled.
+    ///
     /// @param dn The distinguished name.
     /// @param dnSize The amount of bytes in `dn`.
     /// @param q The public key curve point.
@@ -111,6 +145,14 @@ public:
     /// @param curveType The curve type.
     /// @return `S_OK` on success, `E_FAIL` on error.
     HRESULT AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, EllipticCurveType curveType);
+
+    /// @brief Adds an RSA trust anchor.
+    ///
+    /// This function can fail if TLS is disabled.
+    ///
+    /// @param trustAnchor The RSA trust anchor info.
+    /// @return `S_OK` on success, `E_FAIL` on error.
+    HRESULT AddRsaTrustAnchor(const RsaTrustAnchor &trustAnchor);
 
     /// @brief Adds an RSA trust anchor.
     ///

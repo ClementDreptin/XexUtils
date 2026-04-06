@@ -136,8 +136,27 @@ int Socket::Receive(char *buffer, size_t maxSize)
     return recv(m_Socket, buffer, maxSize, 0);
 }
 
+HRESULT Socket::AddECTrustAnchor(const EllipticCurveTrustAnchor &trustAnchor)
+{
+    return AddECTrustAnchor(
+        trustAnchor.DN.data(),
+        trustAnchor.DN.size(),
+        trustAnchor.Q.data(),
+        trustAnchor.Q.size(),
+        trustAnchor.Type
+    );
+}
+
 HRESULT Socket::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *q, size_t qSize, EllipticCurveType curveType)
 {
+#ifndef NDEBUG
+    if (m_Connected)
+        DebugPrint(
+            "[XexUtils][Socket]: Warn: Adding trust anchors after connecting has no effect. "
+            "You should add trust anchors before calling Connect()."
+        );
+#endif
+
     if (!m_Secure)
     {
         DebugPrint("[XexUtils][Socket]: Error: This socket is not in secure mode, trust anchors can't be added.");
@@ -149,8 +168,28 @@ HRESULT Socket::AddECTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t
     return S_OK;
 }
 
+HRESULT Socket::AddRsaTrustAnchor(const RsaTrustAnchor &trustAnchor)
+{
+    return AddRsaTrustAnchor(
+        trustAnchor.DN.data(),
+        trustAnchor.DN.size(),
+        trustAnchor.N.data(),
+        trustAnchor.N.size(),
+        trustAnchor.E.data(),
+        trustAnchor.E.size()
+    );
+}
+
 HRESULT Socket::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize)
 {
+#ifndef NDEBUG
+    if (m_Connected)
+        DebugPrint(
+            "[XexUtils][Socket]: Warn: Adding trust anchors after connecting has no effect. "
+            "You should add trust anchors before calling Connect()."
+        );
+#endif
+
     if (!m_Secure)
     {
         DebugPrint("[XexUtils][Socket]: Error: This socket is not in secure mode, trust anchors can't be added.");

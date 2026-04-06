@@ -49,7 +49,7 @@ void Init()
     // Receive the response
     char buffer[4096] = {};
     int bytesReceived = socket.Receive(buffer, sizeof(buffer));
-    if (bytesReceive <= 0)
+    if (bytesReceived <= 0)
     {
         XexUtils::Log::Print("Couldn't receive the server response");
         socket.Disconnect();
