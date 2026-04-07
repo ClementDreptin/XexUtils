@@ -86,4 +86,19 @@ void Http()
         TEST_EQ(response->Status, 200);
         TEST_EQ(response->Body, expectedResponse);
     });
+
+    It("sends a GET request with custom headers", [&]() {
+        Http::Client client;
+
+        Http::RequestOptions options(*Url::Parse("http://httpbin.org/headers"));
+        options.Headers["X-Custom-Header"] = "CustomValue";
+        auto response = client.Get(options);
+
+        bool responseContainsCustomHeader =
+            response->Body.find("\"X-Custom-Header\": \"CustomValue\"") != std::string::npos;
+
+        TEST_EQ(response.HasValue(), true);
+        TEST_EQ(response->Status, 200);
+        TEST_EQ(responseContainsCustomHeader, true);
+    });
 }

@@ -50,7 +50,12 @@ Optional<Response> Client::Get(const std::string &url)
 
 Optional<Response> Client::Get(const Url &url)
 {
-    bool secure = url.Scheme() == UrlScheme_Https;
+    return Get(RequestOptions(url));
+}
+
+Optional<Response> Client::Get(const RequestOptions &options)
+{
+    bool secure = options.Url.Scheme() == UrlScheme_Https;
 
 #ifndef NDEBUG
     if (secure)
@@ -58,7 +63,7 @@ Optional<Response> Client::Get(const Url &url)
 #endif
 
     // Create the socket
-    Socket socket(url.Domain(), url.Port(), secure);
+    Socket socket(options.Url.Domain(), options.Url.Port(), secure);
 
     // Add the registered trust anchors to the socket when in secure mode
     if (secure)
@@ -77,15 +82,11 @@ Optional<Response> Client::Get(const Url &url)
 
     // Create the request string
     std::stringstream requestStream;
-    requestStream << "GET " << url.Path() << " HTTP/1.1\r\n";
+    requestStream << "GET " << options.Url.Path() << " HTTP/1.1\r\n";
 
-    std::unordered_map<std::string, std::string> headers;
-    headers["Host"] = url.Domain();
-    headers["User-Agent"] = "XexUtils HTTP client";
-    headers["Accept"] = "*/*";
-    headers["Connection"] = "close";
-
-    for (auto it = headers.begin(); it != headers.end(); ++it)
+    // Create the headers
+    Headers finalHeaders = CreateFinalHeaders(options.Headers, options.Url.Domain());
+    for (auto it = finalHeaders.begin(); it != finalHeaders.end(); ++it)
     {
         const std::string &key = it->first;
         const std::string &value = it->second;
@@ -168,9 +169,9 @@ Optional<uint32_t> Client::ReadStatus(Socket &socket)
     return status;
 }
 
-std::unordered_map<std::string, std::string> Client::ReadHeaders(Socket &socket)
+Headers Client::ReadHeaders(Socket &socket)
 {
-    std::unordered_map<std::string, std::string> headers;
+    Headers headers;
     std::stringstream headerStream;
     char buffer[2048] = {};
     bool headersComplete = false;
@@ -259,6 +260,33 @@ std::string Client::ReadBody(Socket &socket)
     }
 
     return bodyStream.str();
+}
+
+Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const std::string &domain)
+{
+    XASSERT(!domain.empty());
+
+    Headers finalHeaders = baseHeaders;
+
+    // Set some headers if they're not already present
+    if (finalHeaders.find("Host") == finalHeaders.end())
+        finalHeaders["Host"] = domain;
+
+    if (finalHeaders.find("User-Agent") == finalHeaders.end())
+        finalHeaders["User-Agent"] = "XexUtils HTTP client";
+
+    if (finalHeaders.find("Accept") == finalHeaders.end())
+        finalHeaders["Accept"] = "*/*";
+
+    // This header is forced because keep-alive isn't supported
+    finalHeaders["Connection"] = "close";
+
+    return finalHeaders;
+}
+
+RequestOptions::RequestOptions(const XexUtils::Url &url)
+    : Url(url)
+{
 }
 
 std::string StringTrim(const std::string &str)

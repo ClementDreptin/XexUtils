@@ -9,6 +9,9 @@ namespace XexUtils
 namespace Http
 {
 
+typedef std::unordered_map<std::string, std::string> Headers;
+
+struct RequestOptions;
 struct Response;
 
 class Client
@@ -26,6 +29,8 @@ public:
 
     Optional<Response> Get(const Url &url);
 
+    Optional<Response> Get(const RequestOptions &options);
+
 private:
     std::vector<Socket::EllipticCurveTrustAnchor> m_ECTrustAnchors;
     std::vector<Socket::RsaTrustAnchor> m_RsaTrustAnchors;
@@ -33,15 +38,25 @@ private:
 
     Optional<uint32_t> ReadStatus(Socket &socket);
 
-    std::unordered_map<std::string, std::string> ReadHeaders(Socket &socket);
+    Headers ReadHeaders(Socket &socket);
 
     std::string ReadBody(Socket &socket);
+
+    Headers CreateFinalHeaders(const Headers &baseHeaders, const std::string &domain);
+};
+
+struct RequestOptions
+{
+    RequestOptions(const Url &url);
+
+    Url Url;
+    Headers Headers;
 };
 
 struct Response
 {
     uint32_t Status;
-    std::unordered_map<std::string, std::string> Headers;
+    Headers Headers;
     std::string Body;
 };
 
