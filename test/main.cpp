@@ -19,6 +19,11 @@ void ValueOrPtr();
 
 void __cdecl main()
 {
+    DWORD ethernetStatus = XNetGetEthernetLinkStatus();
+    bool isConnectedToTheInternet =
+        ethernetStatus & XNET_ETHERNET_LINK_ACTIVE ||
+        ethernetStatus & XNET_ETHERNET_LINK_WIRELESS;
+
     TestRunner::Start();
 
     Expected();
@@ -29,7 +34,8 @@ void __cdecl main()
 
     General();
 
-    Http();
+    if (isConnectedToTheInternet)
+        Http();
 
     Vec2();
 
@@ -43,9 +49,7 @@ void __cdecl main()
 
     Optional();
 
-    // Only run socket tests when connected to the internet
-    DWORD ethernetStatus = XNetGetEthernetLinkStatus();
-    if (ethernetStatus & XNET_ETHERNET_LINK_ACTIVE || ethernetStatus & XNET_ETHERNET_LINK_WIRELESS)
+    if (isConnectedToTheInternet)
         Socket();
 
     Url();
