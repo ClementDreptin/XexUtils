@@ -24,14 +24,11 @@ public:
 
     inline const std::string &Path() const { return m_Path; }
 
-    inline const std::string &Search() const { return m_Search; }
-
 private:
     UrlScheme m_Scheme;
     std::string m_Domain;
     uint16_t m_Port;
     std::string m_Path;
-    std::string m_Search;
 
     // Make the constructor private to force Url objects to be created with the Parse function
     Url() {}
