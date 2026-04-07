@@ -22,7 +22,9 @@ public:
 
     void AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *n, size_t nSize, const uint8_t *e, size_t eSize);
 
-    Optional<Response> Get(const std::string &domain, const std::string &path, bool secure = true, uint16_t port = 443);
+    Optional<Response> Get(const std::string &url);
+
+    Optional<Response> Get(const Url &url);
 
 private:
     std::vector<Socket::EllipticCurveTrustAnchor> m_ECTrustAnchors;

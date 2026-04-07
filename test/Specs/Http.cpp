@@ -7,8 +7,6 @@ using namespace TestRunner;
 
 void Http()
 {
-    Describe("Http");
-
     const uint8_t EC_DN[] = {
         0x30, 0x47, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
         0x02, 0x55, 0x53, 0x31, 0x22, 0x30, 0x20, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -31,9 +29,11 @@ void Http()
         0x8A
     };
 
+    Describe("Http::Client::Get");
+
     It("sends a GET request over HTTP", []() {
         Http::Client client;
-        auto response = client.Get("jsonplaceholder.typicode.com", "/todos/1", false, 80);
+        auto response = client.Get("http://jsonplaceholder.typicode.com/todos/1");
 
         std::string expectedResponse =
             "{\n"
@@ -52,7 +52,27 @@ void Http()
         Http::Client client;
         client.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), Socket::Curve_secp384r1);
 
-        auto response = client.Get("jsonplaceholder.typicode.com", "/todos/1");
+        auto response = client.Get("https://jsonplaceholder.typicode.com/todos/1");
+
+        std::string expectedResponse =
+            "{\n"
+            "  \"userId\": 1,\n"
+            "  \"id\": 1,\n"
+            "  \"title\": \"delectus aut autem\",\n"
+            "  \"completed\": false\n"
+            "}";
+
+        TEST_EQ(response.HasValue(), true);
+        TEST_EQ(response->Status, 200);
+        TEST_EQ(response->Body, expectedResponse);
+    });
+
+    It("sends a GET from a Url object", [&]() {
+        Http::Client client;
+        client.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), Socket::Curve_secp384r1);
+
+        auto url = Url::Parse("https://jsonplaceholder.typicode.com/todos/1");
+        auto response = client.Get(*url);
 
         std::string expectedResponse =
             "{\n"

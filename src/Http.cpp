@@ -39,15 +39,26 @@ void Client::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *
     m_RsaTrustAnchors.emplace_back(trustAnchor);
 }
 
-Optional<Response> Client::Get(const std::string &domain, const std::string &path, bool secure, uint16_t port)
+Optional<Response> Client::Get(const std::string &url)
 {
+    Optional<Url> parsedUrl = Url::Parse(url);
+    if (!parsedUrl)
+        return NullOpt();
+
+    return Get(*parsedUrl);
+}
+
+Optional<Response> Client::Get(const Url &url)
+{
+    bool secure = url.Scheme() == UrlScheme_Https;
+
 #ifndef NDEBUG
     if (secure)
         XASSERT(!m_ECTrustAnchors.empty() || !m_RsaTrustAnchors.empty())
 #endif
 
     // Create the socket
-    Socket socket(domain, port, secure);
+    Socket socket(url.Domain(), url.Port(), secure);
 
     // Add the registered trust anchors to the socket when in secure mode
     if (secure)
@@ -66,10 +77,10 @@ Optional<Response> Client::Get(const std::string &domain, const std::string &pat
 
     // Create the request string
     std::stringstream requestStream;
-    requestStream << "GET " << path << " HTTP/1.1\r\n";
+    requestStream << "GET " << url.Path() << " HTTP/1.1\r\n";
 
     std::unordered_map<std::string, std::string> headers;
-    headers["Host"] = domain;
+    headers["Host"] = url.Domain();
     headers["User-Agent"] = "XexUtils HTTP client";
     headers["Accept"] = "*/*";
     headers["Connection"] = "close";
