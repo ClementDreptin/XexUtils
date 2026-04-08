@@ -108,15 +108,48 @@ Optional<Response> Client::Get(const RequestOptions &options)
         return NullOpt();
     }
 
-    // Create the response
-    Response response = {};
-
+    // Read the status
     Optional<uint32_t> status = ReadStatus(socket);
     if (!status)
         return NullOpt();
 
+    // Read the headers
+    Headers headers = ReadHeaders(socket);
+
+    // If the response is a redirect, follow the redirect
+    if (*status >= 300 && *status < 400)
+    {
+        if (headers.find("Location") == headers.end())
+        {
+            DebugPrint(
+                "[XexUtils][Http]: Error: Tried to follow a redirect (%d) but the "
+                "\"Location\" header is missing.",
+                *status
+            );
+            return NullOpt();
+        }
+
+        Optional<Url> newLocation = Url::Parse(headers["Location"]);
+        if (!newLocation)
+        {
+            DebugPrint(
+                "[XexUtils][Http]: Error: Couldn't follow a redirect (%d) because the "
+                "\"Location\" header (%s) is not a valid URL.",
+                *status,
+                headers["Location"].c_str()
+            );
+            return NullOpt();
+        }
+
+        RequestOptions newOptions(*newLocation);
+        newOptions.Headers = finalHeaders;
+        return Get(newOptions);
+    }
+
+    // Create the response
+    Response response = {};
     response.Status = *status;
-    response.Headers = ReadHeaders(socket);
+    response.Headers = headers;
     response.Body = ReadBody(socket);
 
     return response;
