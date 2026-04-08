@@ -301,10 +301,10 @@ Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const std::string
 
     Headers finalHeaders = baseHeaders;
 
-    // Set some headers if they're not already present
-    if (finalHeaders.find("Host") == finalHeaders.end())
-        finalHeaders["Host"] = domain;
+    // The host header is always the domain, it can't be overridden
+    finalHeaders["Host"] = domain;
 
+    // Set some headers if they're not already present
     if (finalHeaders.find("User-Agent") == finalHeaders.end())
         finalHeaders["User-Agent"] = "XexUtils HTTP client";
 

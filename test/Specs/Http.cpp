@@ -102,14 +102,33 @@ void Http()
         TEST_EQ(responseContainsCustomHeader, true);
     });
 
-    It("follows redirects to the same domain", [&]() {
+    It("follows redirects to the same domain", []() {
         Http::Client client;
-        client.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), Socket::Curve_secp384r1);
 
         std::string url = "http://httpbin.org/redirect-to?url=http%3A%2F%2Fhttpbin.org%2Fstatus%2F200";
         auto response = client.Get(url);
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
+    });
+
+    It("follows redirects to a different domain", [&]() {
+        Http::Client client;
+        client.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), Socket::Curve_secp384r1);
+
+        std::string url = "http://httpbin.org/redirect-to?url=https%3A%2F%2Fjsonplaceholder.typicode.com%2Ftodos%2F1";
+        auto response = client.Get(url);
+
+        std::string expectedResponse =
+            "{\n"
+            "  \"userId\": 1,\n"
+            "  \"id\": 1,\n"
+            "  \"title\": \"delectus aut autem\",\n"
+            "  \"completed\": false\n"
+            "}";
+
+        TEST_EQ(response.HasValue(), true);
+        TEST_EQ(response->Status, 200);
+        TEST_EQ(response->Body, expectedResponse);
     });
 }
