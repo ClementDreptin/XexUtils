@@ -119,4 +119,17 @@ void Http()
         TEST_EQ(response->Status, 200);
         TEST_NEQ(response->Body.find("\"data\": \"my custom body\""), std::string::npos);
     });
+
+    It("sends a POST request with custom headers", []() {
+        Http::Client client;
+
+        Http::RequestOptions options(*Url::Parse("http://httpbin.org/post"));
+        options.Method = Http::Method_Post;
+        options.Headers["X-Custom-Header"] = "CustomValue";
+        auto response = client.SendRequest(options);
+
+        TEST_EQ(response.HasValue(), true);
+        TEST_EQ(response->Status, 200);
+        TEST_NEQ(response->Body.find("\"X-Custom-Header\": \"CustomValue\""), std::string::npos);
+    });
 }
