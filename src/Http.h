@@ -42,7 +42,7 @@ private:
 
     std::string ReadBody(Socket &socket);
 
-    Headers CreateFinalHeaders(const Headers &baseHeaders, const std::string &domain);
+    Headers CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options);
 };
 
 typedef enum _Method

@@ -67,7 +67,7 @@ void Http()
         TEST_EQ(response->Body, expectedResponse);
     });
 
-    It("sends a GET request with custom headers", [&]() {
+    It("sends a GET request with custom headers", []() {
         Http::Client client;
 
         Http::RequestOptions options(*Url::Parse("http://httpbin.org/headers"));
@@ -113,7 +113,7 @@ void Http()
 
     It("sends a POST request over HTTP", []() {
         Http::Client client;
-        auto response = client.Post("http://httpbin.org/anything", "my custom body");
+        auto response = client.Post("http://httpbin.org/post", "my custom body");
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);

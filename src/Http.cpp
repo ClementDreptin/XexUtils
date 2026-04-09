@@ -60,8 +60,6 @@ Optional<Response> Client::Post(const std::string &url, const std::string &body)
     RequestOptions options(*parsedUrl);
     options.Method = Method_Post;
     options.Body = body;
-    options.Headers["Content-Type"] = "text/plain";
-    options.Headers["Content-Length"] = std::to_string(static_cast<uint64_t>(body.size()));
 
     return SendRequest(options);
 }
@@ -110,7 +108,7 @@ Optional<Response> Client::SendRequest(const RequestOptions &options)
     requestStream << methodString << " " << options.Url.Path() << " HTTP/1.1\r\n";
 
     // Create the headers
-    Headers finalHeaders = CreateFinalHeaders(options.Headers, options.Url.Domain());
+    Headers finalHeaders = CreateFinalHeaders(options.Headers, options);
     for (auto it = finalHeaders.begin(); it != finalHeaders.end(); ++it)
     {
         const std::string &key = it->first;
@@ -326,14 +324,12 @@ std::string Client::ReadBody(Socket &socket)
     return bodyStream.str();
 }
 
-Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const std::string &domain)
+Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options)
 {
-    XASSERT(!domain.empty());
-
     Headers finalHeaders = baseHeaders;
 
     // The host header is always the domain, it can't be overridden
-    finalHeaders["Host"] = domain;
+    finalHeaders["Host"] = options.Url.Domain();
 
     // Set some headers if they're not already present
     if (finalHeaders.find("User-Agent") == finalHeaders.end())
@@ -341,6 +337,16 @@ Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const std::string
 
     if (finalHeaders.find("Accept") == finalHeaders.end())
         finalHeaders["Accept"] = "*/*";
+
+    // Headers specific to the POST method
+    if (options.Method == Method_Post)
+    {
+        if (finalHeaders.find("Content-Type") == finalHeaders.end())
+            finalHeaders["Content-Type"] = "text/plain";
+
+        if (finalHeaders.find("Content-Length") == finalHeaders.end())
+            finalHeaders["Content-Length"] = std::to_string(static_cast<uint64_t>(options.Body.size()));
+    }
 
     // This header is forced because keep-alive isn't supported
     finalHeaders["Connection"] = "close";
