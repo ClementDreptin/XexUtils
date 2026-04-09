@@ -119,6 +119,17 @@ void Http()
         TEST_NEQ(response->Body.find("\"data\": \"my custom body\""), std::string::npos);
     });
 
+    It("sends a POST request over HTTPS", [&]() {
+        Http::Client client;
+        client.AddRsaTrustAnchor(RSA_DN, sizeof(RSA_DN), RSA_N, sizeof(RSA_N), RSA_E, sizeof(RSA_E));
+
+        auto response = client.Post("https://httpbin.org/post", "my custom body");
+
+        TEST_EQ(response.HasValue(), true);
+        TEST_EQ(response->Status, 200);
+        TEST_NEQ(response->Body.find("\"data\": \"my custom body\""), std::string::npos);
+    });
+
     It("sends a POST request with custom headers", []() {
         Http::Client client;
 
