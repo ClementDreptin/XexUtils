@@ -175,11 +175,17 @@ Optional<Response> Client::SendRequest(const RequestOptions &options)
         return SendRequest(newOptions);
     }
 
+    // Check the content length to know how many bytes to read
+    size_t contentLength =
+        headers.find("Content-Length") != headers.end()
+            ? atoi(headers["Content-Length"].c_str())
+            : 0;
+
     // Create the response
     Response response = {};
     response.Status = *status;
     response.Headers = headers;
-    response.Body = ReadBody(socket);
+    response.Body = ReadBody(socket, contentLength);
 
     return response;
 }
@@ -297,7 +303,7 @@ Headers Client::ReadHeaders(Socket &socket)
     return headers;
 }
 
-std::string Client::ReadBody(Socket &socket)
+std::string Client::ReadBody(Socket &socket, size_t contentLength)
 {
     std::stringstream bodyStream;
     char buffer[2048] = {};
@@ -311,6 +317,7 @@ std::string Client::ReadBody(Socket &socket)
     }
 
     // Flush the socket
+    size_t totalRead = 0;
     for (;;)
     {
         int bytesRead = socket.Receive(buffer, sizeof(buffer) - 1);
@@ -319,6 +326,13 @@ std::string Client::ReadBody(Socket &socket)
 
         buffer[bytesRead] = '\0';
         bodyStream << buffer;
+
+        totalRead += static_cast<size_t>(bytesRead);
+
+        // If contentLength is 0, it means the header was not present or had a non-int value.
+        // In that case, we don't break and just flush the socket until no data is left
+        if (contentLength != 0 && totalRead >= contentLength)
+            break;
     }
 
     return bodyStream.str();

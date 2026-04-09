@@ -40,7 +40,7 @@ private:
 
     Headers ReadHeaders(Socket &socket);
 
-    std::string ReadBody(Socket &socket);
+    std::string ReadBody(Socket &socket, size_t contentLength);
 
     Headers CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options);
 };
