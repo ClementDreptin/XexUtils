@@ -67,26 +67,6 @@ void Http()
         TEST_EQ(response->Body, expectedResponse);
     });
 
-    It("sends a GET from a Url object", [&]() {
-        Http::Client client;
-        client.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), Socket::Curve_secp384r1);
-
-        auto url = Url::Parse("https://jsonplaceholder.typicode.com/todos/1");
-        auto response = client.Get(*url);
-
-        std::string expectedResponse =
-            "{\n"
-            "  \"userId\": 1,\n"
-            "  \"id\": 1,\n"
-            "  \"title\": \"delectus aut autem\",\n"
-            "  \"completed\": false\n"
-            "}";
-
-        TEST_EQ(response.HasValue(), true);
-        TEST_EQ(response->Status, 200);
-        TEST_EQ(response->Body, expectedResponse);
-    });
-
     It("sends a GET request with custom headers", [&]() {
         Http::Client client;
 

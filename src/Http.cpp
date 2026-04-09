@@ -45,12 +45,7 @@ Optional<Response> Client::Get(const std::string &url)
     if (!parsedUrl)
         return NullOpt();
 
-    return Get(*parsedUrl);
-}
-
-Optional<Response> Client::Get(const Url &url)
-{
-    RequestOptions options(url);
+    RequestOptions options(*parsedUrl);
     options.Method = Method_Get;
 
     return SendRequest(options);

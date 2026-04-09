@@ -27,8 +27,6 @@ public:
 
     Optional<Response> Get(const std::string &url);
 
-    Optional<Response> Get(const Url &url);
-
     Optional<Response> Post(const std::string &url, const std::string &body);
 
     Optional<Response> SendRequest(const RequestOptions &options);
