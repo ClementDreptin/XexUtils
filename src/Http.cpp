@@ -50,17 +50,30 @@ Optional<Response> Client::Get(const std::string &url)
 
 Optional<Response> Client::Get(const Url &url)
 {
-    return Get(RequestOptions(url));
+    RequestOptions options(url);
+    options.Method = Method_Get;
+
+    return SendRequest(options);
 }
 
-Optional<Response> Client::Get(const RequestOptions &options)
+Optional<Response> Client::Post(const std::string &url, const std::string &body)
+{
+    Optional<Url> parsedUrl = Url::Parse(url);
+    if (!parsedUrl)
+        return NullOpt();
+
+    RequestOptions options(*parsedUrl);
+    options.Method = Method_Post;
+    options.Body = body;
+    options.Headers["Content-Type"] = "text/plain";
+    options.Headers["Content-Length"] = std::to_string(static_cast<uint64_t>(body.size()));
+
+    return SendRequest(options);
+}
+
+Optional<Response> Client::SendRequest(const RequestOptions &options)
 {
     bool secure = options.Url.Scheme() == UrlScheme_Https;
-
-#ifndef NDEBUG
-    if (secure)
-        XASSERT(!m_ECTrustAnchors.empty() || !m_RsaTrustAnchors.empty())
-#endif
 
     // Create the socket
     Socket socket(options.Url.Domain(), options.Url.Port(), secure);
@@ -68,6 +81,8 @@ Optional<Response> Client::Get(const RequestOptions &options)
     // Add the registered trust anchors to the socket when in secure mode
     if (secure)
     {
+        XASSERT(!m_ECTrustAnchors.empty() || !m_RsaTrustAnchors.empty())
+
         for (size_t i = 0; i < m_ECTrustAnchors.size(); i++)
             socket.AddECTrustAnchor(m_ECTrustAnchors[i]);
 
@@ -82,7 +97,22 @@ Optional<Response> Client::Get(const RequestOptions &options)
 
     // Create the request string
     std::stringstream requestStream;
-    requestStream << "GET " << options.Url.Path() << " HTTP/1.1\r\n";
+
+    // Convert the method enum to a string
+    const char *methodString = MethodToString(options.Method);
+#ifndef NDEBUG
+    if (methodString == nullptr)
+    {
+        DebugPrint(
+            "[XexUtils][Http]: Error: Incorrect HTTP method \"%d\" (see Http::Method enum).",
+            options.Method
+        );
+        return NullOpt();
+    }
+#endif
+
+    // Create the first line with the method and the resource path
+    requestStream << methodString << " " << options.Url.Path() << " HTTP/1.1\r\n";
 
     // Create the headers
     Headers finalHeaders = CreateFinalHeaders(options.Headers, options.Url.Domain());
@@ -93,6 +123,9 @@ Optional<Response> Client::Get(const RequestOptions &options)
         requestStream << key << ": " << value << "\r\n";
     }
     requestStream << "\r\n";
+
+    // Append the body to the request
+    requestStream << options.Body;
 
     std::string request = requestStream.str();
 
@@ -142,8 +175,11 @@ Optional<Response> Client::Get(const RequestOptions &options)
         }
 
         RequestOptions newOptions(*newLocation);
+        newOptions.Method = options.Method;
         newOptions.Headers = finalHeaders;
-        return Get(newOptions);
+        newOptions.Body = options.Body;
+
+        return SendRequest(newOptions);
     }
 
     // Create the response
@@ -320,6 +356,19 @@ Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const std::string
 RequestOptions::RequestOptions(const XexUtils::Url &url)
     : Url(url)
 {
+}
+
+const char *MethodToString(Method method)
+{
+    switch (method)
+    {
+    case Method_Get:
+        return "GET";
+    case Method_Post:
+        return "POST";
+    default:
+        return nullptr;
+    }
 }
 
 std::string StringTrim(const std::string &str)

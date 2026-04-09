@@ -29,7 +29,9 @@ public:
 
     Optional<Response> Get(const Url &url);
 
-    Optional<Response> Get(const RequestOptions &options);
+    Optional<Response> Post(const std::string &url, const std::string &body);
+
+    Optional<Response> SendRequest(const RequestOptions &options);
 
 private:
     std::vector<Socket::EllipticCurveTrustAnchor> m_ECTrustAnchors;
@@ -45,12 +47,20 @@ private:
     Headers CreateFinalHeaders(const Headers &baseHeaders, const std::string &domain);
 };
 
+typedef enum _Method
+{
+    Method_Get,
+    Method_Post,
+} Method;
+
 struct RequestOptions
 {
     RequestOptions(const Url &url);
 
     Url Url;
+    Method Method;
     Headers Headers;
+    std::string Body;
 };
 
 struct Response
@@ -59,6 +69,8 @@ struct Response
     Headers Headers;
     std::string Body;
 };
+
+static const char *MethodToString(Method method);
 
 static std::string StringTrim(const std::string &str);
 

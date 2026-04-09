@@ -92,14 +92,11 @@ void Http()
 
         Http::RequestOptions options(*Url::Parse("http://httpbin.org/headers"));
         options.Headers["X-Custom-Header"] = "CustomValue";
-        auto response = client.Get(options);
-
-        bool responseContainsCustomHeader =
-            response->Body.find("\"X-Custom-Header\": \"CustomValue\"") != std::string::npos;
+        auto response = client.SendRequest(options);
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_EQ(responseContainsCustomHeader, true);
+        TEST_NEQ(response->Body.find("\"X-Custom-Header\": \"CustomValue\""), std::string::npos);
     });
 
     It("follows redirects to the same domain", []() {
@@ -130,5 +127,16 @@ void Http()
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
         TEST_EQ(response->Body, expectedResponse);
+    });
+
+    Describe("Http::Client::Post");
+
+    It("sends a POST request over HTTP", []() {
+        Http::Client client;
+        auto response = client.Post("http://httpbin.org/anything", "my custom body");
+
+        TEST_EQ(response.HasValue(), true);
+        TEST_EQ(response->Status, 200);
+        TEST_NEQ(response->Body.find("\"data\": \"my custom body\""), std::string::npos);
     });
 }
