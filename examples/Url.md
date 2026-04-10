@@ -1,12 +1,12 @@
 # Url
 
-Parse an URL from a string:
+Parse a URL from a string:
 
 ```C++
 void Init()
 {
     std::string url = "https://example.com:1234/path/to/resource";
-    XexUtils::Optional<XexUtils::Url> parsedUrl = Url::Parse(url);
+    XexUtils::Optional<XexUtils::Url> parsedUrl = XexUtils::Url::Parse(url);
     if (!parsedUrl)
     {
         XexUtils::Log::Print("%s is not a valid URL.", url.c_str());
