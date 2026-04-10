@@ -11,6 +11,10 @@ namespace Http
 static const std::string s_NewLineDelimiter = "\r\n";
 static const std::string s_HeadersDelimiter = "\r\n\r\n";
 
+static const char *MethodToString(Method method);
+
+static std::string StringTrim(const std::string &str);
+
 void Client::AddECTrustAnchor(const Socket::EllipticCurveTrustAnchor &trustAnchor)
 {
     m_ECTrustAnchors.emplace_back(trustAnchor);
@@ -376,7 +380,7 @@ std::string Response::BodyAsString() const
     return std::string(Body.begin(), Body.end());
 }
 
-const char *MethodToString(Method method)
+static const char *MethodToString(Method method)
 {
     switch (method)
     {
@@ -389,7 +393,7 @@ const char *MethodToString(Method method)
     }
 }
 
-std::string StringTrim(const std::string &str)
+static std::string StringTrim(const std::string &str)
 {
     // Remove whitespaces at the beginning of the string
     size_t first = str.find_first_not_of(" \t\n\r");

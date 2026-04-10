@@ -70,10 +70,6 @@ struct Response
     std::vector<uint8_t> Body;
 };
 
-static const char *MethodToString(Method method);
-
-static std::string StringTrim(const std::string &str);
-
 }
 
 }
