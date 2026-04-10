@@ -16,7 +16,7 @@ typedef enum _UrlScheme
 class Url
 {
 public:
-    /// @brief Creates an `Url` from an `std::string`.
+    /// @brief Creates a `Url` from an `std::string`.
     ///
     /// This function can fail if `url` isn't a valid URL.
     ///
