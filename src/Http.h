@@ -97,7 +97,7 @@ typedef enum _Method
 /// @brief A struct to represent the request options.
 struct RequestOptions
 {
-    /// @brief Creates a `RequestOptions` from an `Url`.
+    /// @brief Creates a `RequestOptions` from a `Url`.
     /// @param url The `Url` instance.
     RequestOptions(const Url &url);
 
