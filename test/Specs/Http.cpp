@@ -53,7 +53,7 @@ void Http()
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_NEQ(response->Body.find("\"param\": \"value\""), std::string::npos);
+        TEST_NEQ(response->BodyAsString().find("\"param\": \"value\""), std::string::npos);
     });
 
     It("sends a GET request over HTTPS", [&]() {
@@ -64,19 +64,20 @@ void Http()
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_NEQ(response->Body.find("\"param\": \"value\""), std::string::npos);
+        TEST_NEQ(response->BodyAsString().find("\"param\": \"value\""), std::string::npos);
     });
 
     It("sends a GET request with custom headers", []() {
         Http::Client client;
 
         Http::RequestOptions options(*Url::Parse("http://httpbin.org/headers"));
+        options.Method = Http::Method_Get;
         options.Headers["X-Custom-Header"] = "CustomValue";
         auto response = client.SendRequest(options);
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_NEQ(response->Body.find("\"X-Custom-Header\": \"CustomValue\""), std::string::npos);
+        TEST_NEQ(response->BodyAsString().find("\"X-Custom-Header\": \"CustomValue\""), std::string::npos);
     });
 
     It("follows redirects to the same domain", []() {
@@ -105,7 +106,7 @@ void Http()
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_EQ(response->Body, expectedResponse);
+        TEST_EQ(response->BodyAsString(), expectedResponse);
     });
 
     Describe("Http::Client::Post");
@@ -116,7 +117,7 @@ void Http()
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_NEQ(response->Body.find("\"data\": \"my custom body\""), std::string::npos);
+        TEST_NEQ(response->BodyAsString().find("\"data\": \"my custom body\""), std::string::npos);
     });
 
     It("sends a POST request over HTTPS", [&]() {
@@ -127,7 +128,7 @@ void Http()
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_NEQ(response->Body.find("\"data\": \"my custom body\""), std::string::npos);
+        TEST_NEQ(response->BodyAsString().find("\"data\": \"my custom body\""), std::string::npos);
     });
 
     It("sends a POST request with custom headers", []() {
@@ -140,6 +141,6 @@ void Http()
 
         TEST_EQ(response.HasValue(), true);
         TEST_EQ(response->Status, 200);
-        TEST_NEQ(response->Body.find("\"X-Custom-Header\": \"CustomValue\""), std::string::npos);
+        TEST_NEQ(response->BodyAsString().find("\"X-Custom-Header\": \"CustomValue\""), std::string::npos);
     });
 }

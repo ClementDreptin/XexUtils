@@ -303,16 +303,16 @@ Headers Client::ReadHeaders(Socket &socket)
     return headers;
 }
 
-std::string Client::ReadBody(Socket &socket, size_t contentLength)
+std::vector<uint8_t> Client::ReadBody(Socket &socket, size_t contentLength)
 {
-    std::stringstream bodyStream;
+    std::vector<uint8_t> body;
     char buffer[2048] = {};
 
     // If any leftover data is present from previous reads, use them before reading from
     // the socket
     if (!m_LeftoverData.empty())
     {
-        bodyStream.write(m_LeftoverData.data(), m_LeftoverData.size());
+        body.insert(body.end(), m_LeftoverData.begin(), m_LeftoverData.end());
         m_LeftoverData.clear();
     }
 
@@ -320,13 +320,11 @@ std::string Client::ReadBody(Socket &socket, size_t contentLength)
     size_t totalRead = 0;
     for (;;)
     {
-        int bytesRead = socket.Receive(buffer, sizeof(buffer) - 1);
+        int bytesRead = socket.Receive(buffer, sizeof(buffer));
         if (bytesRead <= 0)
             break;
 
-        buffer[bytesRead] = '\0';
-        bodyStream << buffer;
-
+        body.insert(body.end(), buffer, buffer + bytesRead);
         totalRead += static_cast<size_t>(bytesRead);
 
         // If contentLength is 0, it means the header was not present or had a non-int value.
@@ -335,7 +333,7 @@ std::string Client::ReadBody(Socket &socket, size_t contentLength)
             break;
     }
 
-    return bodyStream.str();
+    return body;
 }
 
 Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options)
@@ -371,6 +369,11 @@ Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const RequestOpti
 RequestOptions::RequestOptions(const XexUtils::Url &url)
     : Url(url)
 {
+}
+
+std::string Response::BodyAsString() const
+{
+    return std::string(Body.begin(), Body.end());
 }
 
 const char *MethodToString(Method method)

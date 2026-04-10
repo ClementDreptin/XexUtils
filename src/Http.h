@@ -40,7 +40,7 @@ private:
 
     Headers ReadHeaders(Socket &socket);
 
-    std::string ReadBody(Socket &socket, size_t contentLength);
+    std::vector<uint8_t> ReadBody(Socket &socket, size_t contentLength);
 
     Headers CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options);
 };
@@ -63,9 +63,11 @@ struct RequestOptions
 
 struct Response
 {
+    std::string BodyAsString() const;
+
     uint32_t Status;
     Headers Headers;
-    std::string Body;
+    std::vector<uint8_t> Body;
 };
 
 static const char *MethodToString(Method method);
