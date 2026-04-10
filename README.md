@@ -22,6 +22,7 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
 | [Optional](./src/Optional.h)     | Partial clone of `std::optional` from C++17.                                                 | [Optional.md](./examples/Optional.md)     |
 | [SMC](./src/SMC.h)               | Interact with the power LED.                                                                 | [SMC.md](./examples/SMC.md)               |
 | [Socket](./src/Socket.h)         | Open TCP connections with TLS support.                                                       | [Socket.md](./examples/Socket.md)         |
+| [Url](./src/Url.h)               | Basic URL parser.                                                                            | [Url.md](./examples/Url.md)               |
 | [ValueOrPtr](./src/ValueOrPtr.h) | Container class to manipulate a value or a pointer seemlessly.                               | [ValueOrPtr.md](./examples/ValueOrPtr.md) |
 | [Xam](./src/Xam.h)               | Functions to nteract with the system UI and declarations of functions exported by `xam.xex`. | [Xam.md](./examples/Xam.md)               |
 
