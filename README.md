@@ -13,6 +13,7 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
 | [Filesystem](./src/Filesystem.h) | Functions to access storage devices and a class to represent a file path.                    | [Filesystem.md](./examples/Filesystem.md) |
 | [Formatter](./src/Formatter.h)   | Convert from narrow to wide strings and generate strings from `printf` formats.              | [Formatter.md](./examples/Formatter.md)   |
 | [General](./src/General.h)       | General purpose helpers that don't really fit in any namespace.                              | [General.md](./examples/General.md)       |
+| [Http](./src/Http.h)             | Basic HTTP client with HTTPS support.                                                        | [Http.md](./examples/Http.md)             |
 | [Hypervisor](./src/Hypervisor.h) | Read and write to hypervisor memory.                                                         | [Hypervisor.md](./examples/Hypervisor.md) |
 | [Input](./src/Input.h)           | Detect single button presses and repeats more easily than using XInput directly.             | [Input.md](./examples/Input.md)           |
 | [Kernel](./src/Kernel.h)         | Declarations of functions exported by `xboxkrnl.exe` and their associated structs and enums. |                                           |
