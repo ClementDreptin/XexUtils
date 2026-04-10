@@ -90,3 +90,7 @@ void Init()
     response->BodyAsString(); // std::string
 }
 ```
+
+### How to generate the trust anchor data
+
+See [Generate Trust Anchors](./generate-trust-anchors.md).
