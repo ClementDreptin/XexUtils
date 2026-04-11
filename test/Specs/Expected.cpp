@@ -1,4 +1,3 @@
-#include <string>
 #include <XexUtils.h>
 
 #include "../TestRunner.h"
