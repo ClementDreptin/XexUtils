@@ -13,6 +13,7 @@ void Math();
 void Memory();
 void Optional();
 void Socket();
+void Url();
 void ValueOrPtr();
 
 void __cdecl main()
@@ -43,6 +44,8 @@ void __cdecl main()
     DWORD ethernetStatus = XNetGetEthernetLinkStatus();
     if (ethernetStatus & XNET_ETHERNET_LINK_ACTIVE || ethernetStatus & XNET_ETHERNET_LINK_WIRELESS)
         Socket();
+
+    Url();
 
     ValueOrPtr();
 

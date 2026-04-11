@@ -82,6 +82,7 @@
     <ClInclude Include="src\Socket.h" />
     <ClInclude Include="src\SystemSocket.h" />
     <ClInclude Include="src\TlsSession.h" />
+    <ClInclude Include="src\Url.h" />
     <ClInclude Include="src\ValueOrPtr.h" />
     <ClInclude Include="src\Vec2.h" />
     <ClInclude Include="src\Vec3.h" />
@@ -102,6 +103,7 @@
     <ClCompile Include="src\SMC.cpp" />
     <ClCompile Include="src\Socket.cpp" />
     <ClCompile Include="src\TlsSession.cpp" />
+    <ClCompile Include="src\Url.cpp" />
     <ClCompile Include="src\Vec2.cpp" />
     <ClCompile Include="src\Vec3.cpp" />
     <ClCompile Include="src\Vec4.cpp" />
