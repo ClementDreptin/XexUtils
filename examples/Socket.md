@@ -49,7 +49,7 @@ void Init()
     // Receive the response
     char buffer[4096] = {};
     int bytesReceived = socket.Receive(buffer, sizeof(buffer));
-    if (bytesReceive <= 0)
+    if (bytesReceived <= 0)
     {
         XexUtils::Log::Print("Couldn't receive the server response");
         socket.Disconnect();
@@ -63,10 +63,6 @@ void Init()
 }
 ```
 
-To generate C byte arrays from a certificate, you can use the `brssl` command-line tool like so:
+### How to generate the trust anchor data
 
-```
-brssl ta ./cert.pem
-```
-
-The `brssl` command-line tool can be built from the [BearSSL source](https://bearssl.org/#download-and-installation). On a Linux system, simply clone the repository and run `make`. The output binary will be in `build/brssl`. The same process might work on Windows, but I never tried.
+See [Generate Trust Anchors](./generate-trust-anchors.md).

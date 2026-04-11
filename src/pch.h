@@ -7,7 +7,9 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 // Functions used in a lot of places
