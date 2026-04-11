@@ -51,7 +51,7 @@ public:
     ///
     /// @param url The URL.
     /// @return A valid `Optional<Response>` on success, and empty `Optional` on error.
-    Optional<Response> Get(const std::string &url);
+    Optional<Response> Get(const std::string &url) const;
 
     /// @brief Sends a POST request to `url`.
     ///
@@ -62,7 +62,7 @@ public:
     /// @param url The URL.
     /// @param body The request body.
     /// @return A valid `Optional<Response>` on success, and empty `Optional` on error.
-    Optional<Response> Post(const std::string &url, const std::string &body);
+    Optional<Response> Post(const std::string &url, const std::string &body) const;
 
     /// @brief Sends a request.
     ///
@@ -71,20 +71,20 @@ public:
     ///
     /// @param options The request options.
     /// @return A valid `Optional<Response>` on success, and empty `Optional` on error.
-    Optional<Response> SendRequest(const RequestOptions &options);
+    Optional<Response> SendRequest(const RequestOptions &options) const;
 
 private:
     std::vector<Socket::EllipticCurveTrustAnchor> m_ECTrustAnchors;
     std::vector<Socket::RsaTrustAnchor> m_RsaTrustAnchors;
-    std::vector<char> m_LeftoverData;
+    mutable std::vector<char> m_LeftoverData;
 
-    Optional<uint32_t> ReadStatus(Socket &socket);
+    Optional<uint32_t> ReadStatus(Socket &socket) const;
 
-    Headers ReadHeaders(Socket &socket);
+    Headers ReadHeaders(Socket &socket) const;
 
-    std::vector<uint8_t> ReadBody(Socket &socket, size_t contentLength);
+    std::vector<uint8_t> ReadBody(Socket &socket, size_t contentLength) const;
 
-    Headers CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options);
+    Headers CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options) const;
 };
 
 /// @brief An enum to represent the supported HTTP methods (GET and POST).

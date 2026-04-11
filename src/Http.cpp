@@ -41,7 +41,7 @@ void Client::AddRsaTrustAnchor(const uint8_t *dn, size_t dnSize, const uint8_t *
     m_RsaTrustAnchors.emplace_back(trustAnchor);
 }
 
-Optional<Response> Client::Get(const std::string &url)
+Optional<Response> Client::Get(const std::string &url) const
 {
     Optional<Url> parsedUrl = Url::Parse(url);
     if (!parsedUrl)
@@ -53,7 +53,7 @@ Optional<Response> Client::Get(const std::string &url)
     return SendRequest(options);
 }
 
-Optional<Response> Client::Post(const std::string &url, const std::string &body)
+Optional<Response> Client::Post(const std::string &url, const std::string &body) const
 {
     Optional<Url> parsedUrl = Url::Parse(url);
     if (!parsedUrl)
@@ -66,7 +66,7 @@ Optional<Response> Client::Post(const std::string &url, const std::string &body)
     return SendRequest(options);
 }
 
-Optional<Response> Client::SendRequest(const RequestOptions &options)
+Optional<Response> Client::SendRequest(const RequestOptions &options) const
 {
     bool secure = options.Url.Scheme() == UrlScheme_Https;
 
@@ -192,7 +192,7 @@ Optional<Response> Client::SendRequest(const RequestOptions &options)
     return response;
 }
 
-Optional<uint32_t> Client::ReadStatus(Socket &socket)
+Optional<uint32_t> Client::ReadStatus(Socket &socket) const
 {
     // Clear any previous leftover data
     m_LeftoverData.clear();
@@ -239,7 +239,7 @@ Optional<uint32_t> Client::ReadStatus(Socket &socket)
     return status;
 }
 
-Headers Client::ReadHeaders(Socket &socket)
+Headers Client::ReadHeaders(Socket &socket) const
 {
     Headers headers;
     std::stringstream headerStream;
@@ -305,7 +305,7 @@ Headers Client::ReadHeaders(Socket &socket)
     return headers;
 }
 
-std::vector<uint8_t> Client::ReadBody(Socket &socket, size_t contentLength)
+std::vector<uint8_t> Client::ReadBody(Socket &socket, size_t contentLength) const
 {
     std::vector<uint8_t> body;
     char buffer[2048] = {};
@@ -338,7 +338,7 @@ std::vector<uint8_t> Client::ReadBody(Socket &socket, size_t contentLength)
     return body;
 }
 
-Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options)
+Headers Client::CreateFinalHeaders(const Headers &baseHeaders, const RequestOptions &options) const
 {
     Headers finalHeaders = baseHeaders;
 
