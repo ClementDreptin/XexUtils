@@ -75,6 +75,7 @@
     <ClInclude Include="TestRunner.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Specs/Detour.cpp" />
     <ClCompile Include="Specs/Expected.cpp" />
     <ClCompile Include="Specs/Filesystem.cpp" />
     <ClCompile Include="Specs/Formatter.cpp" />

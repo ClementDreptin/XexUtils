@@ -8,7 +8,7 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
 | -------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | [Assert](./src/Assert.h)         | Trigger a breakpoint with an assertion message in debug builds.                              | [Assert.md](./examples/Assert.md)         |
 | [Dashlaunch](./src/Dashlaunch.h) | Get/set Dashlaunch options and access its global data.                                       | [Dashlaunch.md](./examples/Dashlaunch.md) |
-| [Detour](./src/Detour.h)         | Hook a function.                                                                             | [Detour.md](./examples/Detour.md)         |
+| [Detour](./src/Detour.h)         | Detour/hook a function.                                                                      | [Detour.md](./examples/Detour.md)         |
 | [Expected](./src/Expected.h)     | Partial clone of `std::expected` from C++23.                                                 | [Expected.md](./examples/Expected.md)     |
 | [Filesystem](./src/Filesystem.h) | Functions to access storage devices and a class to represent a file path.                    | [Filesystem.md](./examples/Filesystem.md) |
 | [Formatter](./src/Formatter.h)   | Convert from narrow to wide strings and generate strings from `printf` formats.              | [Formatter.md](./examples/Formatter.md)   |
@@ -78,5 +78,6 @@ Now run `msbuild` to compile the test app and deploy it to your console.
 
 ## Acknowledgements
 
+- [Xbox 360 Detours](https://gist.github.com/iMoD1998/4aa48d5c990535767a3fc3251efc0348) - What served as a reference for the `Detour` implementation.
 - [BearSSL](https://bearssl.org/) - The TLS implementation used in sockets.
 - [XboxTLS](https://github.com/JakobRangel/XboxTLS) - What inspired and showed how to integrate BearSSL in an Xbox 360 environment.

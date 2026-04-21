@@ -1,3 +1,6 @@
+// Very inspired by the "Xbox 360 Detours" gist from iMoD1998
+// https://gist.github.com/iMoD1998/4aa48d5c990535767a3fc3251efc0348
+
 #include "pch.h"
 #include "Detour.h"
 
@@ -8,46 +11,59 @@
 namespace XexUtils
 {
 
+#define MASK_N_BITS(N) ((1 << (N)) - 1)
+
+#define HI(X) (((X) >> 16) & MASK_N_BITS(16))
+#define LO(X) ((X) & MASK_N_BITS(16))
+
+#define OPCODE_B 0x48000000
+#define OPCODE_BC 0x40000000
+#define OPCODE_MASK 0xFC000000
+
+#define BRANCH_LINKED 1
+#define BRANCH_ABSOLUTE 2
+
+#define BRANCH_OPTIONS_ALWAYS 20
+
+#define LIS(rD, SIMM) (0x3C000000 | ((rD) << 21) | (SIMM))
+#define MTCTR(rS) (0x7C0903A6 | ((rS) << 21))
+#define ORI(rS, rA, UIMM) (0x60000000 | ((rS) << 21) | ((rA) << 16) | (UIMM))
+#define BCCTR(BO, BI, LK) (0x4C000420 | ((BO) << 21) | ((BI) << 16) | ((LK) & BRANCH_LINKED))
+#define STD(rS, DS, rA) (0xF8000000 | ((rS) << 21) | ((rA) << 16) | ((int16_t)(DS) & MASK_N_BITS(16)))
+#define LD(rS, DS, rA) (0xE8000000 | ((rS) << 21) | ((rA) << 16) | ((int16_t)(DS) & MASK_N_BITS(16)))
+
 #pragma section(".text")
 
-// This will hold all the instructions for all hooks. Allocating in an executable section
+// This will hold all the instructions for all stubs. Allocating in an executable section
 // isn't mandatory on real hardware because modded consoles have page permissions disabled,
 // but this is necessary on Xenia, which emulates retail hardware
-__declspec(allocate(".text")) Detour::Stub Detour::s_StubSection[MAX_HOOK_COUNT];
-size_t Detour::s_HookCount = 0;
+__declspec(allocate(".text")) Detour::POWERPC_INSTRUCTION Detour::s_Stubs[MAX_DETOUR_COUNT][MAX_INSTRUCTIONS_IN_STUB];
+bool Detour::s_UsedSlots[MAX_DETOUR_COUNT] = {};
 CRITICAL_SECTION Detour::s_CriticalSection = {};
 
 Detour::Detour()
-    : m_pSource(nullptr), m_pDestination(nullptr), m_HookIndex(static_cast<size_t>(-1))
+    : m_pSource(nullptr), m_pDestination(nullptr), m_SlotIndex(static_cast<size_t>(-1))
 {
 }
 
 Detour::Detour(void *pSource, const void *pDestination)
-    : m_pSource(pSource), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
+    : m_pSource(pSource), m_pDestination(pDestination), m_SlotIndex(static_cast<size_t>(-1))
 {
-    XASSERT(m_pSource != nullptr);
-    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::Detour(uintptr_t sourceAddress, const void *pDestination)
-    : m_pSource(reinterpret_cast<void *>(sourceAddress)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
+    : m_pSource(reinterpret_cast<void *>(sourceAddress)), m_pDestination(pDestination), m_SlotIndex(static_cast<size_t>(-1))
 {
-    XASSERT(m_pSource != nullptr);
-    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::Detour(const std::string &moduleName, uint32_t ordinal, const void *pDestination)
-    : m_pSource(ResolveExport(moduleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
+    : m_pSource(ResolveExport(moduleName, ordinal)), m_pDestination(pDestination), m_SlotIndex(static_cast<size_t>(-1))
 {
-    XASSERT(m_pSource != nullptr);
-    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::Detour(const std::string &moduleName, const std::string &importedModuleName, uint32_t ordinal, const void *pDestination)
-    : m_pSource(GetModuleImport(moduleName, importedModuleName, ordinal)), m_pDestination(pDestination), m_HookIndex(static_cast<size_t>(-1))
+    : m_pSource(GetModuleImport(moduleName, importedModuleName, ordinal)), m_pDestination(pDestination), m_SlotIndex(static_cast<size_t>(-1))
 {
-    XASSERT(m_pSource != nullptr);
-    XASSERT(m_pDestination != nullptr);
 }
 
 Detour::~Detour()
@@ -57,38 +73,48 @@ Detour::~Detour()
 
 HRESULT Detour::Install()
 {
-    if (s_HookCount >= MAX_HOOK_COUNT || m_pSource == nullptr || m_pDestination == nullptr)
+    // Check for incorrect initialization
+    if (m_pSource == nullptr || m_pDestination == nullptr)
     {
-        DebugPrint("[XexUtils][Detour]: Error");
-
-#ifndef NDEBUG
-        if (s_HookCount >= MAX_HOOK_COUNT)
-            DebugPrint("\tMax hook count exceeded, current: %d, max: %d.", s_HookCount, MAX_HOOK_COUNT);
-        if (m_pSource == nullptr)
-            DebugPrint("\tSource address is null.");
-        if (m_pDestination == nullptr)
-            DebugPrint("\tDestination address is null.");
-#endif
-
+        DebugPrint("[XexUtils][Detour]: Error: source and/or destination addresses are null.");
         return E_FAIL;
     }
 
+    // Prevent double detours
+    if (m_SlotIndex != -1)
+    {
+        DebugPrint("[XexUtils][Detour]: Error: This detour has already been installed.");
+        return E_FAIL;
+    }
+
+    // Initialize the synchronization object for the first instance
     if (s_CriticalSection.Synchronization.RawEvent[0] == 0)
         InitializeCriticalSection(&s_CriticalSection);
 
+    // Grab the lock
     EnterCriticalSection(&s_CriticalSection);
 
-    // Keep track of where the stub of the current instance is in s_StubSection
-    m_HookIndex = s_HookCount;
+    // Look for a free slot
+    for (size_t i = 0; i < MAX_DETOUR_COUNT; i++)
+    {
+        if (!s_UsedSlots[i])
+        {
+            m_SlotIndex = i;
+            break;
+        }
+    }
 
-    // Copy the original instructions at m_pSource before hooking to be able to
-    // restore them later
-    m_Original = Memory::Read<Jump>(m_pSource);
+    if (m_SlotIndex == -1)
+    {
+        DebugPrint("[XexUtils][Detour]: Error: Max detour count reached (%i).", MAX_DETOUR_COUNT);
+        LeaveCriticalSection(&s_CriticalSection);
+        return E_FAIL;
+    }
 
+    // Apply the detour
     DetourFunctionStart();
 
-    s_HookCount++;
-
+    // Release the lock
     LeaveCriticalSection(&s_CriticalSection);
 
     return S_OK;
@@ -97,102 +123,172 @@ HRESULT Detour::Install()
 void Detour::Remove()
 {
     // Restore the original instructions if needed
-    if (m_HookIndex != -1 && m_pSource != nullptr && MmIsAddressValid(m_pSource))
-        Memory::Write<Jump>(m_pSource, m_Original);
+    if (m_SlotIndex != -1 && m_pSource != nullptr && MmIsAddressValid(m_pSource))
+    {
+        Memory::Write(m_pSource, m_Original);
+
+        EnterCriticalSection(&s_CriticalSection);
+        s_UsedSlots[m_SlotIndex] = false;
+        LeaveCriticalSection(&s_CriticalSection);
+    }
 
     m_pSource = nullptr;
     m_pDestination = nullptr;
-    m_HookIndex = 0;
-    m_Original = Jump();
+    m_SlotIndex = static_cast<size_t>(-1);
+    m_Original = Original();
 }
 
-#define POWERPC_B 0x48
-#define POWERPC_BL 0x4B
+Detour::Jump::Jump(const void *pTarget, bool linked, bool preserveR0, uint32_t branchOptions, uint8_t conditionRegisterBit)
+{
+    XASSERT(pTarget != nullptr);
+
+    const uint8_t r0 = 0;
+    const uint8_t r1 = 1;
+    const uintptr_t targetAddress = reinterpret_cast<uintptr_t>(pTarget);
+    size_t i = 0;
+
+    // Store the previous value of r0 on the stack if requested
+    if (preserveR0)
+        Instructions[i++] = STD(r0, -0x30, r1);
+
+    // Store the target address in r0 and move it to the count register
+    Instructions[i++] = LIS(r0, HI(targetAddress));
+    Instructions[i++] = ORI(r0, r0, LO(targetAddress));
+    Instructions[i++] = MTCTR(r0);
+
+    // Load the previous value of r0 from the stack back into r0 if requested
+    if (preserveR0)
+        Instructions[i++] = LD(r0, -0x30, r1);
+
+    // Branch to the target address stored in the count register
+    Instructions[i++] = BCCTR(branchOptions, conditionRegisterBit, linked); // bctr/bcctr/bctrl/bcctrl
+
+    Size = i;
+}
+
+void Detour::Jump::Write(void *pDestination)
+{
+    XASSERT(pDestination != nullptr);
+
+    memcpy(pDestination, Instructions, Size * sizeof(Instructions[0]));
+}
 
 void Detour::DetourFunctionStart()
 {
+    XASSERT(m_pSource != nullptr);
+    XASSERT(m_pDestination != nullptr);
+    XASSERT(m_SlotIndex != -1);
+
+    // Copy the original instructions of the source function before detouring
+    // to be able to restore them later
+    m_Original = Memory::Read<Original>(m_pSource);
+    size_t originalInstructionsCount = ARRAYSIZE(m_Original.Instructions);
+
+    // Create the stub from the first 4 instructions of the source function.
+    // This stub can be used by the destination function if it wants to
+    // execute the original code of the source function
     POWERPC_INSTRUCTION *pSource = static_cast<POWERPC_INSTRUCTION *>(m_pSource);
-    POWERPC_INSTRUCTION *pStub = reinterpret_cast<POWERPC_INSTRUCTION *>(&s_StubSection[m_HookIndex]);
-    size_t instructionCount = 0;
-
-    for (size_t i = 0; i < NUM_INSTRUCTIONS_IN_JUMP; i++)
+    POWERPC_INSTRUCTION *pCurrentInstructionInStub = &s_Stubs[m_SlotIndex][0];
+    for (size_t i = 0; i < originalInstructionsCount; i++)
     {
-        POWERPC_INSTRUCTION instruction = pSource[i];
-        POWERPC_INSTRUCTION_TYPE instructionType = Memory::Read<POWERPC_INSTRUCTION_TYPE>(&pSource[i]);
+        POWERPC_INSTRUCTION opcode = pSource[i] & OPCODE_MASK;
+        bool isBranch = opcode == OPCODE_B || opcode == OPCODE_BC;
+        bool isAbsolute = (pSource[i] & BRANCH_ABSOLUTE) != 0;
 
-        // If the function op code is null, it's invalid
-        if (instruction == 0)
+        // If we encounter a relative branch, we need to relocate it because the
+        // target, which is an offset, would be wrong after copying the instruction
+        // to a different location. Absolute branches don't need to be relocated
+        // and should not exist on Xbox 360
+        if (isBranch && !isAbsolute)
         {
-            DebugPrint(
-                "[XexUtils][Detour]: Error: Found invalid instruction with null opcode at %p.",
-                &pSource[i]
-            );
-            break;
+            Jump jump = RelocateBranch(&pSource[i]);
+            jump.Write(pCurrentInstructionInStub);
+            pCurrentInstructionInStub += jump.Size;
+            continue;
         }
 
-        // If the instruction is a branch
-        if (instructionType == POWERPC_B || instructionType == POWERPC_BL)
-        {
-            // Get a pointer to where the branch goes
-            void *pBranchDestination = ResolveBranch(instruction, &pSource[i]);
-            bool linked = (instruction & 1) != 0;
-
-            // Jump from the stub to where the branch goes
-            PatchInJump(&pStub[instructionCount], pBranchDestination, linked);
-            instructionCount += NUM_INSTRUCTIONS_IN_JUMP;
-
-            // If it was a branch to a different section of the same function (b loc_),
-            // we won't need to add anything else to the stub
-            if (!linked)
-            {
-                PatchInJump(pSource, m_pDestination, false);
-                return;
-            }
-        }
-        // Otherwise, just copy the instruction to the stub
-        else
-        {
-            pStub[instructionCount] = instruction;
-            instructionCount++;
-        }
+        // If we encounter any other type of instruction, we can copy it as is to
+        // the stub
+        Memory::Write(pCurrentInstructionInStub, pSource[i]);
+        pCurrentInstructionInStub++;
     }
 
-    // Make the stub call the original function
-    PatchInJump(&pStub[instructionCount], &pSource[NUM_INSTRUCTIONS_IN_JUMP], false);
+    // Make the stub jump back to the source function after the jump we inserted
+    POWERPC_INSTRUCTION *pInstructionAfterBranch = &pSource[originalInstructionsCount];
+    Jump jumpFromStubBackToSource(pInstructionAfterBranch, false, true);
+    jumpFromStubBackToSource.Write(pCurrentInstructionInStub);
 
-    // Make the original function call the stub
-    PatchInJump(pSource, m_pDestination, false);
+    // Finally, make the source function jump to the destination function
+    Jump jumpFromSourceToDestination(m_pDestination);
+    jumpFromSourceToDestination.Write(m_pSource);
+
+    // Mark the current stub as used
+    s_UsedSlots[m_SlotIndex] = true;
 }
 
-void Detour::PatchInJump(void *pSource, const void *pDestination, bool linked)
+Detour::Jump Detour::RelocateBranch(const void *pLocation)
 {
-    Jump jump;
-    uintptr_t destinationAddress = reinterpret_cast<uintptr_t>(pDestination);
+    XASSERT(pLocation != nullptr);
 
-    jump.Instructions[0] = 0x3C000000 + (destinationAddress >> 16);    // lis    %r0, dest>>16
-    jump.Instructions[1] = 0x60000000 + (destinationAddress & 0xFFFF); // ori    %r0, %r0, dest&0xFFFF
-    jump.Instructions[2] = 0x7C0903A6;                                 // mtctr  %r0
-    jump.Instructions[3] = 0x4E800420 + (linked ? 1 : 0);              // bctr/bctrl
+    uint32_t offsetSize = 0;
+    uint32_t offsetBase = 2;
+    uint32_t options = 0;
+    uint8_t conditionRegisterBit = 0;
 
-    Memory::Write<Jump>(pSource, jump);
+    // Get the instruction from its location
+    POWERPC_INSTRUCTION instruction = Memory::Read<POWERPC_INSTRUCTION>(pLocation);
 
-    doSync(pSource);
-}
+    // Get the opcode of the instruction. At this stage, we should never have anything
+    // other than B or BC
+    POWERPC_INSTRUCTION opcode = instruction & OPCODE_MASK;
+    XASSERT(opcode == OPCODE_B || opcode == OPCODE_BC);
 
-void *Detour::ResolveBranch(POWERPC_INSTRUCTION instruction, const void *pBranch)
-{
-    // Taken from here
-    // https://github.com/skiff/libpsutil/blob/master/libpsutil/system/memory.cpp#L90
+    // Note: bit indices in these comments use little-endian numbering (bit 0 = LSB = 2^0),
+    // which is the opposite of the PowerPC documentation (where bit 0 = MSB)
 
-    XASSERT(instruction != 0);
-    XASSERT(pBranch != nullptr);
+    if (opcode == OPCODE_B)
+    {
+        // B instruction layout:
+        // [31-26] opcode: 6 bits
+        // [25-2 ] offset: 24 bits, signed, stored divided by 4
+        // [1    ] absolute flag: 1 bit
+        // [0    ] linked flag: 1 bit
+        offsetSize = 24;
+        options = BRANCH_OPTIONS_ALWAYS;
+        conditionRegisterBit = 0;
+    }
+    else if (opcode == OPCODE_BC)
+    {
+        // BC instruction layout (32 bits):
+        // [31-26] opcode: 6 bits
+        // [25-21] options: 5 bits
+        // [20-16] condition register bit: 5 bits
+        // [15-2 ] offset: 14 bits, signed, stored divided by 4
+        // [1    ] absolute flag: 1 bit
+        // [0    ] linked flag: 1 bit
+        offsetSize = 14;
+        options = (instruction >> 21) & MASK_N_BITS(5);
+        conditionRegisterBit = (instruction >> 16) & MASK_N_BITS(5);
+    }
 
-    uintptr_t offset = instruction & 0x3FFFFFC;
+    // The branch instructions store the branch offset divided by 4 in the offset field.
+    // To get the actual byte offset, we mask the offset field and shift it left by 2
+    // (offsetBase), which is equivalent to the CPU concatenating 2 zero bits on the right
+    // as described in the PowerPC documentation.
+    // https://www.ibm.com/docs/en/aix/7.3.0?topic=set-b-branch-instruction
+    intptr_t offset = instruction & (MASK_N_BITS(offsetSize) << offsetBase);
 
-    if (offset & (1 << 25))
-        offset |= 0xFC000000;
+    // The offset variable only uses the first (offsetSize + offsetBase) bits and the
+    // (offsetSize + offsetBase)th bit is the sign bit. Because the offset variable is 32-bit
+    // and (offsetSize + offsetBase) is always lower than 32, if the sign bit is set, we
+    // need to set all the bits from 32 to (offsetSize + offsetBase) to make it a valid
+    // negative integer following two's complement
+    if (offset & (1 << (offsetSize + offsetBase - 1)))
+        offset |= ~MASK_N_BITS(offsetSize + offsetBase);
 
-    return reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(pBranch) + offset);
+    void *pTarget = reinterpret_cast<void *>(reinterpret_cast<intptr_t>(pLocation) + offset);
+
+    return Jump(pTarget, instruction & BRANCH_LINKED, true, options, conditionRegisterBit);
 }
 
 void *Detour::GetModuleImport(const std::string &baseModuleName, const std::string &importedModuleName, uint32_t ordinal)
@@ -205,7 +301,7 @@ void *Detour::GetModuleImport(const std::string &baseModuleName, const std::stri
     // GetModuleImport("hud.xex", "xam.xex", 842);
     //
     // This would get a pointer to the 842nd function exported by xam.xex (XuiRegisterClass)
-    // used by "hud.xex"
+    // used by hud.xex
 
     // Get the module handle of the base module
     HMODULE moduleHandle = GetModuleHandle(baseModuleName.c_str());

@@ -2,6 +2,7 @@
 
 #include "TestRunner.h"
 
+void Detour();
 void Expected();
 void Filesystem();
 void Formatter();
@@ -25,6 +26,12 @@ void __cdecl main()
         ethernetStatus & XNET_ETHERNET_LINK_WIRELESS;
 
     TestRunner::Start();
+
+#ifndef NDEBUG
+    // We stop trying to run detour tests in release builds because compiler optimizations
+    // and CPU caches make this a nightmare
+    Detour();
+#endif
 
     Expected();
 

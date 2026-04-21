@@ -1,7 +1,7 @@
 #pragma once
 
-#define MAX_HOOK_COUNT 100
-#define NUM_INSTRUCTIONS_IN_JUMP 4
+#define MAX_DETOUR_COUNT 100
+#define MAX_INSTRUCTIONS_IN_STUB 20
 
 namespace XexUtils
 {
@@ -43,7 +43,7 @@ public:
 
     /// @brief Sets up the detour from the source to the destination.
     ///
-    /// This function can fail if the total amount of detours exceeds `MAX_HOOK_COUNT`,
+    /// This function can fail if the total amount of detours exceeds `MAX_DETOUR_COUNT`,
     /// or if either the source or the destination are `nullptr`.
     ///
     /// @return `S_OK` on success, `E_FAIL` on error.
@@ -56,45 +56,46 @@ public:
     /// @tparam T The function pointer type to return.
     /// @return A function pointer of type `T`.
     template<typename T>
-    inline T GetOriginal() const
+    __declspec(noinline) T GetOriginal() const
     {
-        return reinterpret_cast<T>(&s_StubSection[m_HookIndex]);
+        return reinterpret_cast<T>(&s_Stubs[m_SlotIndex]);
     }
 
 private:
     typedef uint32_t POWERPC_INSTRUCTION;
-    typedef uint8_t POWERPC_INSTRUCTION_TYPE;
 
-    struct Stub
+    struct Original
     {
-        POWERPC_INSTRUCTION Instructions[20]; // DetourFunctionStart can copy up to 20 instructions
+        POWERPC_INSTRUCTION Instructions[4];
 
-        Stub() { ZeroMemory(&Instructions, sizeof(Instructions)); }
+        Original() { ZeroMemory(this, sizeof(*this)); }
     };
 
     struct Jump
     {
-        POWERPC_INSTRUCTION Instructions[NUM_INSTRUCTIONS_IN_JUMP];
+        POWERPC_INSTRUCTION Instructions[6];
+        size_t Size;
 
-        Jump() { ZeroMemory(&Instructions, sizeof(Instructions)); }
+        Jump(const void *pTarget, bool linked = false, bool preserveR0 = false, uint32_t branchOptions = 20 /* BRANCH_OPTIONS_ALWAYS */, uint8_t conditionRegisterBit = 0);
+
+        void Write(void *pDestination);
     };
 
     void *m_pSource;
     const void *m_pDestination;
-    size_t m_HookIndex;
-    Jump m_Original;
-
-    static Stub s_StubSection[MAX_HOOK_COUNT];
-    static size_t s_HookCount;
-    static CRITICAL_SECTION s_CriticalSection;
+    size_t m_SlotIndex;
+    Original m_Original;
 
     void DetourFunctionStart();
 
-    void PatchInJump(void *pSource, const void *pDestination, bool linked);
-
-    void *ResolveBranch(POWERPC_INSTRUCTION instruction, const void *pBranch);
+    Jump RelocateBranch(const void *pLocation);
 
     void *GetModuleImport(const std::string &baseModuleName, const std::string &importedModuleName, uint32_t ordinal);
+
+private:
+    static POWERPC_INSTRUCTION s_Stubs[MAX_DETOUR_COUNT][MAX_INSTRUCTIONS_IN_STUB];
+    static bool Detour::s_UsedSlots[MAX_DETOUR_COUNT];
+    static CRITICAL_SECTION s_CriticalSection;
 };
 
 }
