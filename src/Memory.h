@@ -39,7 +39,7 @@ inline void Write(uintptr_t address, const T &data)
 /// @param pSource A pointer to where to read.
 /// @return An instance of `T` copied from `pSource`.
 template<typename T>
-inline T Read(void *pSource)
+inline T Read(const void *pSource)
 {
     if (pSource == nullptr || !MmIsAddressValid(pSource))
     {
@@ -47,7 +47,7 @@ inline T Read(void *pSource)
         return T();
     }
 
-    return *static_cast<T *>(pSource);
+    return *static_cast<const T *>(pSource);
 }
 
 /// @brief Safely reads an instance of `T` at `address` (without access violations).
@@ -57,7 +57,7 @@ inline T Read(void *pSource)
 template<typename T>
 inline T Read(uintptr_t address)
 {
-    return Read<T>(reinterpret_cast<void *>(address));
+    return Read<T>(reinterpret_cast<const void *>(address));
 }
 
 }
