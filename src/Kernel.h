@@ -432,10 +432,7 @@ typedef BOOL (*TRAPHANDLER)(void *pUnknown, KEXCEPTION_FRAME *pExceptionFrame, C
 
 #define __isync() __emit(0x4C00012C)
 
-#define doSync(addr) \
-    __dcbst(0, addr); \
-    __sync(); \
-    __isync()
+#define doSync(addr) KeFlushCacheRange(addr, XM_CACHE_LINE_SIZE)
 
 EXPORTNUM(342)
 extern "C" XBOX_HARDWARE_INFO *XboxHardwareInfo;
@@ -476,6 +473,12 @@ extern "C"
         void *pOutput
     );
 
+    EXPORTNUM(97)
+    void KeFlushCacheRange(
+        const void *pAddress,
+        size_t size
+    );
+
     EXPORTNUM(102)
     PROC_TYPE KeGetCurrentProcessType(
         void
@@ -493,7 +496,7 @@ extern "C"
 
     EXPORTNUM(207)
     NTSTATUS NtClose(
-        HANDLE Handle
+        HANDLE handle
     );
 
     EXPORTNUM(210)
