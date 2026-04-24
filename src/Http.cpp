@@ -309,6 +309,7 @@ std::vector<uint8_t> Client::ReadBody(Socket &socket, size_t contentLength) cons
 {
     std::vector<uint8_t> body;
     char buffer[2048] = {};
+    bool hasExplicitContentLength = contentLength != 0;
 
     // If any leftover data is present from previous reads, use them before reading from
     // the socket
@@ -316,6 +317,10 @@ std::vector<uint8_t> Client::ReadBody(Socket &socket, size_t contentLength) cons
     {
         body.insert(body.end(), m_LeftoverData.begin(), m_LeftoverData.end());
         m_LeftoverData.clear();
+
+        // If we requested a content length and the leftover data is enough for it, stop here
+        if (hasExplicitContentLength && body.size() >= contentLength)
+            return body;
     }
 
     // Flush the socket
@@ -329,9 +334,8 @@ std::vector<uint8_t> Client::ReadBody(Socket &socket, size_t contentLength) cons
         body.insert(body.end(), buffer, buffer + bytesRead);
         totalRead += static_cast<size_t>(bytesRead);
 
-        // If contentLength is 0, it means the header was not present or had a non-int value.
-        // In that case, we don't break and just flush the socket until no data is left
-        if (contentLength != 0 && totalRead >= contentLength)
+        // If we requested a content length and we've read enough, we can stop
+        if (hasExplicitContentLength && totalRead >= contentLength)
             break;
     }
 
