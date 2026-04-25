@@ -14,9 +14,39 @@ namespace Xam
 typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE type, uint32_t userIndex, uint64_t areas, const wchar_t *displayText, void *pContextData);
 static XNOTIFYQUEUEUI XNotifyQueueUI = static_cast<XNOTIFYQUEUEUI>(ResolveExport("xam.xex", 656));
 
+struct XNotifyThreadOptions
+{
+    const wchar_t *Text;
+    XNOTIFYQUEUEUI_TYPE Type;
+};
+
+DWORD WINAPI XNotifyThread(void *pArgs)
+{
+    XNotifyThreadOptions *pOptions = static_cast<XNotifyThreadOptions *>(pArgs);
+    XASSERT(pOptions != nullptr);
+    XASSERT(pOptions->Text != nullptr);
+
+    XNotifyQueueUI(pOptions->Type, 0, XNOTIFY_SYSTEM, pOptions->Text, nullptr);
+
+    return 0;
+}
+
 void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
 {
-    XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, Formatter::ToWide(text).c_str(), nullptr);
+    // XNotifyQueueUI uses wide strings
+    std::wstring wideText = Formatter::ToWide(text);
+
+    // Calling XNotifyQueueUI from a system doesn't work and even triggers a breakpoint
+    // on devkit, so, if we're in a system thread, we create a user thread and call
+    // XNotifyQueueUI from there
+    if (KeGetCurrentProcessType() == PROC_TYPE_SYSTEM)
+    {
+        XNotifyThreadOptions options = { wideText.c_str(), type };
+        HANDLE threadHandle = Thread(XNotifyThread, &options);
+        WaitForSingleObject(threadHandle, INFINITE);
+    }
+    else
+        XNotifyQueueUI(type, 0, XNOTIFY_SYSTEM, wideText.c_str(), nullptr);
 }
 
 uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description, const std::wstring &defaultText, std::string &result, size_t maxLength, uint32_t keyboardType)
