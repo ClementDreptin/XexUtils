@@ -5,7 +5,7 @@ $TestDir = "$RootDir\test"
 
 function BuildTests {
     # Path to the 32-bit version of MSBuild
-    $MsbuildExePath = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
+    $MsbuildExePath = "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe"
 
     # Build the tests for both build configurations
     $BuildConfigs = @("Debug", "Release")
