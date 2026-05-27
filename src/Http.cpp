@@ -11,8 +11,6 @@ static const std::string s_HeadersDelimiter = "\r\n\r\n";
 
 static const char *MethodToString(Method method);
 
-static std::string StringTrim(const std::string &str);
-
 void Client::AddECTrustAnchor(const Socket::EllipticCurveTrustAnchor &trustAnchor)
 {
     m_ECTrustAnchors.emplace_back(trustAnchor);
@@ -393,19 +391,6 @@ static const char *MethodToString(Method method)
     default:
         return nullptr;
     }
-}
-
-static std::string StringTrim(const std::string &str)
-{
-    // Remove whitespaces at the beginning of the string
-    size_t first = str.find_first_not_of(" \t\n\r");
-    if (first == std::string::npos)
-        return str;
-
-    // Remove whitespaces at the end of the string
-    size_t last = str.find_last_not_of(" \t\n\r");
-
-    return str.substr(first, (last - first + 1));
 }
 
 }

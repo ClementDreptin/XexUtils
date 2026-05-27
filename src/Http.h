@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Internals.h"
 #include "Optional.h"
 #include "Socket.h"
 #include "Url.h"
@@ -9,7 +10,7 @@ namespace XexUtils
 namespace Http
 {
 
-typedef std::unordered_map<std::string, std::string> Headers;
+typedef std::unordered_map<std::string, std::string, CaseInsensitiveHash, CaseInsensitiveEqual> Headers;
 
 struct RequestOptions;
 struct Response;

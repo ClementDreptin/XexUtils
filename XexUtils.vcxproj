@@ -75,6 +75,7 @@
     <ClInclude Include="src\Http.h" />
     <ClInclude Include="src\Hypervisor.h" />
     <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Internals.h" />
     <ClInclude Include="src\Kernel.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Math.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="src\Http.cpp" />
     <ClCompile Include="src\Hypervisor.cpp" />
     <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Internals.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\SMC.cpp" />
