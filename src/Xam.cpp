@@ -56,12 +56,8 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
     XOVERLAPPED overlapped = {};
 
     // Create the buffers
-    std::unique_ptr<wchar_t[]> wideBuffer(new wchar_t[realMaxLength]);
-    std::unique_ptr<char[]> buffer(new char[realMaxLength]);
-
-    // Zero the buffers
-    ZeroMemory(wideBuffer.get(), sizeof(wideBuffer));
-    ZeroMemory(buffer.get(), sizeof(buffer));
+    std::unique_ptr<wchar_t[]> wideBuffer(new wchar_t[realMaxLength]());
+    std::unique_ptr<char[]> buffer(new char[realMaxLength]());
 
     // Open the keyboard
     XShowKeyboardUI(
