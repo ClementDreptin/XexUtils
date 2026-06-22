@@ -95,33 +95,27 @@ Gamepad *GetInput(uint32_t userIndex)
     XINPUT_KEYSTROKE keystroke = {};
     result = XInputGetKeystroke(userIndex, XINPUT_FLAG_GAMEPAD, &keystroke);
 
-    // If no button is pressed, just return early
-    if (result != ERROR_SUCCESS)
-        return &gamepad;
-
     // If a key is being held, add it to the pressed buttons even if it was already pressed at the previous frame
     if (keystroke.Flags & XINPUT_KEYSTROKE_REPEAT)
         gamepad.PressedButtons |= ButtonForVirtualKey(keystroke.VirtualKey);
 
     // Check if the left trigger is pressed
     bool leftTriggerPressed = (gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-    if (leftTriggerPressed)
-        gamepad.PressedLeftTrigger = !gamepad.LastLeftTrigger;
-    else
-        gamepad.PressedLeftTrigger = false;
+
+    // Set PressedLeftTrigger only if the left trigger wasn't already pressed last frame
+    gamepad.PressedLeftTrigger = leftTriggerPressed && !gamepad.LastLeftTrigger;
 
     // Store the left trigger state for next time
     gamepad.LastLeftTrigger = leftTriggerPressed;
 
-    // Check if the left trigger is pressed
+    // Check if the right trigger is pressed
     bool rightTriggerPressed = (gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-    if (rightTriggerPressed)
-        gamepad.PressedRightTrigger = !gamepad.LastRightTrigger;
-    else
-        gamepad.PressedRightTrigger = false;
 
-    // Store the left trigger state for next time
-    gamepad.LastRightTrigger = leftTriggerPressed;
+    // Set PressedRightTrigger only if the right trigger wasn't already pressed last frame
+    gamepad.PressedRightTrigger = rightTriggerPressed && !gamepad.LastRightTrigger;
+
+    // Store the right trigger state for next time
+    gamepad.LastRightTrigger = rightTriggerPressed;
 
     return &gamepad;
 }
