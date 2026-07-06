@@ -39,7 +39,7 @@ std::wstring Format(const wchar_t *format, ...)
 std::wstring ToWide(const std::string &narrowString, uint32_t encoding)
 {
     int wcharCount = MultiByteToWideChar(encoding, 0, narrowString.c_str(), -1, nullptr, 0);
-    std::unique_ptr<wchar_t> wideBuffer(new wchar_t[wcharCount]);
+    std::unique_ptr<wchar_t[]> wideBuffer(new wchar_t[wcharCount]());
 
     MultiByteToWideChar(encoding, 0, narrowString.c_str(), -1, wideBuffer.get(), wcharCount);
     std::wstring wideString(wideBuffer.get());
@@ -50,7 +50,7 @@ std::wstring ToWide(const std::string &narrowString, uint32_t encoding)
 std::string ToNarrow(const std::wstring &wideString, uint32_t encoding)
 {
     int charCount = WideCharToMultiByte(encoding, 0, wideString.c_str(), -1, nullptr, 0, nullptr, nullptr);
-    std::unique_ptr<char> narrowBuffer(new char[charCount]);
+    std::unique_ptr<char[]> narrowBuffer(new char[charCount]());
 
     WideCharToMultiByte(encoding, 0, wideString.c_str(), -1, narrowBuffer.get(), charCount, nullptr, nullptr);
     std::string narrowString(narrowBuffer.get());
