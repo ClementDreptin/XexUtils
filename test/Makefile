@@ -85,8 +85,8 @@ copy: $(TARGET)
 	@echo "Copying $< to console..."
 	@$(WINDOWS_SHIM) $(XBCP) -Y -X:$(CONSOLE_NAME) -T "$<" "xE:\XexUtilsTests\$(PROJECT_NAME).xex"
 
-launch: $(TARGET)
-	@echo "Launching $<..."
+launch: copy
+	@echo "Launching $(TARGET)..."
 	@$(WINDOWS_SHIM) $(XBREBOOT) "xE:\XexUtilsTests\$(PROJECT_NAME).xex"
 
 clean:
