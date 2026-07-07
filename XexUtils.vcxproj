@@ -59,8 +59,8 @@
       <PreprocessorDefinitions Condition="'$(Configuration)'=='Release'">NDEBUG;_XBOX</PreprocessorDefinitions>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">xnetd.lib</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">xnet.lib</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">xbdm.lib;xjsond.lib;xnetd.lib</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">xjson.lib;xnet.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -76,6 +76,7 @@
     <ClInclude Include="src\Hypervisor.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Internals.h" />
+    <ClInclude Include="src\Json.h" />
     <ClInclude Include="src\Kernel.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Math.h" />
@@ -102,6 +103,7 @@
     <ClCompile Include="src\Hypervisor.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Internals.cpp" />
+    <ClCompile Include="src\Json.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\SMC.cpp" />

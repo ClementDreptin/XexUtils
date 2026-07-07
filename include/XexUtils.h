@@ -2,6 +2,7 @@
 
 // Xbox headers
 #include <xtl.h>
+#include <xjson.h>
 
 // C++ standard library
 #include <algorithm>
@@ -24,6 +25,7 @@
 #include "../src/Http.h"
 #include "../src/Hypervisor.h"
 #include "../src/Input.h"
+#include "../src/Json.h"
 #include "../src/Kernel.h"
 #include "../src/Log.h"
 #include "../src/Math.h"

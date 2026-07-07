@@ -16,6 +16,7 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
 | [Http](./src/Http.h)             | Basic HTTP client with HTTPS support.                                                        | [Http.md](./examples/Http.md)             |
 | [Hypervisor](./src/Hypervisor.h) | Read and write to hypervisor memory.                                                         | [Hypervisor.md](./examples/Hypervisor.md) |
 | [Input](./src/Input.h)           | Detect single button presses and repeats more easily than using XInput directly.             | [Input.md](./examples/Input.md)           |
+| [Json](./src/Json.h)             | JSON parser and writer (wrapper around the `XJSON` library from the XDK).                    | [Json.md](./examples/Json.md)             |
 | [Kernel](./src/Kernel.h)         | Declarations of functions exported by `xboxkrnl.exe` and their associated structs and enums. |                                           |
 | [Log](./src/Log.h)               | Very barebones logger.                                                                       | [Log.md](./examples/Log.md)               |
 | [Math](./src/Math.h)             | Utility math functions and classes to manipulate vectors.                                    | [Math.md](./examples/Math.md)             |

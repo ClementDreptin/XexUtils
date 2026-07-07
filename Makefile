@@ -60,7 +60,14 @@ LD := "$(XDK_BIN_DIR)/lib.exe"
 # ================================================================
 
 INCLUDES := $(BEARSSL_INC)
-LIBS := xnet$(if $(filter Debug,$(CONFIG)),d).lib
+
+ifeq ($(CONFIG),Debug)
+	LIBS := xbdm.lib xjsond.lib xnetd.lib
+else ifeq ($(CONFIG),Release)
+	LIBS := xjson.lib xnet.lib
+else
+	$(error Unknown CONFIG=$(CONFIG))
+endif
 
 CXX_FLAGS := -c $(addprefix -I ,$(INCLUDES)) -Zi -nologo -W4 -MP -D _XBOX -Gm- -EHsc -GS \
 			 -fp:fast -fp:except- -Zc:wchar_t -Zc:forScope -GR- -openmp- -Fp"$(PCH_FILE)" \

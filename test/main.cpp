@@ -8,6 +8,7 @@ void Filesystem();
 void Formatter();
 void General();
 void Http();
+void Json();
 void Vec2();
 void Vec3();
 void Vec4();
@@ -43,6 +44,8 @@ void __cdecl main()
 
     if (isConnectedToTheInternet)
         Http();
+
+    Json();
 
     Vec2();
 
