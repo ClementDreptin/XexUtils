@@ -47,7 +47,7 @@ public:
         Curve_curve448
     } EllipticCurveType;
 
-    /// @brief A struct to store all in info about an Elliptic Curve trust anchor.
+    /// @brief A struct to store all the info about an Elliptic Curve trust anchor.
     struct EllipticCurveTrustAnchor
     {
         /// @brief The distinguished name.
@@ -60,7 +60,7 @@ public:
         EllipticCurveType Type;
     };
 
-    /// @brief A struct to store all in info about an RSA trust anchor.
+    /// @brief A struct to store all the info about an RSA trust anchor.
     struct RsaTrustAnchor
     {
         /// @brief The distinguished name.
