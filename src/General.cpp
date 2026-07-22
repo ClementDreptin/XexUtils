@@ -38,15 +38,13 @@ void Reboot()
 
 bool IsDevkit()
 {
-    // Read a 32-bit unsigned int at 0x8E038610 and if the 16th is NOT set, the console is a devkit.
-    // This bit is not set while running in Xenia so make sure that's not the case
-    return !(Memory::Read<uint32_t>(0x8E038610) & (1 << 15)) && !InXenia();
+    return (XboxHardwareInfo->Flags & XBOX_HARDWARE_FLAG_NOT_RETAIL) != 0;
 }
 
 bool InXenia()
 {
     // Inspired by this
-    // https://github.com/RBEnhanced/RB3Enhanced/blob/master/source/xbox360.c#L16
+    // https://github.com/RBEnhanced/RB3Enhanced/blob/a6f9e48e286372f619cebf3448bfd5fb8a879d60/source/xbox360.c#L19
 
     void *xamFirstExport = ResolveExport("xam.xex", 1);
 #ifndef NDEBUG

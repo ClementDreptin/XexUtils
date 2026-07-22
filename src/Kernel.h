@@ -46,9 +46,17 @@ typedef enum _NTSTATUS
 #pragma warning(push)
 #pragma warning(disable : 4201)
 
+typedef uint32_t XBOX_HARDWARE_FLAG;
+
+enum XBOX_HARDWARE_FLAG_
+{
+    XBOX_HARDWARE_FLAG_NOT_RETAIL = 1 << 4,
+    XBOX_HARDWARE_FLAG_HDD = 1 << 5,
+};
+
 struct XBOX_HARDWARE_INFO
 {
-    uint32_t Flags;
+    XBOX_HARDWARE_FLAG Flags;
     uint8_t NumberOfProcessors;
     uint8_t PCIBridgeRevisionID;
     uint8_t Reserved[6];
