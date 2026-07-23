@@ -3,6 +3,9 @@
 
 #include "Kernel.h"
 
+// Most of this logic was inspired by this:
+// https://codeberg.org/hax360/ExShadowBoot/src/branch/main/ExShadowBoot/Freeboot.h
+
 namespace XexUtils
 {
 namespace Hypervisor
@@ -20,10 +23,19 @@ static uint64_t VirtualAddressToPhysicalAddress(const void *pAddress)
 
 #pragma warning(pop)
 
-static uint64_t __declspec(naked) HvxGetVersions(uint32_t key, uint64_t type, uint64_t sourceAddress, uint64_t destinationAddress, uint64_t length)
+static const uint32_t s_FreebootBackdoorKey = 0x72627472;
+
+typedef enum _FreebootBackdoorType
 {
-    // Execute syscall number 0
-    // syscalls table: https://github.com/exjam/xbox360-emu/blob/master/docs/kernel/ordinals/syscall.ord
+    FreebootBackdoorType_DisableMemoryProtections = 2,
+    FreebootBackdoorType_EnableMemoryProtections,
+    FreebootBackdoorType_Execute,
+    FreebootBackdoorType_Memcpy
+} FreebootBackdoorType;
+
+static uint64_t __declspec(naked) HvxFreebootBackdoor(uint32_t key, uint64_t type, uint64_t sourceAddress, uint64_t destinationAddress, uint64_t length)
+{
+    // The Freeboot backdoor is in syscall number 0 (normally HvxGetVersions)
     __asm
     {
         li r0, 0x0
@@ -32,9 +44,6 @@ static uint64_t __declspec(naked) HvxGetVersions(uint32_t key, uint64_t type, ui
     }
 }
 
-#define MAGIC 0x72627472
-#define TYPE 5 // I don't what 5 means
-
 // Note: memory at pDestination HAS to be allocated with XPhysicalAlloc and not just malloc
 void Peek(uint64_t address, void *pDestination, size_t length)
 {
@@ -42,7 +51,7 @@ void Peek(uint64_t address, void *pDestination, size_t length)
     XASSERT(pDestination != nullptr);
 
     uint64_t destination = VirtualAddressToPhysicalAddress(pDestination);
-    HvxGetVersions(MAGIC, TYPE, address, destination, length);
+    HvxFreebootBackdoor(s_FreebootBackdoorKey, FreebootBackdoorType_Memcpy, address, destination, length);
 }
 
 void Poke(uint64_t address, const void *pSource, size_t length)
@@ -51,7 +60,17 @@ void Poke(uint64_t address, const void *pSource, size_t length)
     XASSERT(pSource != nullptr);
 
     uint64_t source = VirtualAddressToPhysicalAddress(pSource);
-    HvxGetVersions(MAGIC, TYPE, source, address, length);
+    HvxFreebootBackdoor(s_FreebootBackdoorKey, FreebootBackdoorType_Memcpy, source, address, length);
+}
+
+void EnableMemoryProtections()
+{
+    HvxFreebootBackdoor(s_FreebootBackdoorKey, FreebootBackdoorType_EnableMemoryProtections, 0, 0, 0);
+}
+
+void DisableMemoryProtections()
+{
+    HvxFreebootBackdoor(s_FreebootBackdoorKey, FreebootBackdoorType_DisableMemoryProtections, 0, 0, 0);
 }
 
 }

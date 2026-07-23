@@ -42,5 +42,15 @@ void Peek(uint64_t address, void *pDestination, size_t length);
 /// @param length The amount of bytes to write.
 void Poke(uint64_t address, const void *pSource, size_t length);
 
+/// @brief Enables memory protections.
+///
+/// In a Freeboot/RGLoader environment, memory protections are disabled by default.
+void EnableMemoryProtections();
+
+/// @brief Disables memory protections.
+///
+/// In a Freeboot/RGLoader environment, memory protections are disabled by default.
+void DisableMemoryProtections();
+
 }
 }
