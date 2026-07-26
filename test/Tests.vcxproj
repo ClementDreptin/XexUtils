@@ -66,10 +66,6 @@
     <ImageXex>
       <ConfigurationFile>$(SolutionDir)config.xml</ConfigurationFile>
     </ImageXex>
-    <PostBuildEvent Condition="'$(Configuration)'=='Release'">
-      <Command>"$(XEDK)\bin\win32\xbreboot.exe" $(RemotePath)</Command>
-      <Message>Launch $(RemotePath) after it's built</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TestRunner.h" />
