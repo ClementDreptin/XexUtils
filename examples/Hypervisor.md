@@ -20,7 +20,7 @@ void Init()
 }
 ```
 
-Write hypervisor memory:
+Write to hypervisor memory:
 
 ```C++
 void Init()
@@ -31,5 +31,31 @@ void Init()
     // Writing a buffer
     uint8_t buffer[] = { 1, 2, 3, 4 };
     XexUtils::Hypervisor::Poke(0x8000010400001234, buffer, sizeof(buffer));
+}
+```
+
+Enable memory protections (disabled by default in a Freeboot/RGLoader environment):
+
+```C++
+void Init()
+{
+    *(uint16_t *)0x817619DC = 0x4800; // Works fine.
+
+    XexUtils::Hypervisor::EnableMemoryProtections();
+
+    *(uint16_t *)0x817619DC = 0x4800; // Throws a STATUS_ACCESS_VIOLATION exception.
+}
+```
+
+Disable memory protections (default state in a Freeboot/RGLoader environment):
+
+```C++
+void Init()
+{
+    XexUtils::Hypervisor::EnableMemoryProtections();
+    *(uint16_t *)0x817619DC = 0x4800; // Throws a STATUS_ACCESS_VIOLATION exception.
+
+    XexUtils::Hypervisor::DisableMemoryProtections();
+    *(uint16_t *)0x817619DC = 0x4800; // Works fine again.
 }
 ```
