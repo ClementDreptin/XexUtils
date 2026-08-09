@@ -16,6 +16,7 @@ void Math();
 void Memory();
 void Optional();
 void Socket();
+void UInt24();
 void Url();
 void ValueOrPtr();
 
@@ -61,6 +62,8 @@ void __cdecl main()
 
     if (isConnectedToTheInternet)
         Socket();
+
+    UInt24();
 
     Url();
 
