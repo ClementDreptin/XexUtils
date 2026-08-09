@@ -1,6 +1,6 @@
 # Math
 
-Add two three-component vectors together (check the [vec2](../include/Vec2.h), [vec3](../include/Vec3.h) and [vec4](../include/Vec4.h) structs to see all of the available operations):
+Add two three-component vectors together (check the [vec2](../src/Vec2.h), [vec3](../src/Vec3.h) and [vec4](../src/Vec4.h) structs to see all of the available operations):
 
 ```C++
 void Init()
