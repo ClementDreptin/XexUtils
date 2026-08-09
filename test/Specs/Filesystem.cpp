@@ -11,23 +11,23 @@ void Filesystem()
     Describe("Fs::MountHdd");
 
     It("allows a game to access the hard drive", []() {
-        std::ifstream file("hdd:\\launch.ini");
+        std::ifstream file("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
         TEST_EQ(file.is_open(), false);
 
         Fs::MountHdd();
-        file.open("hdd:\\launch.ini");
+        file.open("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
 
         TEST_EQ(file.is_open(), true);
     });
 
     It("removes the hdd: symbolic link previously created with MountHdd", []() {
         Fs::MountHdd();
-        std::ifstream file("hdd:\\launch.ini");
+        std::ifstream file("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
         TEST_EQ(file.is_open(), true);
 
         file.close();
         Fs::UnmountHdd();
-        file.open("hdd:\\launch.ini");
+        file.open("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
 
         TEST_EQ(file.is_open(), false);
     });
