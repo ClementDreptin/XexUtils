@@ -21,7 +21,7 @@ public:
     /// This function can fail if `url` isn't a valid URL.
     ///
     /// @param url The URL.
-    /// @return A valid `Optional<Url>` on success, and empty `Optional` on error.
+    /// @return A valid `Optional<Url>` on success, an empty `Optional` on error.
     static Optional<Url> Parse(const std::string &url);
 
     /// @brief Gets the scheme component of the `Url`.

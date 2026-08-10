@@ -51,7 +51,7 @@ public:
     /// potential redirects fails.
     ///
     /// @param url The URL.
-    /// @return A valid `Optional<Response>` on success, and empty `Optional` on error.
+    /// @return A valid `Optional<Response>` on success, an empty `Optional` on error.
     Optional<Response> Get(const std::string &url) const;
 
     /// @brief Sends a POST request to `url`.
@@ -62,7 +62,7 @@ public:
     ///
     /// @param url The URL.
     /// @param body The request body.
-    /// @return A valid `Optional<Response>` on success, and empty `Optional` on error.
+    /// @return A valid `Optional<Response>` on success, an empty `Optional` on error.
     Optional<Response> Post(const std::string &url, const std::string &body) const;
 
     /// @brief Sends a request.
@@ -71,7 +71,7 @@ public:
     /// fails, if reading the response fails, or if following the potential redirects fails.
     ///
     /// @param options The request options.
-    /// @return A valid `Optional<Response>` on success, and empty `Optional` on error.
+    /// @return A valid `Optional<Response>` on success, an empty `Optional` on error.
     Optional<Response> SendRequest(const RequestOptions &options) const;
 
 private:
