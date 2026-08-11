@@ -1,5 +1,31 @@
 # Filesystem
 
+Get the different segments of a path from a string:
+
+```C++
+void Init()
+{
+    XexUtils::Fs::Path path("hdd:\\path\\to\\file.txt");
+    XexUtils::Fs::Path drive = path.Drive(); // hdd:
+    XexUtils::Fs::Path drive = path.Basename(); // file
+    XexUtils::Fs::Path drive = path.Extension(); // .txt
+    XexUtils::Fs::Path drive = path.Filename(); // file.txt
+    XexUtils::Fs::Path drive = path.Parent(); // hdd:\path\to
+}
+```
+
+Build a path:
+
+```C++
+void Init()
+{
+    XexUtils::Fs::Path root("hdd:\\");
+    XexUtils::Fs::Path directory("dir");
+    XexUtils::Fs::Path file("file.txt");
+    XexUtils::Fs::Path path = root / directory / file; // hdd:\dir\file.txt
+}
+```
+
 Allow games to access the hard drive:
 
 ```C++
@@ -53,32 +79,6 @@ void Init()
         XexUtils::Log::Print("Could not unmount USB");
         return;
     }
-}
-```
-
-Get the different segments of a path from a string:
-
-```C++
-void Init()
-{
-    XexUtils::Fs::Path path("hdd:\\path\\to\\file.txt");
-    XexUtils::Fs::Path drive = path.Drive(); // hdd:
-    XexUtils::Fs::Path drive = path.Basename(); // file
-    XexUtils::Fs::Path drive = path.Extension(); // .txt
-    XexUtils::Fs::Path drive = path.Filename(); // file.txt
-    XexUtils::Fs::Path drive = path.Parent(); // hdd:\path\to
-}
-```
-
-Build a path:
-
-```C++
-void Init()
-{
-    XexUtils::Fs::Path root("hdd:\\");
-    XexUtils::Fs::Path directory("dir");
-    XexUtils::Fs::Path file("file.txt");
-    XexUtils::Fs::Path path = root / directory / file; // hdd:\dir\file.txt
 }
 ```
 

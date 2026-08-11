@@ -8,32 +8,6 @@ using namespace TestRunner;
 
 void Filesystem()
 {
-    Describe("Fs::MountHdd");
-
-    It("allows a game to access the hard drive", []() {
-        std::ifstream file("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
-        TEST_EQ(file.is_open(), false);
-
-        Fs::MountHdd();
-        file.open("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
-
-        TEST_EQ(file.is_open(), true);
-    });
-
-    Describe("Fs::UnmountHdd");
-
-    It("removes the hdd: symbolic link previously created with MountHdd", []() {
-        Fs::MountHdd();
-        std::ifstream file("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
-        TEST_EQ(file.is_open(), true);
-
-        file.close();
-        Fs::UnmountHdd();
-        file.open("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
-
-        TEST_EQ(file.is_open(), false);
-    });
-
     Describe("Fs::Path");
 
     It("concatenates an std::string with a path", []() {
@@ -384,6 +358,32 @@ void Filesystem()
         Fs::Path path("\\Documents\\");
 
         TEST_EQ(path.IsRoot(), false);
+    });
+
+    Describe("Fs::MountHdd");
+
+    It("allows a game to access the hard drive", []() {
+        std::ifstream file("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+        TEST_EQ(file.is_open(), false);
+
+        Fs::MountHdd();
+        file.open("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+
+        TEST_EQ(file.is_open(), true);
+    });
+
+    Describe("Fs::UnmountHdd");
+
+    It("removes the hdd: symbolic link previously created with MountHdd", []() {
+        Fs::MountHdd();
+        std::ifstream file("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+        TEST_EQ(file.is_open(), true);
+
+        file.close();
+        Fs::UnmountHdd();
+        file.open("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+
+        TEST_EQ(file.is_open(), false);
     });
 
     Describe("Fs::ReadDirectory");
