@@ -10,11 +10,11 @@ void Print(const char *format, ...)
 {
     XASSERT(format != nullptr);
 
-    // Determine the required buffer size.
     va_list args;
     va_start(args, format);
+
+    // Determine the required buffer size.
     size_t requiredBufferSize = vsnprintf(nullptr, 0, format, args) + 1; // +1 for '\n'.
-    va_end(args);
 
     // By default, we use a fixed size buffer to perform the printf formatting.
     char fixedBuffer[2048] = {};
@@ -29,9 +29,7 @@ void Print(const char *format, ...)
     }
 
     // Format the string into the buffer.
-    va_start(args, format);
     vsnprintf_s(bufferToUse, requiredBufferSize, _TRUNCATE, format, args);
-    va_end(args);
 
     // Append a newline.
     bufferToUse[requiredBufferSize - 1] = '\n';
@@ -52,6 +50,8 @@ void Print(const char *format, ...)
     // If we had to use a dynamic buffer, free it.
     if (dynamicBufferUsed)
         delete[] bufferToUse;
+
+    va_end(args);
 }
 
 void Print(const std::string &message)
@@ -63,11 +63,11 @@ void Print(const wchar_t *format, ...)
 {
     XASSERT(format != nullptr);
 
-    // Determine the required buffer size.
     va_list args;
     va_start(args, format);
+
+    // Determine the required buffer size.
     size_t requiredBufferSize = _vsnwprintf(nullptr, 0, format, args) + 1; // +1 for L'\n'.
-    va_end(args);
 
     // By default, we use a fixed size buffer to perform the printf formatting.
     wchar_t fixedBuffer[2048] = {};
@@ -82,9 +82,7 @@ void Print(const wchar_t *format, ...)
     }
 
     // Format the string into the buffer.
-    va_start(args, format);
     _vsnwprintf_s(bufferToUse, requiredBufferSize, _TRUNCATE, format, args);
-    va_end(args);
 
     // Append a newline.
     bufferToUse[requiredBufferSize - 1] = L'\n';
@@ -108,6 +106,8 @@ void Print(const wchar_t *format, ...)
     // If we had to use a dynamic buffer, free it.
     if (dynamicBufferUsed)
         delete[] bufferToUse;
+
+    va_end(args);
 }
 
 void Print(const std::wstring &message)
