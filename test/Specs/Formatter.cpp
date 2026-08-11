@@ -20,12 +20,26 @@ void Formatter()
         TEST_EQ(result, "hello world 3");
     });
 
+    It("can create an std::string longer than 2048 characters", []() {
+        std::string longInput(3000, 'a');
+        std::string result = Formatter::Format("hello %s", longInput.c_str());
+
+        TEST_EQ(result.size(), 3006);
+    });
+
     Describe("Formatter::Format (wide)");
 
-    It("creates and std::wstring from the wide format", []() {
+    It("creates an std::wstring from the wide format", []() {
         std::wstring result = Formatter::Format(L"hello %s %d", L"world", 3);
 
-        TEST_EQ(Formatter::ToNarrow(result), "hello world 3");
+        TEST_EQ_W(result, L"hello world 3");
+    });
+
+    It("can create an std::wstring longer than 2048 characters", []() {
+        std::wstring longInput(3000, L'a');
+        std::wstring result = Formatter::Format(L"hello %s", longInput.c_str());
+
+        TEST_EQ(result.size(), 3006);
     });
 
     Describe("Formatter::ToWide");

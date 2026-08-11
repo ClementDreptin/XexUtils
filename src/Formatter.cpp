@@ -13,12 +13,20 @@ std::string Format(const char *format, ...)
     va_list args;
     va_start(args, format);
 
-    char buffer[2048] = {};
-    vsnprintf_s(buffer, _TRUNCATE, format, args);
+    // Determine the required buffer size.
+    size_t requiredBufferSize = vsnprintf(nullptr, 0, format, args);
+
+    // Create the output string and preallocate enough space. The null terminator doesn't
+    // need to be counted, std::string::resize handles it automatically.
+    std::string buffer;
+    buffer.resize(requiredBufferSize);
+
+    // Format the string into the buffer.
+    vsnprintf_s(&buffer[0], buffer.size() + 1, _TRUNCATE, format, args);
 
     va_end(args);
 
-    return std::string(buffer);
+    return buffer;
 }
 
 std::wstring Format(const wchar_t *format, ...)
@@ -28,12 +36,20 @@ std::wstring Format(const wchar_t *format, ...)
     va_list args;
     va_start(args, format);
 
-    wchar_t buffer[2048] = {};
-    _vsnwprintf_s(buffer, _TRUNCATE, format, args);
+    // Determine the required buffer size.
+    size_t requiredBufferSize = _vsnwprintf(nullptr, 0, format, args);
+
+    // Create the output string and preallocate enough space. The null terminator doesn't
+    // need to be counted, std::wstring::resize handles it automatically.
+    std::wstring buffer;
+    buffer.resize(requiredBufferSize);
+
+    // Format the string into the buffer.
+    _vsnwprintf_s(&buffer[0], buffer.size() + 1, _TRUNCATE, format, args);
 
     va_end(args);
 
-    return std::wstring(buffer);
+    return buffer;
 }
 
 std::wstring ToWide(const std::string &narrowString, uint32_t encoding)
