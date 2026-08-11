@@ -31,6 +31,9 @@ XEXUTILS_INC := $(XEXUTILS_DIR)/include
 SRCS := $(shell find . -name '*.cpp')
 OBJS := $(SRCS:%.cpp=$(INT_DIR)/%.obj)
 
+FIXTURES_DIR := fixtures
+FIXTURES_OUT_DIR := $(OUT_DIR)/$(FIXTURES_DIR)
+
 
 # ================================================================
 # XDK Toolchain
@@ -79,11 +82,12 @@ endif
 
 all: build copy launch
 
-build: $(TARGET)
+build: $(TARGET) copy_fixtures
 
 copy: $(TARGET)
 	@echo "Copying $< to console..."
 	@$(WINDOWS_SHIM) $(XBCP) -Y -X:$(CONSOLE_NAME) -T "$<" "xE:\XexUtilsTests\$(PROJECT_NAME).xex"
+	@$(WINDOWS_SHIM) $(XBCP) -Y -X:$(CONSOLE_NAME) -T -R $(FIXTURES_OUT_DIR) "xE:\XexUtilsTests\$(FIXTURES_DIR)"
 
 launch: copy
 	@echo "Launching $(TARGET)..."
@@ -93,7 +97,16 @@ clean:
 	$(MAKE) -C $(XEXUTILS_DIR) $@
 	rm -rf $(BUILD_DIR)
 
-.PHONY: all build copy launch clean
+.PHONY: all build copy launch clean copy_fixtures
+
+
+# ================================================================
+# Fixtures copy
+# ================================================================
+
+copy_fixtures: $(FIXTURES_DIR)
+	@echo "Copying $< to $(OUT_DIR)..."
+	@cp -r "$<" "$(OUT_DIR)"
 
 
 # ================================================================

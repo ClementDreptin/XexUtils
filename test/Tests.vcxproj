@@ -62,6 +62,7 @@
     </Link>
     <Deploy>
       <DeploymentType>CopyToHardDrive</DeploymentType>
+      <DeploymentFiles>$(RemoteRoot)=$(ImagePath);$(RemoteRoot)\fixtures=$(OutDir)fixtures</DeploymentFiles>
     </Deploy>
     <ImageXex>
       <ConfigurationFile>$(SolutionDir)config.xml</ConfigurationFile>
@@ -90,5 +91,14 @@
     <ClCompile Include="Specs/Vec4.cpp" />
     <ClCompile Include="TestRunner.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="fixtures">
+      <Command>
+        copy /Y "%(FullPath)" "$(OutDir)%(Filename)\"
+      </Command>
+      <Message>Copy the fixtures located at "%(FullPath)."</Message>
+      <Outputs>$(OutDir)%(Filename)\</Outputs>
+    </CustomBuild>
   </ItemGroup>
 </Project>

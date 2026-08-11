@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Optional.h"
+
 namespace XexUtils
 {
 namespace Fs
@@ -219,6 +221,12 @@ private:
 
     static const char s_Separator;
 };
+
+/// @brief Returns a list of files present in a directory.
+/// @param directoryPath The path to the directory.
+/// @return A valid `Optional<std::vector<WIN32_FIND_DATA>>` on success, an empty
+///         `Optional` on error.
+Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath);
 
 }
 }

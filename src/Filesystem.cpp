@@ -213,5 +213,47 @@ size_t Path::Size() const
     return m_Path.size();
 }
 
+Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath)
+{
+    std::vector<WIN32_FIND_DATA> files;
+
+    // Initialize the search.
+    Path searchPattern = directoryPath / "*";
+    WIN32_FIND_DATA fileInfo = {};
+    HANDLE handle = FindFirstFile(searchPattern.c_str(), &fileInfo);
+    if (handle == nullptr || handle == INVALID_HANDLE_VALUE)
+    {
+        DebugPrint(
+            "[XexUtils][Fs]: Error: Couldn't find the first file in %s (%X).",
+            directoryPath.c_str(),
+            GetLastError()
+        );
+        return NullOpt();
+    }
+
+    // Loop until no more files are found or an error occurs.
+    do
+    {
+        files.emplace_back(fileInfo);
+    } while (FindNextFile(handle, &fileInfo));
+
+    FindClose(handle);
+
+    // If the search stopped for another reason than reaching the end of the directory,
+    // then it's an actual error.
+    uint32_t error = GetLastError();
+    if (error != ERROR_NO_MORE_FILES)
+    {
+        DebugPrint(
+            "[XexUtils][Fs]: Error: Couldn't finish reading the files in %s (%X).",
+            directoryPath.c_str(),
+            error
+        );
+        return NullOpt();
+    }
+
+    return files;
+}
+
 }
 }

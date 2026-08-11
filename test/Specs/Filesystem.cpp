@@ -20,6 +20,8 @@ void Filesystem()
         TEST_EQ(file.is_open(), true);
     });
 
+    Describe("Fs::UnmountHdd");
+
     It("removes the hdd: symbolic link previously created with MountHdd", []() {
         Fs::MountHdd();
         std::ifstream file("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
@@ -382,5 +384,28 @@ void Filesystem()
         Fs::Path path("\\Documents\\");
 
         TEST_EQ(path.IsRoot(), false);
+    });
+
+    Describe("Fs::ReadDirectory");
+
+    It("returns a vector a files in a directory", []() {
+        auto files = Fs::ReadDirectory("game:\\fixtures");
+
+        TEST_EQ(files.HasValue(), true);
+        TEST_EQ(files->size(), 2);
+        TEST_EQ((*files)[0].cFileName, std::string("file1.txt"));
+        TEST_EQ((*files)[1].cFileName, std::string("file2.txt"));
+    });
+
+    It("returns NullOpt when the directory path doesn't exist", []() {
+        auto files = Fs::ReadDirectory("game:\\inexistant");
+
+        TEST_EQ(files.HasValue(), false);
+    });
+
+    It("returns NullOpt when the path isn't a path to a directory", []() {
+        auto files = Fs::ReadDirectory("game:\\fixtures\\file1.txt");
+
+        TEST_EQ(files.HasValue(), false);
     });
 }
