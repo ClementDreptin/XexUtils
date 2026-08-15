@@ -1,11 +1,25 @@
 # Formatter
 
-Format a string in a `printf` style:
+Format a narrow string in a `printf` style:
 
 ```C++
 void Init()
 {
     std::string formattedString = XexUtils::Formatter::Format("My favorite number is %i", 3);
+}
+```
+
+Format a narrow string in a `printf` style from within a variadic function:
+
+```C++
+void Init(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    std::string formattedString = XexUtils::Formatter::Format(format, args);
+
+    va_end(args);
 }
 ```
 
@@ -15,6 +29,20 @@ Format a wide string in a `wprintf` style:
 void Init()
 {
     std::wstring formattedWideString = XexUtils::Formatter::Format(L"My favorite number is %i", 3);
+}
+```
+
+Format a wide string in a `wprintf` style from within a variadic function:
+
+```C++
+void Init(const wchar_t *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    std::wstring formattedWideString = XexUtils::Formatter::Format(format, args);
+
+    va_end(args);
 }
 ```
 

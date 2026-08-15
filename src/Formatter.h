@@ -11,11 +11,23 @@ namespace Formatter
 /// @return An `std::string`.
 std::string Format(const char *format, ...);
 
+/// @brief Creates an `std::string` from a printf-like format and a list of arguments.
+/// @param format The printf-like format.
+/// @param args The list of arguments.
+/// @return An `std::string`.
+std::string Format(const char *format, va_list args);
+
 /// @brief Creates an `std::wstring` from a wprintf-like format.
 /// @param format The wprintf-like format.
 /// @param ... The variadic arguments, one for each specifier from the `format`.
 /// @return An `std::wstring`.
 std::wstring Format(const wchar_t *format, ...);
+
+/// @brief Creates an `std::wstring` from a wprintf-like format.
+/// @param format The wprintf-like format.
+/// @param args The list of arguments.
+/// @return An `std::wstring`.
+std::wstring Format(const wchar_t *format, va_list args);
 
 /// @brief Converts an `std::string` into an `std::wstring`.
 /// @param narrowString The `std::string`.

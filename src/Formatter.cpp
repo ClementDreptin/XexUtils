@@ -13,6 +13,17 @@ std::string Format(const char *format, ...)
     va_list args;
     va_start(args, format);
 
+    std::string buffer = Format(format, args);
+
+    va_end(args);
+
+    return buffer;
+}
+
+std::string Format(const char *format, va_list args)
+{
+    XASSERT(format != nullptr);
+
     // Determine the required buffer size.
     size_t requiredBufferSize = vsnprintf(nullptr, 0, format, args);
 
@@ -24,8 +35,6 @@ std::string Format(const char *format, ...)
     // Format the string into the buffer.
     vsnprintf_s(&buffer[0], buffer.size() + 1, _TRUNCATE, format, args);
 
-    va_end(args);
-
     return buffer;
 }
 
@@ -35,6 +44,17 @@ std::wstring Format(const wchar_t *format, ...)
 
     va_list args;
     va_start(args, format);
+
+    std::wstring buffer = Format(format, args);
+
+    va_end(args);
+
+    return buffer;
+}
+
+std::wstring Format(const wchar_t *format, va_list args)
+{
+    XASSERT(format != nullptr);
 
     // Determine the required buffer size.
     size_t requiredBufferSize = _vsnwprintf(nullptr, 0, format, args);
@@ -46,8 +66,6 @@ std::wstring Format(const wchar_t *format, ...)
 
     // Format the string into the buffer.
     _vsnwprintf_s(&buffer[0], buffer.size() + 1, _TRUNCATE, format, args);
-
-    va_end(args);
 
     return buffer;
 }

@@ -12,9 +12,9 @@ using namespace TestRunner;
 
 void Formatter()
 {
-    Describe("Formatter::Format");
+    Describe("Formatter::Format(const char *, ...)");
 
-    It("creates an std::string from a narrow format", []() {
+    It("creates an std::string from a format", []() {
         std::string result = Formatter::Format("hello %s %d", "world", 3);
 
         TEST_EQ(result, "hello world 3");
@@ -27,9 +27,9 @@ void Formatter()
         TEST_EQ(result.size(), 3006);
     });
 
-    Describe("Formatter::Format (wide)");
+    Describe("Formatter::Format(const wchar_t *, ...)");
 
-    It("creates an std::wstring from the wide format", []() {
+    It("creates an std::wstring from a format", []() {
         std::wstring result = Formatter::Format(L"hello %s %d", L"world", 3);
 
         TEST_EQ_W(result, L"hello world 3");
