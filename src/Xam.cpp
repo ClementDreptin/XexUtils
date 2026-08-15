@@ -89,7 +89,7 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
     return overlappedResult;
 }
 
-uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType, uint32_t *pButtonPressedIndex, uint32_t focusedButtonIndex)
+uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType, uint32_t *pPressedButtonIndex, uint32_t focusedButtonIndex)
 {
     MESSAGEBOX_RESULT messageBoxResult = {};
     XOVERLAPPED overlapped = {};
@@ -121,9 +121,9 @@ uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, con
     uint32_t overlappedResult = XGetOverlappedResult(&overlapped, nullptr, TRUE);
 
     // If the message box was closed by pressing "A" on any of the buttons (so not by pressing "B" or the Xbox button)
-    // and if the pressed button is requested, write the pressed button at pButtonPressedIndex
-    if (overlappedResult == ERROR_SUCCESS && pButtonPressedIndex != nullptr)
-        *pButtonPressedIndex = messageBoxResult.dwButtonPressed;
+    // and if the pressed button is requested, write the pressed button at pPressedButtonIndex
+    if (overlappedResult == ERROR_SUCCESS && pPressedButtonIndex != nullptr)
+        *pPressedButtonIndex = messageBoxResult.dwButtonPressed;
 
     return overlappedResult;
 }

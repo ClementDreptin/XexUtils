@@ -108,11 +108,11 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
 /// @param text The main content.
 /// @param buttonLabels A vector of label buttons.
 /// @param messageBoxType The type of message box (e.g. error, info, warning).
-/// @param pButtonPressedIndex A pointer to a `uint32_t` to store the index in `buttonLabels`
-/// of the button that was clicked.
+/// @param pPressedButtonIndex A pointer to a `uint32_t` to store the index in `buttonLabels`
+/// of the button that was pressed.
 /// @param focusedButtonIndex Index in `buttonLabels` of the button to focus by default.
 /// @return How the message box was closed.
-uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType = XMB_NOICON, uint32_t *pButtonPressedIndex = nullptr, uint32_t focusedButtonIndex = 0);
+uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType = XMB_NOICON, uint32_t *pPressedButtonIndex = nullptr, uint32_t focusedButtonIndex = 0);
 
 }
 }
@@ -327,5 +327,16 @@ extern "C"
     EXPORTNUM(463)
     uint32_t XamGetCurrentTitleId(
         void
+    );
+
+    EXPORTNUM(617)
+    HRESULT XamContentOpenFile(
+        uint32_t userIndex,
+        const char *rootName,
+        const char *fileName,
+        uint32_t contentFlags,
+        size_t fileCacheSize,
+        uint32_t *pLicenseMask,
+        XOVERLAPPED *pOverlapped
     );
 }
