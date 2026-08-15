@@ -13,6 +13,15 @@ void Print(const char *format, ...)
     va_list args;
     va_start(args, format);
 
+    Print(format, args);
+
+    va_end(args);
+}
+
+void Print(const char *format, va_list args)
+{
+    XASSERT(format != nullptr);
+
     // Determine the required buffer size.
     size_t requiredBufferSize = vsnprintf(nullptr, 0, format, args) + 1; // +1 for '\n'.
 
@@ -50,8 +59,6 @@ void Print(const char *format, ...)
     // If we had to use a dynamic buffer, free it.
     if (dynamicBufferUsed)
         delete[] bufferToUse;
-
-    va_end(args);
 }
 
 void Print(const std::string &message)
@@ -65,6 +72,15 @@ void Print(const wchar_t *format, ...)
 
     va_list args;
     va_start(args, format);
+
+    Print(format, args);
+
+    va_end(args);
+}
+
+void Print(const wchar_t *format, va_list args)
+{
+    XASSERT(format != nullptr);
 
     // Determine the required buffer size.
     size_t requiredBufferSize = _vsnwprintf(nullptr, 0, format, args) + 1; // +1 for L'\n'.
@@ -106,8 +122,6 @@ void Print(const wchar_t *format, ...)
     // If we had to use a dynamic buffer, free it.
     if (dynamicBufferUsed)
         delete[] bufferToUse;
-
-    va_end(args);
 }
 
 void Print(const std::wstring &message)

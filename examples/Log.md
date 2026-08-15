@@ -5,10 +5,24 @@ Log messages to stdout:
 ```C++
 void Init()
 {
-    XexUtils::Log::Print("Address is: %#010x", 0x1234); // Print 'Address is: 0x12340000'
+    XexUtils::Log::Print("Address is: %#010x", 0x1234); // Print 'Address is: 0x12340000'.
 
     std::string text = "Hello John";
-    XexUtils::Log::Print(text); // Print 'Hello John'
+    XexUtils::Log::Print(text); // Print 'Hello John'.
+}
+```
+
+Log messages to stdout from a variadic function:
+
+```C++
+void Init(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    XexUtils::Log::Print(format, args);
+
+    va_end(args);
 }
 ```
 
