@@ -83,6 +83,7 @@
     <ClCompile Include="Specs/Memory.cpp" />
     <ClCompile Include="Specs/Optional.cpp" />
     <ClCompile Include="Specs/Socket.cpp" />
+    <ClCompile Include="Specs/StfsPackage.cpp" />
     <ClCompile Include="Specs/UInt24.cpp" />
     <ClCompile Include="Specs/Url.cpp" />
     <ClCompile Include="Specs/ValueOrPtr.cpp" />
@@ -92,13 +93,14 @@
     <ClCompile Include="TestRunner.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="fixtures">
-      <Command>
-        copy /Y "%(FullPath)" "$(OutDir)%(Filename)\"
-      </Command>
-      <Message>Copy the fixtures located at "%(FullPath)."</Message>
-      <Outputs>$(OutDir)%(Filename)\</Outputs>
-    </CustomBuild>
-  </ItemGroup>
+  <Target Name="CopyFixtures" BeforeTargets="DeployToHardDrive">
+    <ItemGroup>
+      <FixtureFiles Include="fixtures\**\*" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(FixtureFiles)"
+      DestinationFolder="$(OutDir)fixtures\%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+    />
+  </Target>
 </Project>

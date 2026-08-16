@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -33,6 +34,7 @@
 #include "../src/Optional.h"
 #include "../src/SMC.h"
 #include "../src/Socket.h"
+#include "../src/StfsPackage.h"
 #include "../src/UInt24.h"
 #include "../src/Url.h"
 #include "../src/ValueOrPtr.h"

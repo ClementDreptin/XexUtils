@@ -4,30 +4,31 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
 
 ## Features
 
-| Header file                      | Description                                                                                  | Examples                                  |
-| -------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [Assert](./src/Assert.h)         | Trigger a breakpoint with an assertion message in debug builds.                              | [Assert.md](./examples/Assert.md)         |
-| [Dashlaunch](./src/Dashlaunch.h) | Get/set Dashlaunch options and access its global data.                                       | [Dashlaunch.md](./examples/Dashlaunch.md) |
-| [Detour](./src/Detour.h)         | Detour/hook a function.                                                                      | [Detour.md](./examples/Detour.md)         |
-| [Expected](./src/Expected.h)     | Partial clone of `std::expected` from C++23.                                                 | [Expected.md](./examples/Expected.md)     |
-| [Filesystem](./src/Filesystem.h) | Functions to access storage devices and a class to represent a file path.                    | [Filesystem.md](./examples/Filesystem.md) |
-| [Formatter](./src/Formatter.h)   | Convert from narrow to wide strings and generate strings from `printf` formats.              | [Formatter.md](./examples/Formatter.md)   |
-| [General](./src/General.h)       | General purpose helpers that don't really fit in any namespace.                              | [General.md](./examples/General.md)       |
-| [Http](./src/Http.h)             | Basic HTTP client with HTTPS support.                                                        | [Http.md](./examples/Http.md)             |
-| [Hypervisor](./src/Hypervisor.h) | Read and write to hypervisor memory.                                                         | [Hypervisor.md](./examples/Hypervisor.md) |
-| [Input](./src/Input.h)           | Detect single button presses and repeats more easily than using XInput directly.             | [Input.md](./examples/Input.md)           |
-| [Json](./src/Json.h)             | JSON parser and writer (wrapper around the `XJSON` library from the XDK).                    | [Json.md](./examples/Json.md)             |
-| [Kernel](./src/Kernel.h)         | Declarations of functions exported by `xboxkrnl.exe` and their associated structs and enums. |                                           |
-| [Log](./src/Log.h)               | Very barebones logger.                                                                       | [Log.md](./examples/Log.md)               |
-| [Math](./src/Math.h)             | Utility math functions and classes to manipulate vectors.                                    | [Math.md](./examples/Math.md)             |
-| [Memory](./src/Memory.h)         | Read and write arbitrary data from and to arbritrary locations with safeguards.              | [Memory.md](./examples/Memory.md)         |
-| [Optional](./src/Optional.h)     | Partial clone of `std::optional` from C++17.                                                 | [Optional.md](./examples/Optional.md)     |
-| [SMC](./src/SMC.h)               | Interact with the power LED.                                                                 | [SMC.md](./examples/SMC.md)               |
-| [Socket](./src/Socket.h)         | Open TCP connections with TLS support.                                                       | [Socket.md](./examples/Socket.md)         |
-| [UInt24](./src/UInt24.h)         | A 24-bit unsigned integer.                                                                   | [UInt24.md](./examples/UInt24.md)         |
-| [Url](./src/Url.h)               | Basic URL parser.                                                                            | [Url.md](./examples/Url.md)               |
-| [ValueOrPtr](./src/ValueOrPtr.h) | Container class to manipulate a value or a pointer seemlessly.                               | [ValueOrPtr.md](./examples/ValueOrPtr.md) |
-| [Xam](./src/Xam.h)               | Functions to nteract with the system UI and declarations of functions exported by `xam.xex`. | [Xam.md](./examples/Xam.md)               |
+| Header file                        | Description                                                                                  | Examples                                    |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| [Assert](./src/Assert.h)           | Trigger a breakpoint with an assertion message in debug builds.                              | [Assert.md](./examples/Assert.md)           |
+| [Dashlaunch](./src/Dashlaunch.h)   | Get/set Dashlaunch options and access its global data.                                       | [Dashlaunch.md](./examples/Dashlaunch.md)   |
+| [Detour](./src/Detour.h)           | Detour/hook a function.                                                                      | [Detour.md](./examples/Detour.md)           |
+| [Expected](./src/Expected.h)       | Partial clone of `std::expected` from C++23.                                                 | [Expected.md](./examples/Expected.md)       |
+| [Filesystem](./src/Filesystem.h)   | Functions to access storage devices and a class to represent a file path.                    | [Filesystem.md](./examples/Filesystem.md)   |
+| [Formatter](./src/Formatter.h)     | Convert from narrow to wide strings and generate strings from `printf` formats.              | [Formatter.md](./examples/Formatter.md)     |
+| [General](./src/General.h)         | General purpose helpers that don't really fit in any namespace.                              | [General.md](./examples/General.md)         |
+| [Http](./src/Http.h)               | Basic HTTP client with HTTPS support.                                                        | [Http.md](./examples/Http.md)               |
+| [Hypervisor](./src/Hypervisor.h)   | Read and write to hypervisor memory.                                                         | [Hypervisor.md](./examples/Hypervisor.md)   |
+| [Input](./src/Input.h)             | Detect single button presses and repeats more easily than using XInput directly.             | [Input.md](./examples/Input.md)             |
+| [Json](./src/Json.h)               | JSON parser and writer (wrapper around the `XJSON` library from the XDK).                    | [Json.md](./examples/Json.md)               |
+| [Kernel](./src/Kernel.h)           | Declarations of functions exported by `xboxkrnl.exe` and their associated structs and enums. |                                             |
+| [Log](./src/Log.h)                 | Very barebones logger.                                                                       | [Log.md](./examples/Log.md)                 |
+| [Math](./src/Math.h)               | Utility math functions and classes to manipulate vectors.                                    | [Math.md](./examples/Math.md)               |
+| [Memory](./src/Memory.h)           | Read and write arbitrary data from and to arbritrary locations with safeguards.              | [Memory.md](./examples/Memory.md)           |
+| [Optional](./src/Optional.h)       | Partial clone of `std::optional` from C++17.                                                 | [Optional.md](./examples/Optional.md)       |
+| [SMC](./src/SMC.h)                 | Interact with the power LED.                                                                 | [SMC.md](./examples/SMC.md)                 |
+| [Socket](./src/Socket.h)           | Open TCP connections with TLS support.                                                       | [Socket.md](./examples/Socket.md)           |
+| [StfsPackage](./src/StfsPackage.h) | Parse STFS files metadata and mount them to disk.                                            | [StfsPackage.md](./examples/StfsPackage.md) |
+| [UInt24](./src/UInt24.h)           | A 24-bit unsigned integer.                                                                   | [UInt24.md](./examples/UInt24.md)           |
+| [Url](./src/Url.h)                 | Basic URL parser.                                                                            | [Url.md](./examples/Url.md)                 |
+| [ValueOrPtr](./src/ValueOrPtr.h)   | Container class to manipulate a value or a pointer seemlessly.                               | [ValueOrPtr.md](./examples/ValueOrPtr.md)   |
+| [Xam](./src/Xam.h)                 | Functions to nteract with the system UI and declarations of functions exported by `xam.xex`. | [Xam.md](./examples/Xam.md)                 |
 
 ## Installation
 

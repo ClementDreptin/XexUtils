@@ -389,7 +389,7 @@ void Filesystem()
     Describe("Fs::ReadDirectory");
 
     It("returns a vector a files in a directory", []() {
-        auto files = Fs::ReadDirectory("game:\\fixtures");
+        auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem");
 
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 2);
@@ -404,7 +404,7 @@ void Filesystem()
     });
 
     It("returns NullOpt when the path isn't a path to a directory", []() {
-        auto files = Fs::ReadDirectory("game:\\fixtures\\file1.txt");
+        auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem\\file1.txt");
 
         TEST_EQ(files.HasValue(), false);
     });

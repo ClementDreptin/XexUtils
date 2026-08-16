@@ -16,6 +16,7 @@ void Math();
 void Memory();
 void Optional();
 void Socket();
+void StfsPackage();
 void UInt24();
 void Url();
 void ValueOrPtr();
@@ -32,8 +33,7 @@ void __cdecl main()
 #ifndef NDEBUG
     // We stop trying to run detour tests in release builds because compiler optimizations
     // and CPU caches make this a nightmare.
-    // FIXME: We have to disable Detour tests for now because they cause a crash.
-    // Detour();
+    Detour();
 #endif
 
     Expected();
@@ -63,6 +63,8 @@ void __cdecl main()
 
     if (isConnectedToTheInternet)
         Socket();
+
+    StfsPackage();
 
     UInt24();
 

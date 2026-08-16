@@ -83,6 +83,7 @@
     <ClInclude Include="src\Memory.h" />
     <ClInclude Include="src\SMC.h" />
     <ClInclude Include="src\Socket.h" />
+    <ClInclude Include="src\StfsPackage.h" />
     <ClInclude Include="src\SystemSocket.h" />
     <ClInclude Include="src\TlsSession.h" />
     <ClInclude Include="src\UInt24.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\SMC.cpp" />
     <ClCompile Include="src\Socket.cpp" />
+    <ClCompile Include="src\StfsPackage.cpp" />
     <ClCompile Include="src\TlsSession.cpp" />
     <ClCompile Include="src\UInt24.cpp" />
     <ClCompile Include="src\Url.cpp" />
