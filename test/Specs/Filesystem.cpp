@@ -540,6 +540,18 @@ void Filesystem()
         TEST_EQ(path.Size(), 38);
     });
 
+    Describe("Fs::MountPath(const std::string &, const std::string &)");
+
+    It("allows a game to access the hard drive", []() {
+        std::ifstream file("MyMount:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+        TEST_EQ(file.is_open(), false);
+
+        Fs::MountPath("MyMount:", "\\Device\\Harddisk0\\Partition1\\");
+        file.open("MyMount:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+
+        TEST_EQ(file.is_open(), true);
+    });
+
     Describe("Fs::MountHdd()");
 
     It("allows a game to access the hard drive", []() {
@@ -550,6 +562,20 @@ void Filesystem()
         file.open("hdd:\\DEVKIT\\XexUtilsTests\\Tests.xex");
 
         TEST_EQ(file.is_open(), true);
+    });
+
+    Describe("Fs::UnmountPath(const std::string &)");
+
+    It("removes the MyMount: symbolic link previously created with MountPath", []() {
+        Fs::MountPath("MyMount:", "\\Device\\Harddisk0\\Partition1\\");
+        std::ifstream file("MyMount:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+        TEST_EQ(file.is_open(), true);
+
+        file.close();
+        Fs::UnmountPath("MyMount:");
+        file.open("MyMount:\\DEVKIT\\XexUtilsTests\\Tests.xex");
+
+        TEST_EQ(file.is_open(), false);
     });
 
     Describe("Fs::UnmountHdd()");
@@ -566,7 +592,7 @@ void Filesystem()
         TEST_EQ(file.is_open(), false);
     });
 
-    Describe("Fs::ReadDirectory()");
+    Describe("Fs::ReadDirectory(const Fs::Path &)");
 
     It("returns a vector a files in a directory", []() {
         auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem");
