@@ -22,7 +22,7 @@ float FloatReturnHook(float a, float b);
 
 void Detour()
 {
-    Describe("Detour::Install");
+    Describe("Detour::Install()");
 
     It("fails if the source function is null", []() {
         pDetour = new XexUtils::Detour(nullptr, NoBranchHook);
@@ -137,7 +137,7 @@ void Detour()
         TEST_EQ(value, 8.0f);
     });
 
-    Describe("Detour::Remove");
+    Describe("Detour::Remove()");
 
     It("removes a the detour", []() {
         pDetour = new XexUtils::Detour(NoBranch, NoBranchHook);
