@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void General()
 {
-    Describe("ResolveExport()");
+    Describe("ResolveExport(const std::string &, uint32_t)");
 
     It("returns a valid pointer when given a valid module name and ordinal", []() {
         void *pFunc = ResolveExport("xam.xex", 656); // XNotifyQueueUI
