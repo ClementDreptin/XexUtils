@@ -42,7 +42,7 @@ void Formatter()
         TEST_EQ(result.size(), 3006);
     });
 
-    Describe("Formatter::ToWide");
+    Describe("Formatter::ToWide()");
 
     It("converts an std::string to an std::wstring using ANSI encoding", []() {
         std::string narrow = "é";
@@ -58,7 +58,7 @@ void Formatter()
         TEST_EQ_W(wide, L"的");
     });
 
-    Describe("Formatter::ToNarrow");
+    Describe("Formatter::ToNarrow()");
 
     It("converts an std::wstring to an std::string using ANSI encoding", []() {
         std::wstring wide = L"é";
