@@ -30,6 +30,10 @@ public:
 
     /// @brief Creates a leaf `Node` of type `Type_String`.
     /// @param value The value.
+    Node(std::string &&value);
+
+    /// @brief Creates a leaf `Node` of type `Type_String`.
+    /// @param value The value.
     Node(const char *value);
 
     /// @brief Creates a leaf `Node` of type `Type_Bool`.

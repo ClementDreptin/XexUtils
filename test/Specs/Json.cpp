@@ -18,10 +18,22 @@ void Json()
     Describe("Json::Node::Node(const std::string &)");
 
     It("constructs a Node from an std::string", []() {
-        Json::Node node(std::string("hello"));
+        std::string string("hello");
+        Json::Node node(string);
 
         TEST_EQ(node.GetType(), Json::Node::Type_String);
         TEST_EQ(node.AsString(), "hello");
+    });
+
+    Describe("Json::Node::Node(std::string &&)");
+
+    It("constructs a Node from a moved std::string", []() {
+        std::string string("hello");
+        Json::Node node(std::move(string));
+
+        TEST_EQ(node.GetType(), Json::Node::Type_String);
+        TEST_EQ(node.AsString(), "hello");
+        TEST_EQ(string.size(), 0);
     });
 
     Describe("Json::Node::Node(const char *)");

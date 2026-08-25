@@ -18,6 +18,11 @@ Node::Node(const std::string &value)
 {
 }
 
+Node::Node(std::string &&value)
+    : m_pParent(nullptr), m_Type(Type_String), m_Data(std::move(value))
+{
+}
+
 Node::Node(const char *value)
     : m_pParent(nullptr), m_Type(Type_String), m_Data(value)
 {
