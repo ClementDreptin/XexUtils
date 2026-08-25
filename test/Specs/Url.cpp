@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void Url()
 {
-    Describe("Url::Parse");
+    Describe("Url::Parse(const std::string &)");
 
     It("returns null when the URL doesn't have a protocol", []() {
         std::string url = "clearly not a url";
@@ -89,6 +89,42 @@ void Url()
         TEST_EQ(parsedUrl->Scheme(), UrlScheme_Https);
         TEST_EQ(parsedUrl->Domain(), "example.com");
         TEST_EQ(parsedUrl->Port(), 1234);
+        TEST_EQ(parsedUrl->Path(), "/path/to/resource");
+    });
+
+    Describe("Url::Scheme()");
+
+    It("returns the scheme of the URL", []() {
+        std::string url = "https://example.com:1234/path/to/resource";
+        auto parsedUrl = Url::Parse(url);
+        TEST_EQ(parsedUrl.HasValue(), true);
+        TEST_EQ(parsedUrl->Scheme(), UrlScheme_Https);
+    });
+
+    Describe("Url::Domain()");
+
+    It("returns the domain of the URL", []() {
+        std::string url = "https://example.com:1234/path/to/resource";
+        auto parsedUrl = Url::Parse(url);
+        TEST_EQ(parsedUrl.HasValue(), true);
+        TEST_EQ(parsedUrl->Domain(), "example.com");
+    });
+
+    Describe("Url::Port()");
+
+    It("returns the port of the URL", []() {
+        std::string url = "https://example.com:1234/path/to/resource";
+        auto parsedUrl = Url::Parse(url);
+        TEST_EQ(parsedUrl.HasValue(), true);
+        TEST_EQ(parsedUrl->Port(), 1234);
+    });
+
+    Describe("Url::Path()");
+
+    It("returns the path of the URL", []() {
+        std::string url = "https://example.com:1234/path/to/resource";
+        auto parsedUrl = Url::Parse(url);
+        TEST_EQ(parsedUrl.HasValue(), true);
         TEST_EQ(parsedUrl->Path(), "/path/to/resource");
     });
 }
