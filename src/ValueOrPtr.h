@@ -22,6 +22,15 @@ public:
         XASSERT(m_Ptr != nullptr);
     }
 
+    /// @brief Assignment operator.
+    /// @param other The other `ValueOrPtr`.
+    /// @return Reference to the current `ValueOrPtr`.
+    inline ValueOrPtr<T> &operator=(const ValueOrPtr<T> &other)
+    {
+        operator*() = *other;
+        return *this;
+    }
+
     /// @brief Dereference operator.
     /// @return The constant value or a constant copy of the value at the pointer.
     inline const T &operator*() const { return m_IsPtr ? *m_Ptr : m_Value; }
@@ -31,25 +40,24 @@ public:
     inline T &operator*() { return m_IsPtr ? *m_Ptr : m_Value; }
 
     /// @brief Address-of operator.
+    /// @return The address of the constant value or the pointer.
+    inline const T *operator&() const { return m_IsPtr ? m_Ptr : &m_Value; }
+
+    /// @brief Address-of operator.
     /// @return The address of the value or the pointer.
-    inline T *operator&() const { return m_IsPtr ? m_Ptr : const_cast<T *>(&m_Value); }
+    inline T *operator&() { return m_IsPtr ? m_Ptr : const_cast<T *>(&m_Value); }
+
+    /// @brief Structure dereference operator.
+    /// @return The address of the constant value or the pointer.
+    inline const T *operator->() const { return operator&(); }
+
+    /// @brief Structure dereference operator.
+    /// @return The address of the value or the pointer.
+    inline T *operator->() { return operator&(); }
 
     /// @brief Conversion operator to type T.
     /// @return The value or the value at the pointer.
     inline operator T() const { return operator*(); }
-
-    /// @brief Conversion operator to pointer of type T.
-    /// @return The address of the value or the pointer.
-    inline operator T *() const { return operator&(); }
-
-    /// @brief Assignment operator.
-    /// @param other The other `ValueOrPtr`.
-    /// @return Reference to the current `ValueOrPtr`.
-    inline ValueOrPtr<T> &operator=(const ValueOrPtr<T> &other)
-    {
-        operator*() = other;
-        return *this;
-    }
 
     /// @brief Unary minus operator.
     /// @return The negated value or the negated value at the pointer.
@@ -155,7 +163,11 @@ public:
 
     /// @brief Pre-increment operator.
     /// @return The incremented value or the incremented value at the pointer.
-    inline ValueOrPtr<T> operator++() { return ++operator*(); }
+    inline ValueOrPtr<T> &operator++()
+    {
+        ++operator*();
+        return *this;
+    }
 
     /// @brief Post-increment operator.
     /// @return The value or the value at the pointer before incrementing.
@@ -163,7 +175,11 @@ public:
 
     /// @brief Pre-decrement operator.
     /// @return The decremented value or the decremented value at the pointer.
-    inline ValueOrPtr<T> operator--() { return --operator*(); }
+    inline ValueOrPtr<T> &operator--()
+    {
+        --operator*();
+        return *this;
+    }
 
     /// @brief Post-decrement operator.
     /// @return The value or the value at the pointer before decrementing.
