@@ -56,6 +56,16 @@ void Socket()
         return total;
     };
 
+    Describe("XexUtils::Socket::Socket(std::string &&, uint16_t, bool)");
+
+    It("creates a socket from a moved domain", []() {
+        std::string domain("example.com");
+        XexUtils::Socket insecureSocket(std::move(domain), 443, true);
+        (void)insecureSocket;
+
+        TEST_EQ(domain.size(), 0);
+    });
+
     Describe("Socket::Connect()");
 
     It("connects using a secure socket", [&]() {

@@ -82,6 +82,12 @@ public:
     /// @param secure Wether to use TLS or not.
     Socket(const std::string &domain, uint16_t port, bool secure = true);
 
+    /// @brief Creates a `Socket`.
+    /// @param domain The domain name to connect to.
+    /// @param port The port to connect to.
+    /// @param secure Wether to use TLS or not.
+    Socket(std::string &&domain, uint16_t port, bool secure = true);
+
     /// @brief Creates a copy from an existing `Socket`.
     /// @param other The other `Socket` to copy from.
     Socket(const Socket &other);
