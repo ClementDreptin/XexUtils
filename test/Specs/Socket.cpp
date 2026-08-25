@@ -56,7 +56,7 @@ void Socket()
         return total;
     };
 
-    Describe("XexUtils::Socket::Socket(std::string &&, uint16_t, bool)");
+    Describe("Socket(std::string &&, uint16_t, bool)");
 
     It("creates a socket from a moved domain", []() {
         std::string domain("example.com");
