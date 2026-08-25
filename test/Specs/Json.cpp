@@ -17,7 +17,16 @@ void Json()
 
     Describe("Json::Node::Node(const std::string &)");
 
-    It("constructs a Node from a string", []() {
+    It("constructs a Node from an std::string", []() {
+        Json::Node node(std::string("hello"));
+
+        TEST_EQ(node.GetType(), Json::Node::Type_String);
+        TEST_EQ(node.AsString(), "hello");
+    });
+
+    Describe("Json::Node::Node(const char *)");
+
+    It("constructs a Node from a const char *", []() {
         Json::Node node("hello");
 
         TEST_EQ(node.GetType(), Json::Node::Type_String);
@@ -51,6 +60,129 @@ void Json()
 
         TEST_EQ(node.GetType(), Json::Node::Type_Null);
         TEST_EQ(node.AsString(), "");
+    });
+
+    Describe("Json::Node::operator[](const std::string &)");
+
+    It("returns the child Node at the key", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_Number);
+        TEST_EQ(foo.AsDouble(), 3);
+    });
+
+    It("throws an exception when the Node doesn't have a child Node at the key", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        bool dummy = true;
+
+        try
+        {
+            obj["bar"];
+            TEST_EQ(dummy, false);
+        }
+        catch (...)
+        {
+            TEST_EQ(dummy, true);
+        }
+    });
+
+    Describe("Json::Node::operator[](size_t)");
+
+    It("returns the array element at the index", []() {
+        auto array = Json::Parse("[1,2,3]");
+        auto second = array[1];
+
+        TEST_EQ(second.GetType(), Json::Node::Type_Number);
+        TEST_EQ(second.AsDouble(), 2);
+    });
+
+    It("throws an exception when the Node doesn't have an array element at the index", []() {
+        auto array = Json::Parse("[1,2,3]");
+        bool dummy = true;
+
+        try
+        {
+            array[6];
+            TEST_EQ(dummy, false);
+        }
+        catch (...)
+        {
+            TEST_EQ(dummy, true);
+        }
+    });
+
+    Describe("Json::Node::AsString()");
+
+    It("returns the raw internal Node data", []() {
+        auto obj = Json::Parse("{\"foo\":3,\"bar\":\"baz\"}");
+        auto foo = obj["foo"];
+        auto bar = obj["bar"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_Number);
+        TEST_EQ(foo.AsString(), "3");
+        TEST_EQ(bar.GetType(), Json::Node::Type_String);
+        TEST_EQ(bar.AsString(), "baz");
+    });
+
+    Describe("Json::Node::AsBool()");
+
+    It("returns true if the internal data is \"true\" and the Node type is bool", []() {
+        auto obj = Json::Parse("{\"foo\":true}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_Bool);
+        TEST_EQ(foo.AsBool(), true);
+    });
+
+    It("returns false if the internal data is \"true\" but the Node type is not bool", []() {
+        auto obj = Json::Parse("{\"foo\":\"true\"}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_String);
+        TEST_EQ(foo.AsBool(), false);
+    });
+
+    It("returns false if the internal data is \"false\" and the Node type is bool", []() {
+        auto obj = Json::Parse("{\"foo\":false}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_Bool);
+        TEST_EQ(foo.AsBool(), false);
+    });
+
+    It("returns false if the Node type is not a bool", []() {
+        auto obj = Json::Parse("{\"foo\":\"bar\"}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_String);
+        TEST_EQ(foo.AsBool(), false);
+    });
+
+    Describe("Json::Node::AsDouble()");
+
+    It("returns a the double if the Node type is number", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_Number);
+        TEST_EQ(foo.AsDouble(), 3);
+    });
+
+    It("returns 0 if the internal data is \"0\" and the Node type is number", []() {
+        auto obj = Json::Parse("{\"foo\":0}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_Number);
+        TEST_EQ(foo.AsDouble(), 0);
+    });
+
+    It("returns 0 if the Node type is not number", []() {
+        auto obj = Json::Parse("{\"foo\":\"bar\"}");
+        auto foo = obj["foo"];
+
+        TEST_EQ(foo.GetType(), Json::Node::Type_String);
+        TEST_EQ(foo.AsDouble(), 0);
     });
 
     Describe("Json::Node::operator=(const std::string &)");
@@ -88,7 +220,7 @@ void Json()
         TEST_EQ(foo.AsString(), "3");
     });
 
-    Describe("Json::Node::AddChild");
+    Describe("Json::Node::AddChild(const std::string &, const Json::Node &)");
 
     It("adds a child to the Node", []() {
         auto obj = Json::Node().AddChild("foo", "bar");
@@ -130,7 +262,7 @@ void Json()
         TEST_EQ(fizzBuzzValue, "baz");
     });
 
-    Describe("Json::Node::AddElement");
+    Describe("Json::Node::AddElement(const Json::Node &)");
 
     It("adds an element to the Node", []() {
         auto array = Json::Node().AddElement("foo");
@@ -172,46 +304,103 @@ void Json()
         TEST_EQ(secondFirstValue, "bar");
     });
 
-    Describe("Json::Node::Has");
+    Describe("Json::Node::GetType()");
 
-    It("returns true when the node is of type object and has a child at the given key", []() {
+    It("returns the Node type", []() {
+        auto array = Json::Parse("[{},[],true,false,\"foo\",3.2,null]");
+        auto first = array[0];
+        auto second = array[1];
+        auto third = array[2];
+        auto fourth = array[3];
+        auto fifth = array[4];
+        auto sixth = array[5];
+        auto seventh = array[6];
+
+        TEST_EQ(first.GetType(), Json::Node::Type_Object);
+        TEST_EQ(second.GetType(), Json::Node::Type_Array);
+        TEST_EQ(third.GetType(), Json::Node::Type_Bool);
+        TEST_EQ(fourth.GetType(), Json::Node::Type_Bool);
+        TEST_EQ(fifth.GetType(), Json::Node::Type_String);
+        TEST_EQ(sixth.GetType(), Json::Node::Type_Number);
+        TEST_EQ(seventh.GetType(), Json::Node::Type_Null);
+    });
+
+    Describe("Json::Node::Has(const std::string &)");
+
+    It("returns true when the Node is of type object and has a child at the given key", []() {
         auto obj = Json::Node().AddChild("foo", "bar");
 
         TEST_EQ(obj.GetType(), Json::Node::Type_Object);
         TEST_EQ(obj.Has("foo"), true);
     });
 
-    It("returns false when the node is of type object but doesn't have a child at the given key", []() {
+    It("returns false when the Node is of type object but doesn't have a child at the given key", []() {
         auto obj = Json::Node().AddChild("foo", "bar");
 
         TEST_EQ(obj.GetType(), Json::Node::Type_Object);
         TEST_EQ(obj.Has("other"), false);
     });
 
-    It("returns false when the node is not of type object", []() {
+    It("returns false when the Node is not of type object", []() {
         auto obj = Json::Node().AddElement("foo");
 
         TEST_EQ(obj.GetType(), Json::Node::Type_Array);
         TEST_EQ(obj.Has("foo"), false);
     });
 
-    Describe("Json::Node::Size");
+    Describe("Json::Node::Size()");
 
-    It("returns the size of the array elements when the node is of type array", []() {
+    It("returns the size of the array elements when the Node is of type array", []() {
         auto array = Json::Node().AddElement("foo").AddElement("bar");
 
         TEST_EQ(array.GetType(), Json::Node::Type_Array);
         TEST_EQ(array.Size(), 2);
     });
 
-    It("returns 0 when the node is not of type array", []() {
+    It("returns 0 when the Node is not of type array", []() {
         auto obj = Json::Node().AddChild("foo", "bar");
 
         TEST_EQ(obj.GetType(), Json::Node::Type_Object);
         TEST_EQ(obj.Size(), 0);
     });
 
-    Describe("Json::Parse");
+    Describe("Json::Node::GetChildren()");
+
+    It("returns the children as an std::unordered_map<std::string, Node>", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        const auto &children = obj.GetChildren();
+
+        TEST_EQ(children.size(), 1);
+        TEST_EQ(children.at("foo").AsString(), "3");
+    });
+
+    It("returns an empty std::unordered_map<std::string, Node> when the Node is not of type object", []() {
+        auto array = Json::Parse("[1,2,3]");
+        const auto &children = array.GetChildren();
+
+        TEST_EQ(children.size(), 0);
+    });
+
+    Describe("Json::Node::GetArrayElements()");
+
+    It("returns the array elements as an std::vector<Node>", []() {
+        auto array = Json::Parse("[1,2,3]");
+        const auto &arrayElements = array.GetArrayElements();
+
+        TEST_EQ(arrayElements.size(), 3);
+        TEST_EQ(arrayElements[0].AsString(), "1");
+        TEST_EQ(arrayElements[1].AsString(), "2");
+        TEST_EQ(arrayElements[2].AsString(), "3");
+    });
+
+    It("returns an empty std::vector<Node> when the Node is not of type array", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        const auto &arrayElements = obj.GetArrayElements();
+
+        TEST_EQ(arrayElements.size(), 0);
+    });
+
+    Describe("Json::Parse(const std::string &)");
 
     It("parses an empty object", []() {
         auto obj = Json::Parse("{}");
@@ -513,7 +702,7 @@ void Json()
         TEST_EQ(value, "world");
     });
 
-    Describe("Json::Stringify");
+    Describe("Json::Stringify(const Json::Node &)");
 
     It("stringifies an empty object", []() {
         std::string inputString = "{}";
