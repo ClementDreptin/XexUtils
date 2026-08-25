@@ -7,14 +7,14 @@ using namespace TestRunner;
 
 void Optional()
 {
-    Describe("Optional: default constructor");
+    Describe("Optional<T>()");
 
     It("constructs an empty Optional", []() {
         auto opt = XexUtils::Optional<int>();
         TEST_EQ(opt.HasValue(), false);
     });
 
-    Describe("Optional: value constructor");
+    Describe("Optional<T>(const T &)");
 
     It("constructs a valid Optional from a value", []() {
         int value = 3;
@@ -23,7 +23,7 @@ void Optional()
         TEST_EQ(opt.Value(), 3);
     });
 
-    Describe("Optional: rvalue reference constructor");
+    Describe("Optional<T>(T &&)");
 
     It("constructs a valid Optional from an rvalue reference", []() {
         std::string str = "some text";
@@ -33,14 +33,14 @@ void Optional()
         TEST_EQ(str.size(), 0);
     });
 
-    Describe("Optional: NullOpt constructor");
+    Describe("Optional<T>(NullOpt)");
 
     It("constructs an empty Optional from a NullOpt", []() {
         auto opt = XexUtils::Optional<int>(NullOpt());
         TEST_EQ(opt.HasValue(), false);
     });
 
-    Describe("Optional: copy constructor");
+    Describe("Optional<T>(const Optional &)");
 
     It("doesn't do anything when copying A into B if A is empty", []() {
         auto A = XexUtils::Optional<int>();
@@ -55,7 +55,7 @@ void Optional()
         TEST_EQ(B.Value(), 3);
     });
 
-    Describe("Optional: move constructor");
+    Describe("Optional<T>(Optional &&other)");
 
     It("doesn't do anything when moving A into B if A is empty", []() {
         auto A = XexUtils::Optional<int>();
@@ -71,7 +71,7 @@ void Optional()
         TEST_EQ(A.HasValue(), false);
     });
 
-    Describe("Optional: value assignment");
+    Describe("Optional<T>::operator=(const T &)");
 
     It("sets the Optional to the value when it already has a value", []() {
         auto opt = XexUtils::Optional<int>(3);
@@ -92,7 +92,7 @@ void Optional()
         TEST_EQ(opt.Value(), value);
     });
 
-    Describe("Optional: rvalue reference assignment");
+    Describe("Optional<T>::operator=(T &&)");
 
     It("moves the value into the Optional when it already has a value", []() {
         std::string str = "new text";
@@ -115,7 +115,7 @@ void Optional()
         TEST_EQ(str.size(), 0);
     });
 
-    Describe("Optional: NullOpt assignment");
+    Describe("Optional<T>::operator=(NullOpt)");
 
     It("destroys the Optional", []() {
         auto opt = XexUtils::Optional<int>(3);
@@ -125,7 +125,7 @@ void Optional()
         TEST_EQ(opt.HasValue(), false);
     });
 
-    Describe("Optional: copy assignment");
+    Describe("Optional<T>::operator=(const Optional &)");
 
     It("doesn't do anything when assigning an Optional to itself", []() {
         auto opt = XexUtils::Optional<int>(3);
@@ -172,7 +172,7 @@ void Optional()
         TEST_EQ(B.HasValue(), false);
     });
 
-    Describe("Optional: move assignment");
+    Describe("Optional<T>::operator=(Optional &&)");
 
     It("doesn't do anything when moving an Optional to itself", []() {
         auto opt = XexUtils::Optional<int>(3);
@@ -221,7 +221,21 @@ void Optional()
         TEST_EQ(B.HasValue(), false);
     });
 
-    Describe("Optional: operator bool()");
+    Describe("Optional<T>::HasValue()");
+
+    It("returns true when the Optional is valid", []() {
+        auto opt = XexUtils::Optional<int>(3);
+        bool valid = opt.HasValue();
+        TEST_EQ(valid, true);
+    });
+
+    It("returns false when the Optional is empty", []() {
+        auto opt = XexUtils::Optional<int>();
+        bool valid = opt.HasValue();
+        TEST_EQ(valid, false);
+    });
+
+    Describe("Optional<T>::operator bool()");
 
     It("returns true when the Optional is valid", []() {
         auto opt = XexUtils::Optional<int>(3);
@@ -235,31 +249,57 @@ void Optional()
         TEST_EQ(valid, false);
     });
 
-    Describe("Optional: operator*");
+    Describe("Optional<T>::Value()");
+
+    It("returns the value", []() {
+        auto opt = XexUtils::Optional<int>(3);
+        TEST_EQ(opt.Value(), 3);
+    });
+
+    Describe("Optional<T>::operator*()");
 
     It("returns the value", []() {
         auto opt = XexUtils::Optional<int>(3);
         TEST_EQ(*opt, 3);
     });
 
-    Describe("Optional: operator->");
+    Describe("Optional<T>::operator->()");
 
     It("returns a pointer to the value", []() {
         auto opt = XexUtils::Optional<std::string>("some text");
         TEST_EQ(opt->size(), 9);
     });
 
-    Describe("Optional: ValueOr");
+    Describe("Optional<T>::ValueOr(const T &)");
 
     It("returns the value when the Optional is valid", []() {
         auto opt = XexUtils::Optional<int>(3);
-        int value = opt.ValueOr(4);
+        int defaultValue = 4;
+        int value = opt.ValueOr(defaultValue);
         TEST_EQ(value, 3);
     });
 
     It("returns the default value when the Optional is empty", []() {
         auto opt = XexUtils::Optional<int>();
-        int value = opt.ValueOr(4);
+        int defaultValue = 4;
+        int value = opt.ValueOr(defaultValue);
         TEST_EQ(value, 4);
+    });
+
+    Describe("Optional<T>::ValueOr(T &&)");
+
+    It("returns the value when the Optional is valid", []() {
+        auto opt = XexUtils::Optional<std::string>("some text");
+        std::string defaultValue = "some default text";
+        std::string value = opt.ValueOr(std::move(defaultValue));
+        TEST_EQ(value, "some text");
+    });
+
+    It("returns the default value when the Optional is empty", []() {
+        auto opt = XexUtils::Optional<std::string>();
+        std::string defaultValue = "some default text";
+        std::string value = opt.ValueOr(std::move(defaultValue));
+        TEST_EQ(value, "some default text");
+        TEST_EQ(defaultValue.size(), 0);
     });
 }
