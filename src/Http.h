@@ -24,6 +24,10 @@ public:
     void AddECTrustAnchor(const Socket::EllipticCurveTrustAnchor &trustAnchor);
 
     /// @brief Adds an Elliptic Curve trust anchor.
+    /// @param trustAnchor The elliptic curve trust anchor info.
+    void AddECTrustAnchor(Socket::EllipticCurveTrustAnchor &&trustAnchor);
+
+    /// @brief Adds an Elliptic Curve trust anchor.
     /// @param dn The distinguished name.
     /// @param dnSize The amount of bytes in `dn`.
     /// @param q The public key curve point.
@@ -34,6 +38,10 @@ public:
     /// @brief Adds an RSA trust anchor.
     /// @param trustAnchor The RSA trust anchor info.
     void AddRsaTrustAnchor(const Socket::RsaTrustAnchor &trustAnchor);
+
+    /// @brief Adds an RSA trust anchor.
+    /// @param trustAnchor The RSA trust anchor info.
+    void AddRsaTrustAnchor(Socket::RsaTrustAnchor &&trustAnchor);
 
     /// @brief Adds an RSA trust anchor.
     /// @param dn The distinguished name.
