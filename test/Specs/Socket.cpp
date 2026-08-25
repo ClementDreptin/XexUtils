@@ -7,8 +7,6 @@ using namespace TestRunner;
 
 void Socket()
 {
-    Describe("Socket");
-
     const uint8_t EC_DN[] = {
         0x30, 0x47, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
         0x02, 0x55, 0x53, 0x31, 0x22, 0x30, 0x20, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -58,51 +56,109 @@ void Socket()
         return total;
     };
 
+    Describe("Socket::Connect()");
+
     It("connects using a secure socket", [&]() {
-        HRESULT hr = S_OK;
-
         XexUtils::Socket secureSocket(domain, 443, true);
-        hr = secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
-        TEST_EQ(hr, S_OK);
-
-        hr = secureSocket.Connect();
-        TEST_EQ(hr, S_OK);
-    });
-
-    It("connects using an insecure socket", [&]() {
-        XexUtils::Socket secureSocket(domain, 80, false);
+        secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
 
         HRESULT hr = secureSocket.Connect();
         TEST_EQ(hr, S_OK);
     });
 
-    It("sends and receives data using a secure socket", [&]() {
-        HRESULT hr = S_OK;
-
-        XexUtils::Socket secureSocket(domain, 443, true);
-        hr = secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
-        TEST_EQ(hr, S_OK);
-
-        hr = secureSocket.Connect();
-        TEST_EQ(hr, S_OK);
-
-        int sent = secureSocket.Send(request.c_str(), request.size());
-        TEST_EQ(sent, static_cast<int>(request.size()));
-
-        size_t received = FlushSocket(secureSocket);
-        TEST_EQ(received > 0, true);
-    });
-
-    It("sends and receives data using an insecure socket", [&]() {
+    It("connects using an insecure socket", [&]() {
         XexUtils::Socket insecureSocket(domain, 80, false);
 
         HRESULT hr = insecureSocket.Connect();
         TEST_EQ(hr, S_OK);
+    });
+
+    // NOTE: We can't easily test Disconnect() because trying to call Send() after
+    // disconnecting triggers a breakpoint.
+
+    Describe("Socket::Send(const char *, size_t)");
+
+    It("sends data using a secure socket", [&]() {
+        XexUtils::Socket secureSocket(domain, 443, true);
+        secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
+        secureSocket.Connect();
+
+        int sent = secureSocket.Send(request.c_str(), request.size());
+        FlushSocket(secureSocket);
+        TEST_EQ(sent, static_cast<int>(request.size()));
+    });
+
+    It("sends data using an insecure socket", [&]() {
+        XexUtils::Socket insecureSocket(domain, 80, false);
+        insecureSocket.Connect();
 
         int sent = insecureSocket.Send(request.c_str(), request.size());
+        FlushSocket(insecureSocket);
         TEST_EQ(sent, static_cast<int>(request.size()));
+    });
 
-        size_t received = FlushSocket(insecureSocket);
+    Describe("Socket::Receive(char *, size_t)");
+
+    It("receives data using a secure socket", [&]() {
+        XexUtils::Socket secureSocket(domain, 443, true);
+        secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
+        secureSocket.Connect();
+        secureSocket.Send(request.c_str(), request.size());
+
+        char buffer[2048] = {};
+        int received = secureSocket.Receive(buffer, sizeof(buffer));
+        FlushSocket(secureSocket);
         TEST_EQ(received > 0, true);
+    });
+
+    It("receives data using a secure socket", [&]() {
+        XexUtils::Socket insecureSocket(domain, 80, false);
+        insecureSocket.Connect();
+        insecureSocket.Send(request.c_str(), request.size());
+
+        char buffer[2048] = {};
+        int received = insecureSocket.Receive(buffer, sizeof(buffer));
+        FlushSocket(insecureSocket);
+        TEST_EQ(received > 0, true);
+    });
+
+    Describe("Socket::AddECTrustAnchor(const uint8_t *, size_t, const uint8_t *, size_t, Socket::EllipticCurveType)");
+
+    It("adds an elliptic curve trust anchor to a secure socket", [&]() {
+        XexUtils::Socket secureSocket(domain, 443, true);
+        HRESULT hr = secureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
+
+        TEST_EQ(hr, S_OK);
+    });
+
+    It("fails to add an elliptic curve trust anchor to an insecure socket", [&]() {
+        XexUtils::Socket insecureSocket(domain, 80, false);
+        HRESULT hr = insecureSocket.AddECTrustAnchor(EC_DN, sizeof(EC_DN), EC_Q, sizeof(EC_Q), XexUtils::Socket::Curve_secp384r1);
+
+        TEST_EQ(hr, E_FAIL);
+    });
+
+    Describe("Socket::AddRsaTrustAnchor(const uint8_t *, size_t, const uint8_t *, size_t, const uint8_t *, size_t)");
+
+    It("adds an RSA trust anchor to a secure socket", [&]() {
+        // AddRsaTrustAnchor doesn't check the validity of the RSA data, the only way for
+        // it to fail is when adding an RSA trust anchor to an insecure socket.
+        const uint8_t dummyData[] = { 1, 2, 3 };
+
+        XexUtils::Socket secureSocket(domain, 443, true);
+        HRESULT hr = secureSocket.AddRsaTrustAnchor(dummyData, sizeof(dummyData), dummyData, sizeof(dummyData), dummyData, sizeof(dummyData));
+
+        TEST_EQ(hr, S_OK);
+    });
+
+    It("fails to add an RSA trust anchor to an insecure socket", [&]() {
+        // AddRsaTrustAnchor doesn't check the validity of the RSA data, the only way for
+        // it to fail is when adding an RSA trust anchor to an insecure socket.
+        const uint8_t dummyData[] = { 1, 2, 3 };
+
+        XexUtils::Socket insecureSocket(domain, 80, false);
+        HRESULT hr = insecureSocket.AddRsaTrustAnchor(dummyData, sizeof(dummyData), dummyData, sizeof(dummyData), dummyData, sizeof(dummyData));
+
+        TEST_EQ(hr, E_FAIL);
     });
 }
