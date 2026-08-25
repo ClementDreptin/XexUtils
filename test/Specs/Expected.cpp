@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void Expected()
 {
-    Describe("Unexpected(const E &)");
+    Describe("Unexpected<E>(const E &)");
 
     It("constructs an Unexpected from an error", []() {
         std::string error = "error";
@@ -15,7 +15,7 @@ void Expected()
         TEST_EQ(unexp.Error(), "error");
     });
 
-    Describe("Unexpected(E &&)");
+    Describe("Unexpected<E>(E &&)");
 
     It("constructs an Unexpected from an rvalue reference to an error", []() {
         std::string error = "error";
@@ -24,7 +24,15 @@ void Expected()
         TEST_EQ(error.size(), 0);
     });
 
-    Describe("Expected()");
+    Describe("Unexpected<E>::Error()");
+
+    It("returns the error inside the Unexpected", []() {
+        std::string error = "error";
+        auto unexp = XexUtils::Unexpected<std::string>(error);
+        TEST_EQ(unexp.Error(), "error");
+    });
+
+    Describe("Expected<T, E>()");
 
     It("constructs an Expected from the default value of the value type", []() {
         auto exp = XexUtils::Expected<int, std::string>();
@@ -32,7 +40,7 @@ void Expected()
         TEST_EQ(exp.Value(), int());
     });
 
-    Describe("Expected(const T &)");
+    Describe("Expected<T, E>(const T &)");
 
     It("constructs an Expected from a value", []() {
         int value = 3;
@@ -41,7 +49,7 @@ void Expected()
         TEST_EQ(exp.Value(), 3);
     });
 
-    Describe("Expected(T &&)");
+    Describe("Expected<T, E>(T &&)");
 
     It("constructs an Expected from an rvalue reference", []() {
         std::string value = "some text";
@@ -51,7 +59,7 @@ void Expected()
         TEST_EQ(value.size(), 0);
     });
 
-    Describe("Expected(const Unexpected<E> &)");
+    Describe("Expected<T, E>(const Unexpected<E> &)");
 
     It("constructs an Expected with an error from an Unexpected", []() {
         auto unexp = XexUtils::Unexpected<std::string>("error");
@@ -60,7 +68,7 @@ void Expected()
         TEST_EQ(exp.Error(), "error");
     });
 
-    Describe("Expected(Unexpected<E> &&)");
+    Describe("Expected<T, E>(Unexpected<E> &&)");
 
     It("constructs an Expected with an error from an Unexpected rvalue reference", []() {
         auto unexp = XexUtils::Unexpected<std::string>("error");
@@ -70,7 +78,7 @@ void Expected()
         TEST_EQ(unexp.Error(), "");
     });
 
-    Describe("Expected(const Expected &)");
+    Describe("Expected<T, E>(const Expected &)");
 
     It("constructs an Expected with a value from an Expected with a value", []() {
         auto A = XexUtils::Expected<int, std::string>(3);
@@ -86,7 +94,7 @@ void Expected()
         TEST_EQ(B.Error(), "error");
     });
 
-    Describe("Expected(Expected &&)");
+    Describe("Expected<T, E>(Expected &&)");
 
     It("constructs an Expected with a value from an rvalue reference to an Expected with a value", []() {
         auto A = XexUtils::Expected<int, std::string>(3);
@@ -102,7 +110,7 @@ void Expected()
         TEST_EQ(B.Error(), "error");
     });
 
-    Describe("Expected::operator=(const T &)");
+    Describe("Expected<T, E>::operator=(const T &)");
 
     It("sets the value of the Expected", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
@@ -114,7 +122,7 @@ void Expected()
         TEST_EQ(exp.Value(), 4);
     });
 
-    Describe("Expected::operator=(T &&)");
+    Describe("Expected<T, E>::operator=(T &&)");
 
     It("sets the value of the Expected", []() {
         auto exp = XexUtils::Expected<std::string, int>("some text");
@@ -127,7 +135,7 @@ void Expected()
         TEST_EQ(otherText.size(), 0);
     });
 
-    Describe("Expected::operator=(const Unexpected<E> &)");
+    Describe("Expected<T, E>::operator=(const Unexpected<E> &)");
 
     It("sets the error of the Expected to the error of the Unexpected", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
@@ -139,7 +147,7 @@ void Expected()
         TEST_EQ(exp.Error(), "error");
     });
 
-    Describe("Expected::operator=(Unexpected<E> &&)");
+    Describe("Expected<T, E>::operator=(Unexpected<E> &&)");
 
     It("sets the error of the Expected to the error of the Unexpected", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
@@ -151,7 +159,7 @@ void Expected()
         TEST_EQ(exp.Error(), "error");
     });
 
-    Describe("Expected::operator=(const Expected &)");
+    Describe("Expected<T, E>::operator=(const Expected &)");
 
     It("doesn't do anything when assigning an Expected to itself", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
@@ -180,7 +188,7 @@ void Expected()
         TEST_EQ(B.Error(), "errorA");
     });
 
-    Describe("Expected::operator=(Expected &&)");
+    Describe("Expected<T, E>::operator=(Expected &&)");
 
     It("doesn't do anything when moving an Expected to itself", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
@@ -209,7 +217,7 @@ void Expected()
         TEST_EQ(B.Error(), "errorA");
     });
 
-    Describe("Expected::operator bool()");
+    Describe("Expected<T, E>::operator bool()");
 
     It("returns true when the Expected has a value", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
@@ -223,21 +231,21 @@ void Expected()
         TEST_EQ(hasValue, false);
     });
 
-    Describe("Expected::operator*()");
+    Describe("Expected<T, E>::operator*()");
 
     It("returns the value", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
         TEST_EQ(*exp, 3);
     });
 
-    Describe("Expected::operator->()");
+    Describe("Expected<T, E>::operator->()");
 
     It("returns a pointer to the value", []() {
         auto opt = XexUtils::Expected<std::string, int>("some text");
         TEST_EQ(opt->size(), 9);
     });
 
-    Describe("Expected:ValueOr(const T &)");
+    Describe("Expected<T, E>::ValueOr(const T &)");
 
     It("returns the value when the Expected has a value", []() {
         auto exp = XexUtils::Expected<int, std::string>(3);
@@ -253,7 +261,7 @@ void Expected()
         TEST_EQ(value, 4);
     });
 
-    Describe("Expected:ValueOr(T &&)");
+    Describe("Expected<T, E>::ValueOr(T &&)");
 
     It("returns the value when the Expected has a value", []() {
         auto exp = XexUtils::Expected<std::string, std::string>("some text");
@@ -270,7 +278,7 @@ void Expected()
         TEST_EQ(defaultValue.size(), 0);
     });
 
-    Describe("Expected::ErrorOr(const E &)");
+    Describe("Expected<T, E>::ErrorOr(const E &)");
 
     It("returns the error when the Expected has an error", []() {
         auto exp = XexUtils::Expected<int, std::string>(XexUtils::Unexpected<std::string>("error"));
@@ -286,7 +294,7 @@ void Expected()
         TEST_EQ(error, "default error");
     });
 
-    Describe("Expected::ErrorOr(E &&)");
+    Describe("Expected<T, E>::ErrorOr(E &&)");
 
     It("returns the error when the Expected has an error", []() {
         auto exp = XexUtils::Expected<int, std::string>(XexUtils::Unexpected<std::string>("error"));
