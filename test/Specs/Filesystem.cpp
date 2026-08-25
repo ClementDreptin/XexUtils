@@ -85,6 +85,15 @@ void Filesystem()
         TEST_EQ(newPath.String(), "C:\\Windows\\System32File.txt");
     });
 
+    Describe("Fs::operator<<(std::ostream &, const Fs::Path &)");
+
+    It("writes the Path to the output stream", []() {
+        std::ostringstream os;
+        os << Fs::Path("C:\\Windows\\System32\\Documents\\File.txt");
+
+        TEST_EQ(os.str(), "C:\\Windows\\System32\\Documents\\File.txt");
+    });
+
     Describe("Fs::Path::operator/=(const Fs::Path &)");
 
     It("appends a Path with a leading separator to a Path without a trailing separator", []() {
