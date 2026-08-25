@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void Memory()
 {
-    Describe("Memory::Write");
+    Describe("Memory::Write(void *, const T &)");
 
     It("doesn't do anything when trying to write to an invalid address", []() {
         Memory::Write<float>(nullptr, 3.0f); // Just make sure we don't crash
@@ -20,7 +20,7 @@ void Memory()
         TEST_EQ(value, 2.0f);
     });
 
-    Describe("Memory::Read");
+    Describe("Memory::Read(const void *)");
 
     It("doesn't crash and returns the default value for the type when given an invalid address", []() {
         float value = Memory::Read<float>(nullptr);
