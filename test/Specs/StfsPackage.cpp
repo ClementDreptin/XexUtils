@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void StfsPackage()
 {
-    Describe("StfsPackage::ReadHeader");
+    Describe("StfsPackage::ReadHeader()");
 
     It("reads the header of a theme package", []() {
         XexUtils::StfsPackage nxeart("game:\\fixtures\\stfs\\nxeart");
@@ -48,7 +48,7 @@ void StfsPackage()
         TEST_EQ(header.HasValue(), false);
     });
 
-    Describe("StfsPackage::ReadMetadata");
+    Describe("StfsPackage::ReadMetadata()");
 
     It("reads the metadata of a theme package", []() {
         XexUtils::StfsPackage nxeart("game:\\fixtures\\stfs\\nxeart");
@@ -142,7 +142,7 @@ void StfsPackage()
         TEST_EQ(metadata.HasValue(), false);
     });
 
-    Describe("StfsPackage::Mount");
+    Describe("StfsPackage::Mount(const std::string &)");
 
     It("mounts the files of a theme package", []() {
         XexUtils::StfsPackage nxeart("game:\\fixtures\\stfs\\nxeart");
@@ -202,7 +202,7 @@ void StfsPackage()
         TEST_EQ(hr, ERROR_FILE_NOT_FOUND);
     });
 
-    Describe("StfsPackage::Unmount");
+    Describe("StfsPackage::Unmount()");
 
     It("unmounts the files of a theme package", []() {
         XexUtils::StfsPackage nxeart("game:\\fixtures\\stfs\\nxeart");
