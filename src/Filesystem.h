@@ -18,6 +18,10 @@ public:
     /// @param path The string representing the path.
     Path(const std::string &path);
 
+    /// @brief Creates a `Path` object from a moved string.
+    /// @param path The string representing the path.
+    Path(std::string &&path);
+
     /// @brief Creates a `Path` object from a given string.
     /// @param path The string representing the path.
     Path(const char *path);

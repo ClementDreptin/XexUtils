@@ -23,10 +23,11 @@ void Filesystem()
         TEST_EQ(path.String(), "");
     });
 
-    Describe("Fs::Path::Path(const std::string &)");
+    Describe("Fs::Path(const std::string &)");
 
     It("creates a Path from an std::string", []() {
-        Fs::Path path(std::string("C:\\Windows\\System32\\Documents\\File.txt"));
+        std::string string("C:\\Windows\\System32\\Documents\\File.txt");
+        Fs::Path path(string);
 
         TEST_EQ(path.Drive(), "C:");
         TEST_EQ(path.Basename(), "File");
@@ -38,7 +39,24 @@ void Filesystem()
         TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
     });
 
-    Describe("Fs::Path::Path(const char *)");
+    Describe("Fs::Path(std::string &&)");
+
+    It("creates a Path from a moved std::string", []() {
+        std::string string("C:\\Windows\\System32\\Documents\\File.txt");
+        Fs::Path path(std::move(string));
+
+        TEST_EQ(path.Drive(), "C:");
+        TEST_EQ(path.Basename(), "File");
+        TEST_EQ(path.Extension(), ".txt");
+        TEST_EQ(path.Filename(), "File.txt");
+        TEST_EQ(path.Parent(), "C:\\Windows\\System32\\Documents");
+        TEST_EQ(path.RelativePath(), "\\Windows\\System32\\Documents\\File.txt");
+        TEST_EQ(path.IsRoot(), false);
+        TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+        TEST_EQ(string.size(), 0);
+    });
+
+    Describe("Fs::Path(const char *)");
 
     It("creates a Path from a const char *", []() {
         Fs::Path path("C:\\Windows\\System32\\Documents\\File.txt");

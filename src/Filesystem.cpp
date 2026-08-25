@@ -19,6 +19,11 @@ Path::Path(const std::string &path)
 {
 }
 
+Path::Path(std::string &&path)
+    : m_Path(std::move(path))
+{
+}
+
 Path::Path(const char *path)
     : m_Path(path)
 {
