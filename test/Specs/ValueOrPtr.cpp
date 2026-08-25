@@ -15,6 +15,16 @@ void ValueOrPtr()
         TEST_EQ(valueOrPtr, 3);
     });
 
+    Describe("ValueOrPtr<T>(T &&)");
+
+    It("creates a ValueOrPtr from a moved value", []() {
+        std::string value = "hello";
+        XexUtils::ValueOrPtr<std::string> valueOrPtr(std::move(value));
+
+        TEST_EQ(*valueOrPtr, "hello");
+        TEST_EQ(value.size(), 0);
+    });
+
     Describe("ValueOrPtr<T>(T *)");
 
     It("creates a ValueOrPtr from a pointer", []() {

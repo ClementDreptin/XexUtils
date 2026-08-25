@@ -14,6 +14,11 @@ public:
     ValueOrPtr(const T &value)
         : m_Value(value), m_Ptr(nullptr), m_IsPtr(false) {}
 
+    /// @brief Creates a `ValueOrPtr` from a value.
+    /// @param value The value.
+    ValueOrPtr(T &&value)
+        : m_Value(std::move(value)), m_Ptr(nullptr), m_IsPtr(false) {}
+
     /// @brief Creates a `ValueOrPtr` from a pointer.
     /// @param ptr The pointer.
     ValueOrPtr(T *ptr)
