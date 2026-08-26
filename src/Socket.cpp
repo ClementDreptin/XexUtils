@@ -7,8 +7,16 @@
 namespace XexUtils
 {
 
+static CRITICAL_SECTION CreateInitializedCriticalSection()
+{
+    CRITICAL_SECTION criticalSection;
+    InitializeCriticalSection(&criticalSection);
+    return criticalSection;
+}
+
 bool Socket::s_Initialized = false;
 size_t Socket::s_ReferenceCounter = 0;
+CRITICAL_SECTION Socket::s_CriticalSection = CreateInitializedCriticalSection();
 
 Socket::Socket()
     : m_Socket(INVALID_SOCKET), m_Port(0), m_Secure(false), m_Connected(false)
@@ -44,12 +52,18 @@ Socket::~Socket()
 HRESULT Socket::Connect()
 {
     // Execute the global initialization when connecting with a socket for the first time
+    EnterCriticalSection(&s_CriticalSection);
     if (s_ReferenceCounter == 0 && s_Initialized == false)
     {
         HRESULT hr = GlobalInit();
         if (FAILED(hr))
+        {
+            LeaveCriticalSection(&s_CriticalSection);
             return hr;
+        }
     }
+    s_ReferenceCounter++;
+    LeaveCriticalSection(&s_CriticalSection);
 
     // Resolve domain to IP address
     IN_ADDR ipAddress = DnsLookup();
@@ -93,8 +107,6 @@ HRESULT Socket::Connect()
 
     m_Connected = true;
 
-    s_ReferenceCounter++;
-
     return S_OK;
 }
 
@@ -105,16 +117,18 @@ void Socket::Disconnect()
     {
         shutdown(m_Socket, SD_BOTH);
         closesocket(m_Socket);
+        m_Socket = INVALID_SOCKET;
     }
 
     m_Connected = false;
 
+    // Once the amount of connected sockets hits 0, execute the global cleanup
+    EnterCriticalSection(&s_CriticalSection);
     if (s_ReferenceCounter != 0)
         s_ReferenceCounter--;
-
-    // Once the amount of connected sockets hits 0, execute the global cleanup
     if (s_ReferenceCounter == 0 && s_Initialized == true)
         GlobalCleanup();
+    LeaveCriticalSection(&s_CriticalSection);
 }
 
 int Socket::Send(const char *buffer, size_t size)

@@ -186,6 +186,7 @@ private:
 private:
     static bool s_Initialized;
     static size_t s_ReferenceCounter;
+    static CRITICAL_SECTION s_CriticalSection;
 
     static HRESULT GlobalInit();
 
