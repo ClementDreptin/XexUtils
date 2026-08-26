@@ -179,7 +179,7 @@ private:
     uint16_t m_Port;
     bool m_Secure;
     bool m_Connected;
-    TlsSession *m_pTlsSession;
+    std::unique_ptr<TlsSession> m_pTlsSession;
 
     IN_ADDR DnsLookup();
 

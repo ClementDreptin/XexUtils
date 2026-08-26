@@ -11,38 +11,34 @@ bool Socket::s_Initialized = false;
 size_t Socket::s_ReferenceCounter = 0;
 
 Socket::Socket()
-    : m_Socket(INVALID_SOCKET), m_Port(0), m_Secure(false), m_Connected(false), m_pTlsSession(nullptr)
+    : m_Socket(INVALID_SOCKET), m_Port(0), m_Secure(false), m_Connected(false)
 {
 }
 
 Socket::Socket(const std::string &domain, uint16_t port, bool secure)
-    : m_Socket(INVALID_SOCKET), m_Domain(domain), m_Port(port), m_Secure(secure), m_Connected(false), m_pTlsSession(nullptr)
+    : m_Socket(INVALID_SOCKET), m_Domain(domain), m_Port(port), m_Secure(secure), m_Connected(false)
 {
     if (m_Secure)
-        m_pTlsSession = new TlsSession();
+        m_pTlsSession = std::unique_ptr<TlsSession>(new TlsSession());
 }
 
 Socket::Socket(std::string &&domain, uint16_t port, bool secure)
-    : m_Socket(INVALID_SOCKET), m_Domain(std::move(domain)), m_Port(port), m_Secure(secure), m_Connected(false), m_pTlsSession(nullptr)
+    : m_Socket(INVALID_SOCKET), m_Domain(std::move(domain)), m_Port(port), m_Secure(secure), m_Connected(false)
 {
     if (m_Secure)
-        m_pTlsSession = new TlsSession();
+        m_pTlsSession = std::unique_ptr<TlsSession>(new TlsSession());
 }
 
 Socket::Socket(const Socket &other)
-    : m_Socket(INVALID_SOCKET), m_Domain(other.m_Domain), m_Port(other.m_Port), m_Secure(other.m_Secure), m_Connected(false), m_pTlsSession(nullptr)
+    : m_Socket(INVALID_SOCKET), m_Domain(other.m_Domain), m_Port(other.m_Port), m_Secure(other.m_Secure), m_Connected(false)
 {
     if (m_Secure)
-        m_pTlsSession = new TlsSession();
+        m_pTlsSession = std::unique_ptr<TlsSession>(new TlsSession());
 }
 
 Socket::~Socket()
 {
     Disconnect();
-
-    // Cleanup the TLS session if one was created
-    if (m_pTlsSession != nullptr)
-        delete m_pTlsSession;
 }
 
 HRESULT Socket::Connect()
