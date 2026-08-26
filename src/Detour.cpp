@@ -32,6 +32,13 @@ namespace XexUtils
 #define STD(rS, DS, rA) (0xF8000000 | ((rS) << 21) | ((rA) << 16) | ((int16_t)(DS) & MASK_N_BITS(16)))
 #define LD(rS, DS, rA) (0xE8000000 | ((rS) << 21) | ((rA) << 16) | ((int16_t)(DS) & MASK_N_BITS(16)))
 
+static CRITICAL_SECTION CreateInitializedCriticalSection()
+{
+    CRITICAL_SECTION criticalSection;
+    InitializeCriticalSection(&criticalSection);
+    return criticalSection;
+}
+
 #pragma section(".text")
 
 // This will hold all the instructions for all stubs. Allocating in an executable section
@@ -39,7 +46,7 @@ namespace XexUtils
 // but this is necessary on Xenia, which emulates retail hardware
 __declspec(allocate(".text")) Detour::POWERPC_INSTRUCTION Detour::s_Stubs[MAX_DETOUR_COUNT][MAX_INSTRUCTIONS_IN_STUB];
 bool Detour::s_UsedSlots[MAX_DETOUR_COUNT] = {};
-CRITICAL_SECTION Detour::s_CriticalSection = {};
+CRITICAL_SECTION Detour::s_CriticalSection = CreateInitializedCriticalSection();
 
 Detour::Detour()
     : m_pSource(nullptr), m_pDestination(nullptr), m_SlotIndex(static_cast<size_t>(-1))
@@ -86,10 +93,6 @@ HRESULT Detour::Install()
         DebugPrint("[XexUtils][Detour]: Error: This detour has already been installed.");
         return E_FAIL;
     }
-
-    // Initialize the synchronization object for the first instance
-    if (s_CriticalSection.Synchronization.RawEvent[0] == 0)
-        InitializeCriticalSection(&s_CriticalSection);
 
     // Grab the lock
     EnterCriticalSection(&s_CriticalSection);
