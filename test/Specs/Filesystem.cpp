@@ -71,6 +71,44 @@ void Filesystem()
         TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
     });
 
+    Describe("Fs::Path::Path(const Fs::Path &)");
+
+    It("creates a Path from another Path", []() {
+        Fs::Path path1("C:\\Windows\\System32\\Documents\\File.txt");
+        Fs::Path path2(path1);
+
+        TEST_EQ(path2.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+    });
+
+    Describe("Fs::Path::Path(Fs::Path &&)");
+
+    It("creates a Path from another moved Path", []() {
+        Fs::Path path1("C:\\Windows\\System32\\Documents\\File.txt");
+        Fs::Path path2(std::move(path1));
+
+        TEST_EQ(path2.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+        TEST_EQ(path1.Size(), 0);
+    });
+
+    Describe("Fs::Path::operator=(const Fs::Path &)");
+
+    It("assigns another Path to the current Path", []() {
+        Fs::Path path1("C:\\Windows\\System32\\Documents\\File.txt");
+        Fs::Path path2 = path1;
+
+        TEST_EQ(path2.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+    });
+
+    Describe("Fs::Path::operator=(const Fs::Path &)");
+
+    It("assigns another Path to the current Path", []() {
+        Fs::Path path1("C:\\Windows\\System32\\Documents\\File.txt");
+        Fs::Path path2 = std::move(path1);
+
+        TEST_EQ(path2.String(), "C:\\Windows\\System32\\Documents\\File.txt");
+        TEST_EQ(path1.Size(), 0);
+    });
+
     Describe("Fs::operator+(const T &, const Fs::Path &)");
 
     It("concatenates an std::string with a Path", []() {

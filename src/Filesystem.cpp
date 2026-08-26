@@ -29,6 +29,32 @@ Path::Path(const char *path)
 {
 }
 
+Path::Path(const Path &other)
+    : m_Path(other.m_Path)
+{
+}
+
+Path::Path(Path &&other)
+    : m_Path(std::move(other.m_Path))
+{
+}
+
+Path &Path::operator=(const Path &other)
+{
+    m_Path = other.m_Path;
+    return *this;
+}
+
+Path &Path::operator=(Path &&other)
+{
+    m_Path = std::move(other.m_Path);
+    return *this;
+}
+
+Path::~Path()
+{
+}
+
 Path Path::Drive() const
 {
     size_t colonPos = m_Path.find_first_of(':');

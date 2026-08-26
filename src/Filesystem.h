@@ -26,6 +26,27 @@ public:
     /// @param path The string representing the path.
     Path(const char *path);
 
+    /// @brief Creates a `Path` from another `Path`.
+    /// @param other The other `Path`.
+    Path(const Path &other);
+
+    /// @brief Creates a `Path` from another moved `Path`.
+    /// @param other The other `Path`.
+    Path(Path &&other);
+
+    /// @brief Assigns another `Path` to the current `Path`.
+    /// @param other The other `Path`.
+    /// @return The current `Path`.
+    Path &operator=(const Path &other);
+
+    /// @brief Assigns another moved `Path` to the current `Path`.
+    /// @param other The other `Path`.
+    /// @return The current `Path`.
+    Path &operator=(Path &&other);
+
+    /// @brief Destroys the `Path`.
+    ~Path();
+
     /// @brief Concatenates a generic type with a `Path` object.
     /// @tparam T The type of the left operand.
     /// @param left The left operand of the concatenation.
