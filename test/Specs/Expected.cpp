@@ -17,11 +17,49 @@ void Expected()
 
     Describe("Unexpected<E>::Unexpected(E &&)");
 
-    It("constructs an Unexpected from an rvalue reference to an error", []() {
+    It("constructs an Unexpected from a moved error", []() {
         std::string error = "error";
         auto unexp = XexUtils::Unexpected<std::string>(std::move(error));
         TEST_EQ(unexp.Error(), "error");
         TEST_EQ(error.size(), 0);
+    });
+
+    Describe("Unexpected<E>::Unexpected(const Unexpected &)");
+
+    It("creates an Unexpected from another Unexpected", []() {
+        XexUtils::Unexpected<std::string> unexp1("error");
+        XexUtils::Unexpected<std::string> unexp2(unexp1);
+
+        TEST_EQ(unexp2.Error(), "error");
+    });
+
+    Describe("Unexpected<E>::Unexpected(Unexpected &&)");
+
+    It("creates an Unexpected from another moved Unexpected", []() {
+        XexUtils::Unexpected<std::string> unexp1("error");
+        XexUtils::Unexpected<std::string> unexp2(std::move(unexp1));
+
+        TEST_EQ(unexp2.Error(), "error");
+        TEST_EQ(unexp1.Error().size(), 0);
+    });
+
+    Describe("Unexpected<E>::operator=(const Unexpected<E> &)");
+
+    It("assigns another Unexpected to the current Unexpected", []() {
+        XexUtils::Unexpected<std::string> unexp1("error");
+        XexUtils::Unexpected<std::string> unexp2 = unexp1;
+
+        TEST_EQ(unexp2.Error(), "error");
+    });
+
+    Describe("Unexpected<E>::operator=(Unexpected<E> &&)");
+
+    It("assigns another moved Unexpected to the current Unexpected", []() {
+        XexUtils::Unexpected<std::string> unexp1("error");
+        XexUtils::Unexpected<std::string> unexp2 = std::move(unexp1);
+
+        TEST_EQ(unexp2.Error(), "error");
+        TEST_EQ(unexp1.Error().size(), 0);
     });
 
     Describe("Unexpected<E>::Error()");
@@ -51,7 +89,7 @@ void Expected()
 
     Describe("Expected<T, E>::Expected(T &&)");
 
-    It("constructs an Expected from an rvalue reference", []() {
+    It("constructs an Expected from a moved value", []() {
         std::string value = "some text";
         auto exp = XexUtils::Expected<std::string, int>(std::move(value));
         TEST_EQ(exp.HasValue(), true);
@@ -70,7 +108,7 @@ void Expected()
 
     Describe("Expected<T, E>::Expected(Unexpected<E> &&)");
 
-    It("constructs an Expected with an error from an Unexpected rvalue reference", []() {
+    It("constructs an Expected with an error from a moved Unexpected", []() {
         auto unexp = XexUtils::Unexpected<std::string>("error");
         auto exp = XexUtils::Expected<int, std::string>(std::move(unexp));
         TEST_EQ(exp.HasValue(), false);
@@ -96,14 +134,14 @@ void Expected()
 
     Describe("Expected<T, E>::Expected(Expected &&)");
 
-    It("constructs an Expected with a value from an rvalue reference to an Expected with a value", []() {
+    It("constructs an Expected with a value from a moved Expected with a value", []() {
         auto A = XexUtils::Expected<int, std::string>(3);
         auto B(std::move(A));
         TEST_EQ(B.HasValue(), true);
         TEST_EQ(B.Value(), 3);
     });
 
-    It("constructs an Expected with an error from an rvalue reference to an Expected with an error", []() {
+    It("constructs an Expected with an error from a moved Expected with an error", []() {
         auto A = XexUtils::Expected<int, std::string>(XexUtils::Unexpected<std::string>("error"));
         auto B(std::move(A));
         TEST_EQ(B.HasValue(), false);

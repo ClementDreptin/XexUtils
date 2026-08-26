@@ -23,6 +23,43 @@ public:
     {
     }
 
+    /// @brief Creates a `Unexpected` from another `Unexpected`.
+    /// @param other The other `Unexpected`.
+    Unexpected(const Unexpected &other)
+        : m_Error(other.m_Error)
+    {
+    }
+
+    /// @brief Creates a `Unexpected` from another moved `Unexpected`.
+    /// @param other The other `Unexpected`.
+    Unexpected(Unexpected &&other)
+        : m_Error(std::move(other.m_Error))
+    {
+    }
+
+    /// @brief Assigns another `Unexpected` to the current `Unexpected`.
+    /// @param other The other `Unexpected`.
+    /// @return The current `Unexpected`.
+    Unexpected &operator=(const Unexpected &other)
+    {
+        m_Error = other.Error;
+        return *this;
+    }
+
+    /// @brief Assigns another moved `Unexpected` to the current `Unexpected`.
+    /// @param other The other `Unexpected`.
+    /// @return The current `Unexpected`.
+    Unexpected &operator=(Unexpected &&other)
+    {
+        m_Error = std::move(other.Error);
+        return *this;
+    }
+
+    /// @brief Destroys the `Unexpected`.
+    ~Unexpected()
+    {
+    }
+
     /// @brief Returns the stored error.
     /// @return A reference to the stored error.
     inline E &Error() { return m_Error; }
