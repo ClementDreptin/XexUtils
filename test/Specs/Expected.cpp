@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void Expected()
 {
-    Describe("Unexpected<E>(const E &)");
+    Describe("Unexpected<E>::Unexpected(const E &)");
 
     It("constructs an Unexpected from an error", []() {
         std::string error = "error";
@@ -15,7 +15,7 @@ void Expected()
         TEST_EQ(unexp.Error(), "error");
     });
 
-    Describe("Unexpected<E>(E &&)");
+    Describe("Unexpected<E>::Unexpected(E &&)");
 
     It("constructs an Unexpected from an rvalue reference to an error", []() {
         std::string error = "error";
@@ -32,7 +32,7 @@ void Expected()
         TEST_EQ(unexp.Error(), "error");
     });
 
-    Describe("Expected<T, E>()");
+    Describe("Expected<T, E>::Expected()");
 
     It("constructs an Expected from the default value of the value type", []() {
         auto exp = XexUtils::Expected<int, std::string>();
@@ -40,7 +40,7 @@ void Expected()
         TEST_EQ(exp.Value(), int());
     });
 
-    Describe("Expected<T, E>(const T &)");
+    Describe("Expected<T, E>::Expected(const T &)");
 
     It("constructs an Expected from a value", []() {
         int value = 3;
@@ -49,7 +49,7 @@ void Expected()
         TEST_EQ(exp.Value(), 3);
     });
 
-    Describe("Expected<T, E>(T &&)");
+    Describe("Expected<T, E>::Expected(T &&)");
 
     It("constructs an Expected from an rvalue reference", []() {
         std::string value = "some text";
@@ -59,7 +59,7 @@ void Expected()
         TEST_EQ(value.size(), 0);
     });
 
-    Describe("Expected<T, E>(const Unexpected<E> &)");
+    Describe("Expected<T, E>::Expected(const Unexpected<E> &)");
 
     It("constructs an Expected with an error from an Unexpected", []() {
         auto unexp = XexUtils::Unexpected<std::string>("error");
@@ -68,7 +68,7 @@ void Expected()
         TEST_EQ(exp.Error(), "error");
     });
 
-    Describe("Expected<T, E>(Unexpected<E> &&)");
+    Describe("Expected<T, E>::Expected(Unexpected<E> &&)");
 
     It("constructs an Expected with an error from an Unexpected rvalue reference", []() {
         auto unexp = XexUtils::Unexpected<std::string>("error");
@@ -78,7 +78,7 @@ void Expected()
         TEST_EQ(unexp.Error(), "");
     });
 
-    Describe("Expected<T, E>(const Expected &)");
+    Describe("Expected<T, E>::Expected(const Expected &)");
 
     It("constructs an Expected with a value from an Expected with a value", []() {
         auto A = XexUtils::Expected<int, std::string>(3);
@@ -94,7 +94,7 @@ void Expected()
         TEST_EQ(B.Error(), "error");
     });
 
-    Describe("Expected<T, E>(Expected &&)");
+    Describe("Expected<T, E>::Expected(Expected &&)");
 
     It("constructs an Expected with a value from an rvalue reference to an Expected with a value", []() {
         auto A = XexUtils::Expected<int, std::string>(3);

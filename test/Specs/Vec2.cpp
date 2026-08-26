@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void Vec2()
 {
-    Describe("Math::vec2()");
+    Describe("Math::vec2::vec2()");
 
     It("creates an empty vec2", []() {
         auto v1 = Math::vec2();
@@ -16,7 +16,7 @@ void Vec2()
         TEST_EQ(v1.y, 0.0f);
     });
 
-    Describe("Math::vec2(float, float)");
+    Describe("Math::vec2::vec2(float, float)");
 
     It("creates a vec2 from x and y", []() {
         Math::vec2 v1(1.0f, 2.0f);

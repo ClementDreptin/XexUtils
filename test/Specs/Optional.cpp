@@ -7,14 +7,14 @@ using namespace TestRunner;
 
 void Optional()
 {
-    Describe("Optional<T>()");
+    Describe("Optional<T>::Optional()");
 
     It("constructs an empty Optional", []() {
         auto opt = XexUtils::Optional<int>();
         TEST_EQ(opt.HasValue(), false);
     });
 
-    Describe("Optional<T>(const T &)");
+    Describe("Optional<T>::Optional(const T &)");
 
     It("constructs a valid Optional from a value", []() {
         int value = 3;
@@ -23,7 +23,7 @@ void Optional()
         TEST_EQ(opt.Value(), 3);
     });
 
-    Describe("Optional<T>(T &&)");
+    Describe("Optional<T>::Optional(T &&)");
 
     It("constructs a valid Optional from an rvalue reference", []() {
         std::string str = "some text";
@@ -33,14 +33,14 @@ void Optional()
         TEST_EQ(str.size(), 0);
     });
 
-    Describe("Optional<T>(NullOpt)");
+    Describe("Optional<T>::Optional(NullOpt)");
 
     It("constructs an empty Optional from a NullOpt", []() {
         auto opt = XexUtils::Optional<int>(NullOpt());
         TEST_EQ(opt.HasValue(), false);
     });
 
-    Describe("Optional<T>(const Optional &)");
+    Describe("Optional<T>::Optional(const Optional &)");
 
     It("doesn't do anything when copying A into B if A is empty", []() {
         auto A = XexUtils::Optional<int>();
@@ -55,7 +55,7 @@ void Optional()
         TEST_EQ(B.Value(), 3);
     });
 
-    Describe("Optional<T>(Optional &&other)");
+    Describe("Optional<T>::Optional(Optional &&other)");
 
     It("doesn't do anything when moving A into B if A is empty", []() {
         auto A = XexUtils::Optional<int>();

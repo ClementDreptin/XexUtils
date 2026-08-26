@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void StfsPackage()
 {
-    Describe("StfsPackage(Fs::Path &&)");
+    Describe("StfsPackage::StfsPackage(Fs::Path &&)");
 
     It("creates an StfsPackage from a moved Fs::Path", []() {
         Fs::Path path("game:\\fixtures\\stfs\\nxeart");

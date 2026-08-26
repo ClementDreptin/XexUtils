@@ -8,7 +8,7 @@ using namespace TestRunner;
 
 void Filesystem()
 {
-    Describe("Fs::Path()");
+    Describe("Fs::Path::Path()");
 
     It("creates an empty Path", []() {
         auto path = Fs::Path();
@@ -23,7 +23,7 @@ void Filesystem()
         TEST_EQ(path.String(), "");
     });
 
-    Describe("Fs::Path(const std::string &)");
+    Describe("Fs::Path::Path(const std::string &)");
 
     It("creates a Path from an std::string", []() {
         std::string string("C:\\Windows\\System32\\Documents\\File.txt");
@@ -39,7 +39,7 @@ void Filesystem()
         TEST_EQ(path.String(), "C:\\Windows\\System32\\Documents\\File.txt");
     });
 
-    Describe("Fs::Path(std::string &&)");
+    Describe("Fs::Path::Path(std::string &&)");
 
     It("creates a Path from a moved std::string", []() {
         std::string string("C:\\Windows\\System32\\Documents\\File.txt");
@@ -56,7 +56,7 @@ void Filesystem()
         TEST_EQ(string.size(), 0);
     });
 
-    Describe("Fs::Path(const char *)");
+    Describe("Fs::Path::Path(const char *)");
 
     It("creates a Path from a const char *", []() {
         Fs::Path path("C:\\Windows\\System32\\Documents\\File.txt");

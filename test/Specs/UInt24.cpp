@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void UInt24()
 {
-    Describe("UInt24()");
+    Describe("UInt24::UInt24()");
 
     It("constructs a null UInt24", []() {
         XexUtils::UInt24 value;
@@ -15,7 +15,7 @@ void UInt24()
         TEST_EQ(value, 0);
     });
 
-    Describe("UInt24(uint32_t)");
+    Describe("UInt24::UInt24(uint32_t)");
 
     It("constructs a UInt24 from a uint32_t", []() {
         XexUtils::UInt24 value(3);
@@ -29,7 +29,7 @@ void UInt24()
         TEST_EQ(value, 0x123);
     });
 
-    Describe("UInt24(const uint8_t *)");
+    Describe("UInt24::UInt24(const uint8_t *)");
 
     It("construcs a UInt24 from an array of bytes", []() {
         const uint8_t bytes[] = { 0x12, 0x34, 0x56 };

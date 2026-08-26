@@ -7,7 +7,7 @@ using namespace TestRunner;
 
 void ValueOrPtr()
 {
-    Describe("ValueOrPtr<T>(const T &)");
+    Describe("ValueOrPtr<T>::ValueOrPtr(const T &)");
 
     It("creates a ValueOrPtr from a value", []() {
         XexUtils::ValueOrPtr<int> valueOrPtr(3);
@@ -15,7 +15,7 @@ void ValueOrPtr()
         TEST_EQ(valueOrPtr, 3);
     });
 
-    Describe("ValueOrPtr<T>(T &&)");
+    Describe("ValueOrPtr<T>::ValueOrPtr(T &&)");
 
     It("creates a ValueOrPtr from a moved value", []() {
         std::string value = "hello";
@@ -25,7 +25,7 @@ void ValueOrPtr()
         TEST_EQ(value.size(), 0);
     });
 
-    Describe("ValueOrPtr<T>(T *)");
+    Describe("ValueOrPtr<T>::ValueOrPtr(T *)");
 
     It("creates a ValueOrPtr from a pointer", []() {
         int value = 3;
