@@ -15,6 +15,11 @@ StfsPackage::StfsPackage(const XexUtils::Fs::Path &filePath)
 {
 }
 
+StfsPackage::StfsPackage(XexUtils::Fs::Path &&filePath)
+    : m_FilePath(std::move(filePath))
+{
+}
+
 StfsPackage::~StfsPackage()
 {
     // Unmount if needed.

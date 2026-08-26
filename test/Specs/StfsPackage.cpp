@@ -7,6 +7,15 @@ using namespace TestRunner;
 
 void StfsPackage()
 {
+    Describe("StfsPackage(Fs::Path &&)");
+
+    It("creates an StfsPackage from a moved Fs::Path", []() {
+        Fs::Path path("game:\\fixtures\\stfs\\nxeart");
+        XexUtils::StfsPackage nxeart(std::move(path));
+
+        TEST_EQ(path.Size(), 0);
+    });
+
     Describe("StfsPackage::ReadHeader()");
 
     It("reads the header of a theme package", []() {

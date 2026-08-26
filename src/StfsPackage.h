@@ -21,6 +21,10 @@ public:
     /// @param filePath The path to the file on disk.
     StfsPackage(const XexUtils::Fs::Path &filePath);
 
+    /// @brief Creates an `StfsPackage` from a file on disk.
+    /// @param filePath The path to the file on disk.
+    StfsPackage(XexUtils::Fs::Path &&filePath);
+
     /// @brief Unmounts the `StfsPackage` if it was mounted.
     ~StfsPackage();
 
