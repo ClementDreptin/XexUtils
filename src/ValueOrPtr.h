@@ -27,14 +27,42 @@ public:
         XASSERT(m_Ptr != nullptr);
     }
 
-    /// @brief Assignment operator.
+    /// @brief Creates a `ValueOrPtr` from another `ValueOrPtr`.
     /// @param other The other `ValueOrPtr`.
-    /// @return Reference to the current `ValueOrPtr`.
+    ValueOrPtr(const ValueOrPtr &other)
+        : m_Value(other.m_Value), m_Ptr(other.m_Ptr), m_IsPtr(other.m_IsPtr) {}
+
+    /// @brief Creates a `ValueOrPtr` from another moved `ValueOrPtr`.
+    /// @param other The other `ValueOrPtr`.
+    ValueOrPtr(ValueOrPtr &&other)
+        : m_Value(std::move(other.m_Value)), m_Ptr(other.m_Ptr), m_IsPtr(other.m_IsPtr) {}
+
+    /// @brief Assigns another `ValueOrPtr` to the current `ValueOrPtr`.
+    /// @param other The other `ValueOrPtr`.
+    /// @return The current `ValueOrPtr`.
     inline ValueOrPtr<T> &operator=(const ValueOrPtr<T> &other)
     {
-        operator*() = *other;
+        m_Value = other.m_Value;
+        m_Ptr = other.m_Ptr;
+        m_IsPtr = other.m_IsPtr;
+
         return *this;
     }
+
+    /// @brief Assigns another moved `ValueOrPtr` to the current `ValueOrPtr`.
+    /// @param other The other `ValueOrPtr`.
+    /// @return The current `ValueOrPtr`.
+    ValueOrPtr &operator=(ValueOrPtr &&other)
+    {
+        m_Value = std::move(other.m_Value);
+        m_Ptr = other.m_Ptr;
+        m_IsPtr = other.m_IsPtr;
+
+        return *this;
+    }
+
+    /// @brief Destroys the `ValueOrPtr`.
+    ~ValueOrPtr() {}
 
     /// @brief Dereference operator.
     /// @return The constant value or a constant copy of the value at the pointer.

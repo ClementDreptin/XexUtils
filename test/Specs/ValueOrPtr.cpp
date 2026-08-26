@@ -43,26 +43,94 @@ void ValueOrPtr()
         TEST_EQ(valueOrPtr, 42);
     });
 
-    Describe("ValueOrPtr<T>::operator=(const ValueOrPtr<T> &)");
+    Describe("ValueOrPtr<T>::ValueOrPtr(const ValueOrPtr<T> &)");
 
-    It("assigns the value in value mode", []() {
-        XexUtils::ValueOrPtr<int> valueOrPtr(3);
-        XexUtils::ValueOrPtr<int> other(42);
+    It("copies the value when the source is in value mode", []() {
+        XexUtils::ValueOrPtr<int> src(42);
+        XexUtils::ValueOrPtr<int> copy(src);
 
-        valueOrPtr = other;
-
-        TEST_EQ(valueOrPtr, 42);
+        TEST_EQ(*src, 42);
+        TEST_EQ(*copy, 42);
     });
 
-    It("writes through to the pointee in pointer mode instead of rebinding", []() {
-        int value = 3;
-        XexUtils::ValueOrPtr<int> valueOrPtr(&value);
-        XexUtils::ValueOrPtr<int> other(42);
+    It("aliases the same pointer when the source is in pointer mode", []() {
+        int value = 42;
+        XexUtils::ValueOrPtr<int> src(&value);
+        XexUtils::ValueOrPtr<int> copy(src);
 
-        valueOrPtr = other;
+        TEST_EQ(*copy, 42);
+        TEST_EQ(&copy, &value);
 
-        TEST_EQ(value, 42);
-        TEST_EQ(&valueOrPtr, &value);
+        *copy = 7;
+        TEST_EQ(*src, 7);
+        TEST_EQ(value, 7);
+    });
+
+    Describe("ValueOrPtr<T>::ValueOrPtr(ValueOrPtr<T> &&)");
+
+    It("leaves the source's value in a moved-from state after moving a value", []() {
+        XexUtils::ValueOrPtr<std::string> src("hello");
+        XexUtils::ValueOrPtr<std::string> moved(std::move(src));
+
+        TEST_EQ(*moved, "hello");
+        TEST_EQ(src->size(), 0);
+    });
+
+    It("aliases the same pointer when the source is in pointer mode, without touching the pointee", []() {
+        std::string value("hello");
+        XexUtils::ValueOrPtr<std::string> src(&value);
+        XexUtils::ValueOrPtr<std::string> moved(std::move(src));
+
+        TEST_EQ(*moved, "hello");
+        TEST_EQ(&moved, &value);
+
+        *moved = "modified";
+        TEST_EQ(value, "modified");
+    });
+
+    Describe("ValueOrPtr<T>::operator=(const ValueOrPtr<T> &)");
+
+    It("copies the value when the source is in value mode", []() {
+        XexUtils::ValueOrPtr<int> src(42);
+        XexUtils::ValueOrPtr<int> copy = src;
+
+        TEST_EQ(*src, 42);
+        TEST_EQ(*copy, 42);
+    });
+
+    It("aliases the same pointer when the source is in pointer mode", []() {
+        int value = 42;
+        XexUtils::ValueOrPtr<int> src(&value);
+        XexUtils::ValueOrPtr<int> copy = src;
+
+        TEST_EQ(*copy, 42);
+        TEST_EQ(&copy, &value);
+
+        *copy = 7;
+        TEST_EQ(*src, 7);
+        TEST_EQ(value, 7);
+    });
+
+    Describe("ValueOrPtr<T>::operator=(ValueOrPtr<T> &&)");
+
+    It("leaves the source's value in a moved-from state after moving a value", []() {
+        XexUtils::ValueOrPtr<std::string> src("hello");
+        XexUtils::ValueOrPtr<std::string> moved = std::move(src);
+
+        TEST_EQ(*moved, "hello");
+        TEST_EQ(src->size(), 0);
+    });
+
+    It("aliases the same pointer when the source is in pointer mode, without touching the pointee", []() {
+        std::string value("hello");
+        XexUtils::ValueOrPtr<std::string> src(&value);
+        XexUtils::ValueOrPtr<std::string> moved = std::move(src);
+
+        TEST_EQ(*moved, "hello");
+        TEST_EQ(&moved, &value);
+
+        *moved = "modified";
+        TEST_EQ(value, "modified");
     });
 
     Describe("ValueOrPtr<T>::operator*() const");
