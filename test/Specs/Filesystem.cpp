@@ -101,7 +101,7 @@ void Filesystem()
 
     Describe("Fs::Path::operator=(Fs::Path &&)");
 
-    It("assigns another Path to the current Path", []() {
+    It("assigns another moved Path to the current Path", []() {
         Fs::Path path1("C:\\Windows\\System32\\Documents\\File.txt");
         Fs::Path path2 = std::move(path1);
 
