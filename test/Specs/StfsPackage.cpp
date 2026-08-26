@@ -16,6 +16,50 @@ void StfsPackage()
         TEST_EQ(path.Size(), 0);
     });
 
+    Describe("StfsPackage::StfsPackage(StfsPackage &&)");
+
+    It("transfers the file path so the moved-to instance can still read the header", []() {
+        XexUtils::StfsPackage nxeart1("game:\\fixtures\\stfs\\nxeart");
+        XexUtils::StfsPackage nxeart2(std::move(nxeart1));
+        auto header = nxeart2.ReadHeader();
+
+        TEST_EQ(header.HasValue(), true);
+    });
+
+    It("transfers ownership of the mount so only the moved-to instance can unmount it", []() {
+        XexUtils::StfsPackage nxeart1("game:\\fixtures\\stfs\\nxeart");
+        HRESULT hr = nxeart1.Mount("nxeart");
+        TEST_EQ(hr, S_OK);
+
+        XexUtils::StfsPackage nxeart2(std::move(nxeart1));
+        hr = nxeart1.Unmount();
+        TEST_EQ(hr, E_FAIL);
+        hr = nxeart2.Unmount();
+        TEST_EQ(hr, S_OK);
+    });
+
+    Describe("StfsPackage::operator=(StfsPackage &&)");
+
+    It("transfers the file path so the moved-to instance can still read the header", []() {
+        XexUtils::StfsPackage nxeart1("game:\\fixtures\\stfs\\nxeart");
+        XexUtils::StfsPackage nxeart2 = std::move(nxeart1);
+        auto header = nxeart2.ReadHeader();
+
+        TEST_EQ(header.HasValue(), true);
+    });
+
+    It("transfers ownership of the mount so only the moved-to instance can unmount it", []() {
+        XexUtils::StfsPackage nxeart1("game:\\fixtures\\stfs\\nxeart");
+        HRESULT hr = nxeart1.Mount("nxeart");
+        TEST_EQ(hr, S_OK);
+
+        XexUtils::StfsPackage nxeart2 = std::move(nxeart1);
+        hr = nxeart1.Unmount();
+        TEST_EQ(hr, E_FAIL);
+        hr = nxeart2.Unmount();
+        TEST_EQ(hr, S_OK);
+    });
+
     Describe("StfsPackage::ReadHeader()");
 
     It("reads the header of a theme package", []() {

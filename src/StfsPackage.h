@@ -25,6 +25,15 @@ public:
     /// @param filePath The path to the file on disk.
     StfsPackage(XexUtils::Fs::Path &&filePath);
 
+    /// @brief Creates a `StfsPackage` from another moved `StfsPackage`.
+    /// @param other The other `StfsPackage`.
+    StfsPackage(StfsPackage &&other);
+
+    /// @brief Assigns another moved `StfsPackage` to the current `StfsPackage`.
+    /// @param other The other `StfsPackage`.
+    /// @return The current `StfsPackage`.
+    StfsPackage &operator=(StfsPackage &&other);
+
     /// @brief Unmounts the `StfsPackage` if it was mounted.
     ~StfsPackage();
 
@@ -61,6 +70,11 @@ public:
 private:
     XexUtils::Fs::Path m_FilePath;
     std::string m_MountDiskName;
+
+    // Make the copy operations private to prevent two StfsPackages to own the same
+    // mounted drive.
+    StfsPackage(const StfsPackage &other);
+    StfsPackage &operator=(const StfsPackage &other);
 };
 
 #pragma warning(push)

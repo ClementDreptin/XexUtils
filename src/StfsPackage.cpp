@@ -20,6 +20,26 @@ StfsPackage::StfsPackage(XexUtils::Fs::Path &&filePath)
 {
 }
 
+StfsPackage::StfsPackage(StfsPackage &&other)
+    : m_FilePath(std::move(other.m_FilePath)), m_MountDiskName(std::move(other.m_MountDiskName))
+{
+}
+
+StfsPackage &StfsPackage::operator=(StfsPackage &&other)
+{
+    if (this == &other)
+        return *this;
+
+    // Unmount if needed.
+    if (!m_MountDiskName.empty())
+        Unmount();
+
+    m_FilePath = std::move(other.m_FilePath);
+    m_MountDiskName = std::move(other.m_MountDiskName);
+
+    return *this;
+}
+
 StfsPackage::~StfsPackage()
 {
     // Unmount if needed.
