@@ -99,7 +99,7 @@ void Filesystem()
         TEST_EQ(path2.String(), "C:\\Windows\\System32\\Documents\\File.txt");
     });
 
-    Describe("Fs::Path::operator=(const Fs::Path &)");
+    Describe("Fs::Path::operator=(Fs::Path &&)");
 
     It("assigns another Path to the current Path", []() {
         Fs::Path path1("C:\\Windows\\System32\\Documents\\File.txt");
