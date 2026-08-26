@@ -95,4 +95,26 @@ Optional<Url> Url::Parse(const std::string &url)
     return parsedUrl;
 }
 
+Url::Url(const Url &other)
+    : m_Scheme(other.m_Scheme), m_Domain(other.m_Domain), m_Port(other.m_Port), m_Path(other.m_Path)
+{
+}
+
+Url &Url::operator=(const Url &other)
+{
+    if (this == &other)
+        return *this;
+
+    m_Scheme = other.m_Scheme;
+    m_Domain = other.m_Domain;
+    m_Port = other.m_Port;
+    m_Path = other.m_Path;
+
+    return *this;
+}
+
+Url::~Url()
+{
+}
+
 }

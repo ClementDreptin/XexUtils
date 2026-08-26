@@ -24,6 +24,18 @@ public:
     /// @return A valid `Optional<Url>` on success, an empty `Optional` on error.
     static Optional<Url> Parse(const std::string &url);
 
+    /// @brief Creates a `Url` from another `Url`.
+    /// @param other The other `Url`.
+    Url(const Url &other);
+
+    /// @brief Assigns another `Url` to the current `Url`.
+    /// @param other The other `Url`.
+    /// @return The current `Url`.
+    Url &operator=(const Url &other);
+
+    /// @brief Destroys the `Url`.
+    ~Url();
+
     /// @brief Gets the scheme component of the `Url`.
     /// @return The scheme.
     inline UrlScheme Scheme() const { return m_Scheme; }
@@ -46,8 +58,12 @@ private:
     uint16_t m_Port;
     std::string m_Path;
 
-    // Make the constructor private to force Url objects to be created with the Parse function
+    // Make the constructor private to force Url objects to be created with the Parse function.
     Url() {}
+
+    // Make the move operations private to prevent invalid Url objects from existing.
+    Url &operator=(Url &&other);
+    Url(Url &&other);
 };
 
 }
