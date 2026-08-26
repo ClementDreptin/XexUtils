@@ -43,6 +43,53 @@ Node::Node(nullptr_t)
 {
 }
 
+Node::Node(const Node &other)
+    : m_pParent(other.m_pParent), m_Data(other.m_Data), m_Children(other.m_Children), m_ArrayElements(other.m_ArrayElements), m_Type(other.m_Type)
+{
+}
+
+Node::Node(Node &&other)
+    : m_pParent(other.m_pParent), m_Data(std::move(other.m_Data)), m_Children(std::move(other.m_Children)), m_ArrayElements(std::move(other.m_ArrayElements)), m_Type(other.m_Type)
+{
+    other.m_pParent = nullptr;
+    other.m_Type = Type_Undefined;
+}
+
+Node &Node::operator=(const Node &other)
+{
+    if (this == &other)
+        return *this;
+
+    m_pParent = other.m_pParent;
+    m_Data = other.m_Data;
+    m_Children = other.m_Children;
+    m_ArrayElements = other.m_ArrayElements;
+    m_Type = other.m_Type;
+
+    return *this;
+}
+
+Node &Node::operator=(Node &&other)
+{
+    if (this == &other)
+        return *this;
+
+    m_pParent = other.m_pParent;
+    m_Data = std::move(other.m_Data);
+    m_Children = std::move(other.m_Children);
+    m_ArrayElements = std::move(other.m_ArrayElements);
+    m_Type = other.m_Type;
+
+    other.m_pParent = nullptr;
+    other.m_Type = Type_Undefined;
+
+    return *this;
+}
+
+Node::~Node()
+{
+}
+
 Node &Node::operator[](const std::string &key)
 {
     return m_Children.at(key);

@@ -47,6 +47,27 @@ public:
     /// @brief Creates a leaf `Node` of type `Type_Null`.
     Node(nullptr_t);
 
+    /// @brief Creates a `Node` from another `Node`.
+    /// @param other The other `Node`.
+    Node(const Node &other);
+
+    /// @brief Creates a `Node` from another moved `Node`.
+    /// @param other The other `Node`.
+    Node(Node &&other);
+
+    /// @brief Assigns another `Node` to the current `Node`.
+    /// @param other The other `Node`.
+    /// @return The current `Node`.
+    Node &operator=(const Node &other);
+
+    /// @brief Assigns another moved `Node` to the current `Node`.
+    /// @param other The other `Node`.
+    /// @return The current `Node`.
+    Node &operator=(Node &&other);
+
+    /// @brief Destroys the `Node`.
+    ~Node();
+
     /// @brief Gets the child `Node` at `key`.
     ///
     /// If the current `Node` doesn't have a child at `key`, an `std::out_of_range`

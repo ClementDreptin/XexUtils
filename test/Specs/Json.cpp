@@ -74,6 +74,98 @@ void Json()
         TEST_EQ(node.AsString(), "");
     });
 
+    Describe("Json::Node::Node(const Json::Node &)");
+
+    It("creates an object Node from another object Node", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        auto copy(obj);
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Object);
+        TEST_EQ(copy["foo"].AsString(), "3");
+    });
+
+    It("creates an array Node from another array Node", []() {
+        auto array = Json::Parse("[1,2,3]");
+        auto copy(array);
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Array);
+        TEST_EQ(copy.Size(), 3);
+        TEST_EQ(copy[0].AsString(), "1");
+        TEST_EQ(copy[1].AsString(), "2");
+        TEST_EQ(copy[2].AsString(), "3");
+    });
+
+    Describe("Json::Node::Node(Json::Node &&)");
+
+    It("creates an object Node from another moved object Node", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        auto copy(std::move(obj));
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Object);
+        TEST_EQ(copy["foo"].AsString(), "3");
+        TEST_EQ(obj.GetType(), Json::Node::Type_Undefined);
+        TEST_EQ(obj.GetChildren().size(), 0);
+    });
+
+    It("creates an array Node from another moved array Node", []() {
+        auto array = Json::Parse("[1,2,3]");
+        auto copy(std::move(array));
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Array);
+        TEST_EQ(copy.Size(), 3);
+        TEST_EQ(copy[0].AsString(), "1");
+        TEST_EQ(copy[1].AsString(), "2");
+        TEST_EQ(copy[2].AsString(), "3");
+        TEST_EQ(array.GetType(), Json::Node::Type_Undefined);
+        TEST_EQ(array.GetArrayElements().size(), 0);
+    });
+
+    Describe("Json::Node::operator=(const Json::Node &)");
+
+    It("assigns another object Node to the current Node", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        auto copy = obj;
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Object);
+        TEST_EQ(copy["foo"].AsString(), "3");
+    });
+
+    It("assigns another array Node to the current Node", []() {
+        auto array = Json::Parse("[1,2,3]");
+        auto copy = array;
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Array);
+        TEST_EQ(copy.Size(), 3);
+        TEST_EQ(copy[0].AsString(), "1");
+        TEST_EQ(copy[1].AsString(), "2");
+        TEST_EQ(copy[2].AsString(), "3");
+    });
+
+    Describe("Json::Node::operator=(Json::Node &&)");
+
+    It("assigns another moved object Node to the current Node", []() {
+        auto obj = Json::Parse("{\"foo\":3}");
+        auto copy = std::move(obj);
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Object);
+        TEST_EQ(copy["foo"].AsString(), "3");
+        TEST_EQ(obj.GetType(), Json::Node::Type_Undefined);
+        TEST_EQ(obj.GetChildren().size(), 0);
+    });
+
+    It("assigns another moved array Node to the current Node", []() {
+        auto array = Json::Parse("[1,2,3]");
+        auto copy = std::move(array);
+
+        TEST_EQ(copy.GetType(), Json::Node::Type_Array);
+        TEST_EQ(copy.Size(), 3);
+        TEST_EQ(copy[0].AsString(), "1");
+        TEST_EQ(copy[1].AsString(), "2");
+        TEST_EQ(copy[2].AsString(), "3");
+        TEST_EQ(array.GetType(), Json::Node::Type_Undefined);
+        TEST_EQ(array.GetArrayElements().size(), 0);
+    });
+
     Describe("Json::Node::operator[](const std::string &)");
 
     It("returns the child Node at the key", []() {
