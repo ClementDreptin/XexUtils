@@ -22,6 +22,76 @@ float FloatReturnHook(float a, float b);
 
 void Detour()
 {
+    Describe("Detour::Detour(Detour &&)");
+
+    It("move-constructs a Detour, transferring ownership of the slot", []() {
+        XexUtils::Detour original(NoBranch, NoBranchHook);
+        original.Install();
+
+        pDetour = new XexUtils::Detour(std::move(original));
+
+        int value = NoBranch(2, 3);
+        delete pDetour;
+
+        TEST_EQ(value, 10);
+    });
+
+    It("leaves the moved-from Detour empty after a move construction", []() {
+        XexUtils::Detour original(NoBranch, NoBranchHook);
+        original.Install();
+
+        pDetour = new XexUtils::Detour(std::move(original));
+
+        // The moved-from Detour no longer owns a slot or a source address, so removing
+        // it must be a no-op and must not affect the moved-to Detour.
+        original.Remove();
+
+        int valueAfterRemovingMovedFrom = NoBranch(2, 3);
+        delete pDetour;
+
+        doSync(NoBranch);
+        int valueAfterCleanup = NoBranch(2, 3);
+
+        TEST_EQ(valueAfterRemovingMovedFrom, 10);
+        TEST_EQ(valueAfterCleanup, 5);
+    });
+
+    Describe("Detour::operator=(Detour &&)");
+
+    It("move-assigns a Detour, transferring ownership of the slot", []() {
+        XexUtils::Detour original(NoBranch, NoBranchHook);
+        original.Install();
+
+        pDetour = new XexUtils::Detour();
+        *pDetour = std::move(original);
+
+        int value = NoBranch(2, 3);
+        delete pDetour;
+
+        TEST_EQ(value, 10);
+    });
+
+    It("leaves the moved-from Detour empty after a move assignment", []() {
+        XexUtils::Detour original(NoBranch, NoBranchHook);
+        original.Install();
+
+        pDetour = new XexUtils::Detour();
+        *pDetour = std::move(original);
+
+        // The moved-from Detour no longer owns a slot or a source address, so removing
+        // it must be a no-op and must not affect the moved-to Detour.
+        original.Remove();
+
+        int valueAfterRemovingMovedFrom = NoBranch(2, 3);
+        delete pDetour;
+
+        doSync(NoBranch);
+        int valueAfterCleanup = NoBranch(2, 3);
+
+        TEST_EQ(valueAfterRemovingMovedFrom, 10);
+        TEST_EQ(valueAfterCleanup, 5);
+    });
+
     Describe("Detour::Install()");
 
     It("fails if the source function is null", []() {

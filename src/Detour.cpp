@@ -73,6 +73,36 @@ Detour::Detour(const std::string &moduleName, const std::string &importedModuleN
 {
 }
 
+Detour::Detour(Detour &&other)
+    : m_pSource(other.m_pSource), m_pDestination(other.m_pDestination), m_SlotIndex(other.m_SlotIndex), m_Original(other.m_Original)
+{
+    other.m_pSource = nullptr;
+    other.m_pDestination = nullptr;
+    other.m_SlotIndex = static_cast<size_t>(-1);
+    other.m_Original = Original();
+}
+
+Detour &Detour::operator=(Detour &&other)
+{
+    if (this == &other)
+        return *this;
+
+    // Release whatever this object currently owns before stealing other's state
+    Remove();
+
+    m_pSource = other.m_pSource;
+    m_pDestination = other.m_pDestination;
+    m_SlotIndex = other.m_SlotIndex;
+    m_Original = other.m_Original;
+
+    other.m_pSource = nullptr;
+    other.m_pDestination = nullptr;
+    other.m_SlotIndex = static_cast<size_t>(-1);
+    other.m_Original = Original();
+
+    return *this;
+}
+
 Detour::~Detour()
 {
     Remove();

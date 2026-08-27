@@ -38,6 +38,15 @@ public:
     /// @param pDestination Where the make the detour go.
     Detour(const std::string &moduleName, const std::string &importedModuleName, uint32_t ordinal, const void *pDestination);
 
+    /// @brief Creates a `Detour` from another moved `Detour`.
+    /// @param other The other `Detour`.
+    Detour(Detour &&other);
+
+    /// @brief Assigns another moved `Detour` to the current `Detour`.
+    /// @param other The other `Detour`.
+    /// @return The current `Detour`.
+    Detour &operator=(Detour &&other);
+
     /// @brief Calls `Remove`.
     ~Detour();
 
@@ -91,6 +100,11 @@ private:
     Jump RelocateBranch(const void *pLocation);
 
     void *GetModuleImport(const std::string &baseModuleName, const std::string &importedModuleName, uint32_t ordinal);
+
+    // Make the copy operations private to prevent two Detours from owning the same
+    // stub in s_Stubs.
+    Detour(const Detour &other);
+    Detour &operator=(const Detour &other);
 
 private:
     static POWERPC_INSTRUCTION s_Stubs[MAX_DETOUR_COUNT][MAX_INSTRUCTIONS_IN_STUB];
