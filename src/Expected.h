@@ -42,7 +42,11 @@ public:
     /// @return The current `Unexpected`.
     Unexpected &operator=(const Unexpected &other)
     {
+        if (this == &other)
+            return *this;
+
         m_Error = other.Error;
+
         return *this;
     }
 
@@ -51,7 +55,11 @@ public:
     /// @return The current `Unexpected`.
     Unexpected &operator=(Unexpected &&other)
     {
+        if (this == &other)
+            return *this;
+
         m_Error = std::move(other.Error);
+
         return *this;
     }
 

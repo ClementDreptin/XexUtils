@@ -41,13 +41,21 @@ Path::Path(Path &&other)
 
 Path &Path::operator=(const Path &other)
 {
+    if (this == &other)
+        return *this;
+
     m_Path = other.m_Path;
+
     return *this;
 }
 
 Path &Path::operator=(Path &&other)
 {
+    if (this == &other)
+        return *this;
+
     m_Path = std::move(other.m_Path);
+
     return *this;
 }
 
