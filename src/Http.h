@@ -19,6 +19,29 @@ struct Response;
 class Client
 {
 public:
+    Client();
+
+    /// @brief Creates a `Client` from another `Client`.
+    /// @param other The other `Client`.
+    Client(const Client &other);
+
+    /// @brief Creates a `Client` from another moved `Client`.
+    /// @param other The other `Client`.
+    Client(Client &&other);
+
+    /// @brief Assigns another `Client` to the current `Client`.
+    /// @param other The other `Client`.
+    /// @return The current `Client`.
+    Client &operator=(const Client &other);
+
+    /// @brief Assigns another moved `Client` to the current `Client`.
+    /// @param other The other `Client`.
+    /// @return The current `Client`.
+    Client &operator=(Client &&other);
+
+    /// @brief Destroys the `Client`.
+    ~Client();
+
     /// @brief Adds an Elliptic Curve trust anchor.
     /// @param trustAnchor The elliptic curve trust anchor info.
     void AddECTrustAnchor(const Socket::EllipticCurveTrustAnchor &trustAnchor);

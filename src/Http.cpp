@@ -11,6 +11,48 @@ static const std::string s_HeadersDelimiter = "\r\n\r\n";
 
 static const char *MethodToString(Method method);
 
+Client::Client()
+{
+}
+
+Client::Client(const Client &other)
+    : m_ECTrustAnchors(other.m_ECTrustAnchors), m_RsaTrustAnchors(other.m_RsaTrustAnchors), m_LeftoverData(other.m_LeftoverData)
+{
+}
+
+Client::Client(Client &&other)
+    : m_ECTrustAnchors(std::move(other.m_ECTrustAnchors)), m_RsaTrustAnchors(std::move(other.m_RsaTrustAnchors)), m_LeftoverData(std::move(other.m_LeftoverData))
+{
+}
+
+Client &Client::operator=(const Client &other)
+{
+    if (this == &other)
+        return *this;
+
+    m_ECTrustAnchors = other.m_ECTrustAnchors;
+    m_RsaTrustAnchors = other.m_RsaTrustAnchors;
+    m_LeftoverData = other.m_LeftoverData;
+
+    return *this;
+}
+
+Client &Client::operator=(Client &&other)
+{
+    if (this == &other)
+        return *this;
+
+    m_ECTrustAnchors = std::move(other.m_ECTrustAnchors);
+    m_RsaTrustAnchors = std::move(other.m_RsaTrustAnchors);
+    m_LeftoverData = std::move(other.m_LeftoverData);
+
+    return *this;
+}
+
+Client::~Client()
+{
+}
+
 void Client::AddECTrustAnchor(const Socket::EllipticCurveTrustAnchor &trustAnchor)
 {
     m_ECTrustAnchors.emplace_back(trustAnchor);
