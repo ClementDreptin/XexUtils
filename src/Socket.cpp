@@ -49,7 +49,7 @@ Socket::Socket(Socket &&other)
 
 Socket &Socket::operator=(Socket &&other)
 {
-    if (this != &other)
+    if (this == &other)
         return *this;
 
     // Release whatever this instance currently owns before taking other's.
