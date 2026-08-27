@@ -88,9 +88,14 @@ public:
     /// @param secure Wether to use TLS or not.
     Socket(std::string &&domain, uint16_t port, bool secure = true);
 
-    /// @brief Creates a copy from an existing `Socket`.
-    /// @param other The other `Socket` to copy from.
-    Socket(const Socket &other);
+    /// @brief Creates a `Socket` from another moved `Socket`.
+    /// @param other The other `Socket`.
+    Socket(Socket &&other);
+
+    /// @brief Assigns another moved `Socket` to the current `Socket`.
+    /// @param other The other `Socket`.
+    /// @return The current `Socket`.
+    Socket &operator=(Socket &&other);
 
     /// @brief Calls `Disconnect`.
     ~Socket();
@@ -179,9 +184,15 @@ private:
     uint16_t m_Port;
     bool m_Secure;
     bool m_Connected;
+    bool m_ReferenceCounted;
     std::unique_ptr<TlsSession> m_pTlsSession;
 
     IN_ADDR DnsLookup();
+
+    // Make the copy operations private to prevent two Sockets from owning the same
+    // OS socket handle.
+    Socket(const Socket &other);
+    Socket &operator=(const Socket &other);
 
 private:
     static bool s_Initialized;

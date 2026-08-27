@@ -66,6 +66,30 @@ void Socket()
         TEST_EQ(domain.size(), 0);
     });
 
+    Describe("Socket::Socket(Socket &&)");
+
+    It("transfers a live connection so the destination can send and receive", [&]() {
+        XexUtils::Socket insecureSocket(domain, 80, false);
+        insecureSocket.Connect();
+
+        XexUtils::Socket copy(std::move(insecureSocket));
+        int sent = copy.Send(request.c_str(), request.size());
+        FlushSocket(copy);
+        TEST_EQ(sent, static_cast<int>(request.size()));
+    });
+
+    Describe("Socket::operator=(Socket &&)");
+
+    It("transfers a live connection so the destination can send and receive", [&]() {
+        XexUtils::Socket insecureSocket(domain, 80, false);
+        insecureSocket.Connect();
+
+        XexUtils::Socket copy = std::move(insecureSocket);
+        int sent = copy.Send(request.c_str(), request.size());
+        FlushSocket(copy);
+        TEST_EQ(sent, static_cast<int>(request.size()));
+    });
+
     Describe("Socket::Connect()");
 
     It("connects using a secure socket", [&]() {

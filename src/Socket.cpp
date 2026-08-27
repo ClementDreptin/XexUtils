@@ -19,29 +19,57 @@ size_t Socket::s_ReferenceCounter = 0;
 CRITICAL_SECTION Socket::s_CriticalSection = CreateInitializedCriticalSection();
 
 Socket::Socket()
-    : m_Socket(INVALID_SOCKET), m_Port(0), m_Secure(false), m_Connected(false)
+    : m_Socket(INVALID_SOCKET), m_Port(0), m_Secure(false), m_Connected(false), m_ReferenceCounted(false)
 {
 }
 
 Socket::Socket(const std::string &domain, uint16_t port, bool secure)
-    : m_Socket(INVALID_SOCKET), m_Domain(domain), m_Port(port), m_Secure(secure), m_Connected(false)
+    : m_Socket(INVALID_SOCKET), m_Domain(domain), m_Port(port), m_Secure(secure), m_Connected(false), m_ReferenceCounted(false)
 {
     if (m_Secure)
         m_pTlsSession = std::unique_ptr<TlsSession>(new TlsSession());
 }
 
 Socket::Socket(std::string &&domain, uint16_t port, bool secure)
-    : m_Socket(INVALID_SOCKET), m_Domain(std::move(domain)), m_Port(port), m_Secure(secure), m_Connected(false)
+    : m_Socket(INVALID_SOCKET), m_Domain(std::move(domain)), m_Port(port), m_Secure(secure), m_Connected(false), m_ReferenceCounted(false)
 {
     if (m_Secure)
         m_pTlsSession = std::unique_ptr<TlsSession>(new TlsSession());
 }
 
-Socket::Socket(const Socket &other)
-    : m_Socket(INVALID_SOCKET), m_Domain(other.m_Domain), m_Port(other.m_Port), m_Secure(other.m_Secure), m_Connected(false)
+Socket::Socket(Socket &&other)
+    : m_Socket(other.m_Socket), m_Domain(std::move(other.m_Domain)), m_Port(other.m_Port), m_Secure(other.m_Secure), m_Connected(other.m_Connected), m_ReferenceCounted(false), m_pTlsSession(std::move(other.m_pTlsSession))
 {
-    if (m_Secure)
-        m_pTlsSession = std::unique_ptr<TlsSession>(new TlsSession());
+    other.m_Socket = INVALID_SOCKET;
+    other.m_Port = 0;
+    other.m_Secure = false;
+    other.m_Connected = false;
+    other.m_ReferenceCounted = false;
+}
+
+Socket &Socket::operator=(Socket &&other)
+{
+    if (this != &other)
+        return *this;
+
+    // Release whatever this instance currently owns before taking other's.
+    Disconnect();
+
+    m_Socket = other.m_Socket;
+    m_Domain = std::move(other.m_Domain);
+    m_Port = other.m_Port;
+    m_Secure = other.m_Secure;
+    m_Connected = other.m_Connected;
+    m_ReferenceCounted = other.m_ReferenceCounted;
+    m_pTlsSession = std::move(other.m_pTlsSession);
+
+    other.m_Socket = INVALID_SOCKET;
+    other.m_Port = 0;
+    other.m_Secure = false;
+    other.m_Connected = false;
+    other.m_ReferenceCounted = false;
+
+    return *this;
 }
 
 Socket::~Socket()
@@ -63,12 +91,16 @@ HRESULT Socket::Connect()
         }
     }
     s_ReferenceCounter++;
+    m_ReferenceCounted = true;
     LeaveCriticalSection(&s_CriticalSection);
 
     // Resolve domain to IP address
     IN_ADDR ipAddress = DnsLookup();
     if (ipAddress.s_addr == INADDR_NONE)
+    {
+        Disconnect();
         return E_FAIL;
+    }
 
     // Set up the address info of the server
     sockaddr_in addrInfo = {};
@@ -81,6 +113,7 @@ HRESULT Socket::Connect()
     if (m_Socket == INVALID_SOCKET)
     {
         DebugPrint("[XexUtils][Socket]: Error: Failed to create socket: %d.", WSAGetLastError());
+        Disconnect();
         return E_FAIL;
     }
 
@@ -123,12 +156,16 @@ void Socket::Disconnect()
     m_Connected = false;
 
     // Once the amount of connected sockets hits 0, execute the global cleanup
-    EnterCriticalSection(&s_CriticalSection);
-    if (s_ReferenceCounter != 0)
-        s_ReferenceCounter--;
-    if (s_ReferenceCounter == 0 && s_Initialized == true)
-        GlobalCleanup();
-    LeaveCriticalSection(&s_CriticalSection);
+    if (m_ReferenceCounted)
+    {
+        EnterCriticalSection(&s_CriticalSection);
+        m_ReferenceCounted = false;
+        if (s_ReferenceCounter != 0)
+            s_ReferenceCounter--;
+        if (s_ReferenceCounter == 0 && s_Initialized == true)
+            GlobalCleanup();
+        LeaveCriticalSection(&s_CriticalSection);
+    }
 }
 
 int Socket::Send(const char *buffer, size_t size)
