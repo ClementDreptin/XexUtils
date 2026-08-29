@@ -120,27 +120,39 @@ Path Path::Parent() const
 
     // When the path is a directory (so ends with the separator), we make the offset
     // to be one character before so that lastSeparatorPos doesn't point the very last
-    // separator but the one before
+    // separator but the one before.
     size_t offset = std::string::npos;
     if (m_Path.back() == s_Separator)
         offset = m_Path.size() - 2;
 
     size_t lastSeparatorPos = m_Path.find_last_of(s_Separator, offset);
 
-    // Handle absolute path case
+    // Handle the absolute path case.
     if (lastSeparatorPos == 0)
         return Path(std::string(1, s_Separator));
 
+    // Handle the no separator case.
     if (lastSeparatorPos == std::string::npos)
     {
+        // If we have a drive but no separator, we have a path that looks like "C:File.txt"
+        // so we just return the drive.
         Path drive = Drive();
         if (!drive.IsEmpty())
             return drive;
 
+        // If we don't have a drive and no separator, we have just a filename like "File.txt"
+        // so we just return an empty Path.
         return Path();
     }
 
-    return Path(m_Path.substr(0, lastSeparatorPos));
+    // Handle the case where the last separator is the drive root, if that the case,
+    // include the separator in the Path.
+    size_t endOffset = lastSeparatorPos;
+    size_t colonPos = m_Path.find_first_of(':');
+    if (lastSeparatorPos == colonPos + 1)
+        endOffset = lastSeparatorPos + 1;
+
+    return Path(m_Path.substr(0, endOffset));
 }
 
 Path Path::RelativePath() const

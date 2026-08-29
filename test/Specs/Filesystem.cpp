@@ -503,6 +503,12 @@ void Filesystem()
         TEST_EQ(path.Parent(), "C:");
     });
 
+    It("extracts the parent of a Path with a drive and a separator", []() {
+        Fs::Path path("C:\\File.txt");
+
+        TEST_EQ(path.Parent(), "C:\\");
+    });
+
     It("returns an empty Path when extracting the parent of a Path with no separators", []() {
         Fs::Path path("File.txt");
 
