@@ -264,9 +264,104 @@ HRESULT UnmountUsb()
     return UnmountPath("usb:");
 }
 
-Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath)
+File::File()
+    : Size(0), Attributes(0), CreationTime(0), LastReadTime(0), LastWriteTime(0)
 {
-    std::vector<WIN32_FIND_DATA> files;
+}
+
+File::File(const File &other)
+    : Name(other.Name), Size(other.Size), Attributes(other.Attributes), CreationTime(other.CreationTime), LastReadTime(other.LastReadTime), LastWriteTime(other.LastWriteTime)
+{
+}
+
+File::File(File &&other)
+    : Name(std::move(other.Name)), Size(other.Size), Attributes(other.Attributes), CreationTime(other.CreationTime), LastReadTime(other.LastReadTime), LastWriteTime(other.LastWriteTime)
+{
+    other.Size = 0;
+    other.Attributes = 0;
+    other.CreationTime = 0;
+    other.LastReadTime = 0;
+    other.LastWriteTime = 0;
+}
+
+File &File::operator=(const File &other)
+{
+    if (this == &other)
+        return *this;
+
+    Name = other.Name;
+    Size = other.Size;
+    Attributes = other.Attributes;
+    CreationTime = other.CreationTime;
+    LastReadTime = other.LastReadTime;
+    LastWriteTime = other.LastWriteTime;
+
+    return *this;
+}
+
+File &File::operator=(File &&other)
+{
+    if (this == &other)
+        return *this;
+
+    Name = std::move(other.Name);
+    Size = other.Size;
+    Attributes = other.Attributes;
+    CreationTime = other.CreationTime;
+    LastReadTime = other.LastReadTime;
+    LastWriteTime = other.LastWriteTime;
+
+    other.Size = 0;
+    other.Attributes = 0;
+    other.CreationTime = 0;
+    other.LastReadTime = 0;
+    other.LastWriteTime = 0;
+
+    return *this;
+}
+
+File::~File()
+{
+}
+
+bool File::operator<(const File &other) const
+{
+    // Compare the file names and store the comparaisons as integers (which will be either
+    // 0 or 1).
+    const std::string &thisName = Name.String();
+    const std::string &otherName = other.Name.String();
+    size_t comparisonLength = std::max<size_t>(thisName.size(), otherName.size()) + 1;
+
+    int nameComparison = _strnicmp(thisName.c_str(), otherName.c_str(), comparisonLength);
+    int thisNameGreaterThanOtherName = static_cast<int>(nameComparison > 0);
+    int otherNameGreaterThanThisName = static_cast<int>(nameComparison < 0);
+
+    // If the file is a directory, decrease the score by 2. The score is decreased because
+    // the lower the score the closer the element will be to the start of the set and we
+    // want directories to always be before files in sets.
+    bool thisIsDirectory = (Attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    bool otherIsDirectory = (other.Attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    int thisScore = thisNameGreaterThanOtherName - static_cast<int>(thisIsDirectory * 2);
+    int otherScore = otherNameGreaterThanThisName - static_cast<int>(otherIsDirectory * 2);
+
+    return thisScore < otherScore;
+}
+
+static time_t FileTimeToTimet(const FILETIME &fileTime)
+{
+    uint64_t fileTimeAsUint64 =
+        static_cast<uint64_t>(fileTime.dwHighDateTime) << 32 |
+        static_cast<uint64_t>(fileTime.dwLowDateTime);
+
+    return static_cast<time_t>(fileTimeAsUint64 / 10000000ULL - 11644473600ULL);
+}
+
+Optional<std::vector<File>> ReadDirectory(const Path &directoryPath)
+{
+    // We temporarily store the files in an std::set so that they are automatically sorted.
+    // It starts with the directories in case-insensitive alphabetical order, than the
+    // files in case-insensitive alphabetical order.
+    std::set<File> files;
 
     // Check if directoryPath is a valid directory.
     // On Windows this wouldn't be needed because FindFirstFile would simply return
@@ -293,7 +388,7 @@ Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath)
         // FindFirstFile sets the last error to ERROR_FILE_NOT_FOUND when the directory is
         // empty (cf. comment above).
         if (error == ERROR_FILE_NOT_FOUND)
-            return files;
+            return std::vector<File>();
 
         DebugPrint(
             "[XexUtils][Fs]: Error: Couldn't find the first file in %s (%X).",
@@ -307,7 +402,14 @@ Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath)
     // Loop until no more files are found or an error occurs.
     do
     {
-        files.emplace_back(fileInfo);
+        File file;
+        file.Name = fileInfo.cFileName;
+        file.Size = static_cast<uint64_t>(fileInfo.nFileSizeHigh) << 32 | static_cast<uint64_t>(fileInfo.nFileSizeLow);
+        file.Attributes = fileInfo.dwFileAttributes;
+        file.CreationTime = FileTimeToTimet(fileInfo.ftCreationTime);
+        file.LastReadTime = FileTimeToTimet(fileInfo.ftLastAccessTime);
+        file.LastWriteTime = FileTimeToTimet(fileInfo.ftLastWriteTime);
+        files.emplace(std::move(file));
     } while (FindNextFile(handle, &fileInfo));
 
     FindClose(handle);
@@ -325,7 +427,8 @@ Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath)
         return NullOpt();
     }
 
-    return files;
+    // Create a vector from the std::set.
+    return std::vector<File>(files.begin(), files.end());
 }
 
 }

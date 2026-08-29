@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Kernel.h"
 #include "Optional.h"
 
 namespace XexUtils
@@ -247,11 +248,65 @@ HRESULT UnmountHdd();
 /// @return `S_OK` on success, an `NTSTATUS` error on error.
 HRESULT UnmountUsb();
 
+/// @brief A struct to represent a file on disk.
+struct File
+{
+    /// @brief Creates an empty `File`.
+    File();
+
+    /// @brief Creates a `File` from another `File`.
+    /// @param other The other `File`.
+    File(const File &other);
+
+    /// @brief Creates a `File` from another moved `File`.
+    /// @param other The other `File`.
+    File(File &&other);
+
+    /// @brief Assigns another `File` to the current `File`.
+    /// @param other The other `File`.
+    /// @return The current `File`.
+    File &operator=(const File &other);
+
+    /// @brief Assigns another moved `File` to the current `File`.
+    /// @param other The other `File`.
+    /// @return The current `File`.
+    File &operator=(File &&other);
+
+    /// @brief Destroys the `File`.
+    ~File();
+
+    /// @brief Compares two `File`s together.
+    ///
+    /// The sorting logic replicates what's in the Windows file explorer by default, so
+    /// directories, than files, ordered alphabetically and case-insensitively.
+    ///
+    /// @param other The other `File`.
+    /// @return
+    bool operator<(const File &other) const;
+
+    /// @brief The file name.
+    Path Name;
+
+    /// @brief The file size in bytes.
+    uint64_t Size;
+
+    /// @brief The file attributes (cf. `FILE_ATTRIBUTE_*` macros).
+    FILE_ATTRIBUTE Attributes;
+
+    /// @brief The file creation time as a `time_t` (UNIX timestamp).
+    time_t CreationTime;
+
+    /// @brief The time at which the file was last read as a `time_t` (UNIX timestamp).
+    time_t LastReadTime;
+
+    /// @brief The time at which the file was last written as a `time_t` (UNIX timestamp).
+    time_t LastWriteTime;
+};
+
 /// @brief Returns a list of files present in a directory.
 /// @param directoryPath The path to the directory.
-/// @return A valid `Optional<std::vector<WIN32_FIND_DATA>>` on success, an empty
-///         `Optional` on error.
-Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath);
+/// @return A valid `Optional<std::vector<File>>` on success, an empty `Optional` on error.
+Optional<std::vector<File>> ReadDirectory(const Path &directoryPath);
 
 }
 }

@@ -206,9 +206,9 @@ void StfsPackage()
         auto files = Fs::ReadDirectory("nxeart:\\");
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 3);
-        TEST_EQ((*files)[0].cFileName, std::string("DashStyle"));
-        TEST_EQ((*files)[1].cFileName, std::string("nxebg.jpg"));
-        TEST_EQ((*files)[2].cFileName, std::string("nxeslot.jpg"));
+        TEST_EQ((*files)[0].Name, "DashStyle");
+        TEST_EQ((*files)[1].Name, "nxebg.jpg");
+        TEST_EQ((*files)[2].Name, "nxeslot.jpg");
     });
 
     It("mounts the files of a title update package", []() {
@@ -220,8 +220,8 @@ void StfsPackage()
         auto files = Fs::ReadDirectory("titleUpdate:\\");
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 2);
-        TEST_EQ((*files)[0].cFileName, std::string("12345678.ini"));
-        TEST_EQ((*files)[1].cFileName, std::string("fake-game.xexp"));
+        TEST_EQ((*files)[0].Name, "12345678.ini");
+        TEST_EQ((*files)[1].Name, "fake-game.xexp");
     });
 
     It("mounts the files of a demo package", []() {
@@ -233,7 +233,7 @@ void StfsPackage()
         auto files = Fs::ReadDirectory("demo:\\");
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 1);
-        TEST_EQ((*files)[0].cFileName, std::string("fake-game.xex"));
+        TEST_EQ((*files)[0].Name, std::string("fake-game.xex"));
     });
 
     It("mounts the files of a gamesave package", []() {
@@ -245,7 +245,7 @@ void StfsPackage()
         auto files = Fs::ReadDirectory("gamesave:\\");
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 1);
-        TEST_EQ((*files)[0].cFileName, std::string("savegame.txt"));
+        TEST_EQ((*files)[0].Name, "savegame.txt");
     });
 
     It("fails if the package doesn't exist", []() {

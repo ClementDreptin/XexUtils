@@ -94,15 +94,24 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Target Name="CopyFixtures" BeforeTargets="DeployToHardDrive">
+    <ItemGroup>
+      <FixtureFiles Include="fixtures\**\*" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(FixtureFiles)"
+      DestinationFolder="$(OutDir)fixtures\%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+    />
+
     <!--
-      We can't use the builtin Copy task here because it doesn't support copying empty
-      directories, so we use robocopy instead.
-      robocopy has none standard exit codes and can return codes between 0 and 7 on
-      success. Any code equal to or greater than 8 indicates a failure.
+      Some directories only contain a .gitkeep file so that they can be tracked by git but
+      we actually want them to be empty, so we delete those files afterwards. We can't
+      simply ignore them from the FixtureFiles pattern because if they are the only file
+      in their directory, the directory won't be copied at all.
     -->
-    <Exec Command="robocopy fixtures $(OutDir)fixtures /E /NFL /NDL /NJH /NJS" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="RobocopyExitCode" />
-    </Exec>
-    <Error Condition="'$(RobocopyExitCode)' >= '8'" Text="robocopy failed with exit code $(RobocopyExitCode)." />
+    <ItemGroup>
+      <FixtureGitKeeps Include="@(FixtureFiles)" Condition="'%(Filename)%(Extension)' == '.gitkeep'" />
+    </ItemGroup>
+    <Delete Files="@(FixtureGitKeeps->'$(OutDir)fixtures\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 </Project>

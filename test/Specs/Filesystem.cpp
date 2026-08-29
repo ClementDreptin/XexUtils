@@ -663,19 +663,188 @@ void Filesystem()
         TEST_EQ(file.is_open(), false);
     });
 
+    Describe("Fs::File::File()");
+
+    It("creates an empty File", []() {
+        auto file = Fs::File();
+
+        TEST_EQ(file.Name, "");
+        TEST_EQ(file.Size, 0);
+        TEST_EQ(file.Attributes, 0);
+        TEST_EQ(file.CreationTime, 0);
+        TEST_EQ(file.LastReadTime, 0);
+        TEST_EQ(file.LastWriteTime, 0);
+    });
+
+    Describe("Fs::File::File(const Fs::File &)");
+
+    It("creates a File from another File", []() {
+        Fs::File file;
+        file.Name = "file.txt";
+        file.Size = 3;
+        file.Attributes = FILE_ATTRIBUTE_NORMAL;
+        file.CreationTime = 123;
+        file.LastReadTime = 456;
+        file.LastWriteTime = 789;
+        Fs::File copy(file);
+
+        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.Size, 3);
+        TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
+        TEST_EQ(copy.CreationTime, 123);
+        TEST_EQ(copy.LastReadTime, 456);
+        TEST_EQ(copy.LastWriteTime, 789);
+    });
+
+    Describe("Fs::File::File(Fs::File &&)");
+
+    It("creates a File from another moved File", []() {
+        Fs::File file;
+        file.Name = "file.txt";
+        file.Size = 3;
+        file.Attributes = FILE_ATTRIBUTE_NORMAL;
+        file.CreationTime = 123;
+        file.LastReadTime = 456;
+        file.LastWriteTime = 789;
+        Fs::File copy(std::move(file));
+
+        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.Size, 3);
+        TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
+        TEST_EQ(copy.CreationTime, 123);
+        TEST_EQ(copy.LastReadTime, 456);
+        TEST_EQ(copy.LastWriteTime, 789);
+
+        TEST_EQ(file.Name, "");
+        TEST_EQ(file.Size, 0);
+        TEST_EQ(file.Attributes, 0);
+        TEST_EQ(file.CreationTime, 0);
+        TEST_EQ(file.LastReadTime, 0);
+        TEST_EQ(file.LastWriteTime, 0);
+    });
+
+    Describe("Fs::File::operator=(const Fs::File &)");
+
+    It("creates a File from another File", []() {
+        Fs::File file;
+        file.Name = "file.txt";
+        file.Size = 3;
+        file.Attributes = FILE_ATTRIBUTE_NORMAL;
+        file.CreationTime = 123;
+        file.LastReadTime = 456;
+        file.LastWriteTime = 789;
+        Fs::File copy = file;
+
+        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.Size, 3);
+        TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
+        TEST_EQ(copy.CreationTime, 123);
+        TEST_EQ(copy.LastReadTime, 456);
+        TEST_EQ(copy.LastWriteTime, 789);
+    });
+
+    Describe("Fs::File::operator=(Fs::File &&)");
+
+    It("creates a File from another moved File", []() {
+        Fs::File file;
+        file.Name = "file.txt";
+        file.Size = 3;
+        file.Attributes = FILE_ATTRIBUTE_NORMAL;
+        file.CreationTime = 123;
+        file.LastReadTime = 456;
+        file.LastWriteTime = 789;
+        Fs::File copy = std::move(file);
+
+        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.Size, 3);
+        TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
+        TEST_EQ(copy.CreationTime, 123);
+        TEST_EQ(copy.LastReadTime, 456);
+        TEST_EQ(copy.LastWriteTime, 789);
+
+        TEST_EQ(file.Name, "");
+        TEST_EQ(file.Size, 0);
+        TEST_EQ(file.Attributes, 0);
+        TEST_EQ(file.CreationTime, 0);
+        TEST_EQ(file.LastReadTime, 0);
+        TEST_EQ(file.LastWriteTime, 0);
+    });
+
+    Describe("Fs::File::operator<(const Fs::File &)");
+
+    It("sorts Files in case-insensitive alphabetical order", []() {
+        Fs::File first;
+        first.Name = "DirB";
+        Fs::File second;
+        second.Name = "dirA";
+
+        std::set<Fs::File> files;
+        files.insert(first);
+        files.insert(second);
+
+        auto it = files.begin();
+        TEST_EQ(it->Name, "dirA");
+        TEST_EQ((++it)->Name, "DirB");
+    });
+
+    It("puts directories before normal files", []() {
+        Fs::File first;
+        first.Name = "B.txt";
+        first.Attributes = FILE_ATTRIBUTE_NORMAL;
+        Fs::File second;
+        second.Name = "a.txt";
+        second.Attributes = FILE_ATTRIBUTE_NORMAL;
+        Fs::File third;
+        third.Name = "DirB";
+        third.Attributes = FILE_ATTRIBUTE_DIRECTORY;
+        Fs::File fourth;
+        fourth.Name = "dirA";
+        fourth.Attributes = FILE_ATTRIBUTE_DIRECTORY;
+
+        std::set<Fs::File> files;
+        files.insert(first);
+        files.insert(second);
+        files.insert(third);
+        files.insert(fourth);
+
+        auto it = files.begin();
+        TEST_EQ(it->Name, "dirA");
+        TEST_EQ((++it)->Name, "DirB");
+        TEST_EQ((++it)->Name, "a.txt");
+        TEST_EQ((++it)->Name, "B.txt");
+    });
+
+    It("sorts a name that is a prefix of another name before it", []() {
+        Fs::File first;
+        first.Name = "file.txt";
+        Fs::File second;
+        second.Name = "file";
+
+        std::set<Fs::File> files;
+        files.insert(first);
+        files.insert(second);
+
+        auto it = files.begin();
+        TEST_EQ(it->Name, "file");
+        TEST_EQ((++it)->Name, "file.txt");
+    });
+
     Describe("Fs::ReadDirectory(const Fs::Path &)");
 
-    It("returns a vector of files in a directory", []() {
+    It("returns a vector of Files in a directory", []() {
         auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem");
 
         TEST_EQ(files.HasValue(), true);
-        TEST_EQ(files->size(), 2);
-        TEST_EQ((*files)[0].cFileName, std::string("file1.txt"));
-        TEST_EQ((*files)[1].cFileName, std::string("file2.txt"));
+        TEST_EQ(files->size(), 5);
+        TEST_EQ((*files)[0].Name, "dirA");
+        TEST_EQ((*files)[1].Name, "DirB");
+        TEST_EQ((*files)[2].Name, "empty-dir");
+        TEST_EQ((*files)[3].Name, "a.txt");
+        TEST_EQ((*files)[4].Name, "B.txt");
     });
 
     It("returns an empty vector when the directory is empty", []() {
-        auto files = Fs::ReadDirectory("game:\\fixtures\\empty-dir");
+        auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem\\empty-dir");
 
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 0);
