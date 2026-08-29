@@ -659,13 +659,20 @@ void Filesystem()
 
     Describe("Fs::ReadDirectory(const Fs::Path &)");
 
-    It("returns a vector a files in a directory", []() {
+    It("returns a vector of files in a directory", []() {
         auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem");
 
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 2);
         TEST_EQ((*files)[0].cFileName, std::string("file1.txt"));
         TEST_EQ((*files)[1].cFileName, std::string("file2.txt"));
+    });
+
+    It("returns an empty vector when the directory is empty", []() {
+        auto files = Fs::ReadDirectory("game:\\fixtures\\empty-dir");
+
+        TEST_EQ(files.HasValue(), true);
+        TEST_EQ(files->size(), 0);
     });
 
     It("returns NullOpt when the directory path doesn't exist", []() {

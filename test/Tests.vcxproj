@@ -94,13 +94,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Target Name="CopyFixtures" BeforeTargets="DeployToHardDrive">
-    <ItemGroup>
-      <FixtureFiles Include="fixtures\**\*" />
-    </ItemGroup>
-    <Copy
-      SourceFiles="@(FixtureFiles)"
-      DestinationFolder="$(OutDir)fixtures\%(RecursiveDir)"
-      SkipUnchangedFiles="true"
-    />
+    <!--
+      We can't use the builtin Copy task here because it doesn't support copying empty
+      directories, so we use robocopy instead.
+      robocopy has none standard exit codes and can return codes between 0 and 7 on
+      success. Any code equal to or greater than 8 indicates a failure.
+    -->
+    <Exec Command="robocopy fixtures $(OutDir)fixtures /E /NFL /NDL /NJH /NJS" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="RobocopyExitCode" />
+    </Exec>
+    <Error Condition="'$(RobocopyExitCode)' >= '8'" Text="robocopy failed with exit code $(RobocopyExitCode)." />
   </Target>
 </Project>

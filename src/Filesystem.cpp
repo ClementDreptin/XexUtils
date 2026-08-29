@@ -256,17 +256,39 @@ Optional<std::vector<WIN32_FIND_DATA>> ReadDirectory(const Path &directoryPath)
 {
     std::vector<WIN32_FIND_DATA> files;
 
+    // Check if directoryPath is a valid directory.
+    // On Windows this wouldn't be needed because FindFirstFile would simply return
+    // INVALID_HANDLE_VALUE and that would mean the directoryPath is not a valid directory.
+    // On Xbox 360 FindFirstFile can also returrn INVALID_HANDLE_VALUE when the directory
+    // is valid but empty, because there are no "." or ".." entries, so we need to make
+    // a difference between the directory doesn't exist and it's empty.
+    uint32_t attributes = GetFileAttributes(directoryPath.c_str());
+    bool isDirectory = attributes != 0xFFFFFFFF && (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    if (!isDirectory)
+    {
+        DebugPrint("[XexUtils][Fs]: Error: %s is not a valid directory.", directoryPath.c_str());
+        return NullOpt();
+    }
+
     // Initialize the search.
     Path searchPattern = directoryPath / "*";
     WIN32_FIND_DATA fileInfo = {};
     HANDLE handle = FindFirstFile(searchPattern.c_str(), &fileInfo);
     if (handle == nullptr || handle == INVALID_HANDLE_VALUE)
     {
+        uint32_t error = GetLastError();
+
+        // FindFirstFile sets the last error to ERROR_FILE_NOT_FOUND when the directory is
+        // empty (cf. comment above).
+        if (error == ERROR_FILE_NOT_FOUND)
+            return files;
+
         DebugPrint(
             "[XexUtils][Fs]: Error: Couldn't find the first file in %s (%X).",
             directoryPath.c_str(),
-            GetLastError()
+            error
         );
+
         return NullOpt();
     }
 
