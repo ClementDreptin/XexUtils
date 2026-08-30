@@ -1,5 +1,8 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdint>
+
 namespace XexUtils
 {
 namespace Input

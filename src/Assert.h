@@ -1,5 +1,8 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdio>
+
 #ifndef NDEBUG
     /// @brief Triggers a breakpoint in debug builds when a condition is false.
     ///

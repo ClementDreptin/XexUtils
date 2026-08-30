@@ -1,4 +1,8 @@
-#include "pch.h"
+#include <cstdint>
+#include <cstdlib>
+#include <string>
+
+#include "Log.h"
 #include "Url.h"
 
 namespace XexUtils

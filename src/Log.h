@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdarg>
+#include <string>
+
 namespace XexUtils
 {
 namespace Log

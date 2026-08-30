@@ -1,7 +1,14 @@
-#include "pch.h"
-#include "Filesystem.h"
+#include <xtl.h>
+#include <cstdint>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "Filesystem.h"
 #include "Kernel.h"
+#include "Log.h"
+#include "Optional.h"
 
 namespace XexUtils
 {

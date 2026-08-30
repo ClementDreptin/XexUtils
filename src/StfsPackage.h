@@ -1,5 +1,9 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdint>
+#include <string>
+
 #include "Filesystem.h"
 #include "Kernel.h"
 #include "Optional.h"
@@ -19,11 +23,11 @@ public:
 
     /// @brief Creates an `StfsPackage` from a file on disk.
     /// @param filePath The path to the file on disk.
-    StfsPackage(const XexUtils::Fs::Path &filePath);
+    StfsPackage(const Fs::Path &filePath);
 
     /// @brief Creates an `StfsPackage` from a file on disk.
     /// @param filePath The path to the file on disk.
-    StfsPackage(XexUtils::Fs::Path &&filePath);
+    StfsPackage(Fs::Path &&filePath);
 
     /// @brief Creates an `StfsPackage` from another moved `StfsPackage`.
     /// @param other The other `StfsPackage`.
@@ -68,7 +72,7 @@ public:
     HRESULT Unmount();
 
 private:
-    XexUtils::Fs::Path m_FilePath;
+    Fs::Path m_FilePath;
     std::string m_MountDiskName;
 
     // Make the copy operations private to prevent two StfsPackages from owning the same

@@ -1,4 +1,7 @@
-#include "pch.h"
+#include <xtl.h>
+#include <cmath>
+#include <cstdint>
+
 #include "Math.h"
 
 namespace XexUtils

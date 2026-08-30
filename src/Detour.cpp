@@ -1,11 +1,15 @@
 // Very inspired by the "Xbox 360 Detours" gist from iMoD1998
 // https://gist.github.com/iMoD1998/4aa48d5c990535767a3fc3251efc0348
 
-#include "pch.h"
-#include "Detour.h"
+#include <xtl.h>
+#include <cstdint>
+#include <string>
 
+#include "Assert.h"
+#include "Detour.h"
 #include "General.h"
 #include "Kernel.h"
+#include "Log.h"
 #include "Memory.h"
 
 namespace XexUtils

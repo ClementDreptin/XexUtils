@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kernel.h"
-#include "Xam.h"
+#include "Log.h"
 
 namespace XexUtils
 {

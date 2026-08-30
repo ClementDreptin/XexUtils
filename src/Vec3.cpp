@@ -1,4 +1,5 @@
-#include "pch.h"
+#include <cmath>
+
 #include "Vec3.h"
 
 namespace XexUtils

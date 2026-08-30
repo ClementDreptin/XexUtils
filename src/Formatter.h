@@ -1,5 +1,10 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdarg>
+#include <cstdint>
+#include <string>
+
 namespace XexUtils
 {
 namespace Formatter

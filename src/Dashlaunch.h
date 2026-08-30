@@ -1,5 +1,8 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdint>
+
 #include "Kernel.h"
 
 namespace XexUtils

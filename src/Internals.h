@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 // This file contains internal helpers that are not exposed by the public XexUtils.h
 // header. That's why there's no Doxygen documentation.
 

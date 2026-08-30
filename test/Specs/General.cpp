@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <XexUtils.h>
 
 #include "../TestRunner.h"

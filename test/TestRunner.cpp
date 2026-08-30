@@ -1,10 +1,12 @@
-#include "TestRunner.h"
-
 #include <xtl.h>
-
+#include <cstdint>
+#include <functional>
+#include <sstream>
+#include <string>
 #include <vector>
-
 #include <XexUtils.h>
+
+#include "TestRunner.h"
 
 namespace TestRunner
 {

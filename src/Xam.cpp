@@ -1,8 +1,15 @@
-#include "pch.h"
-#include "Xam.h"
+#include <xtl.h>
+#include <cstdint>
+#include <cstdlib>
+#include <memory>
+#include <string>
+#include <vector>
 
+#include "Assert.h"
 #include "Formatter.h"
 #include "General.h"
+#include "Kernel.h"
+#include "Xam.h"
 
 namespace XexUtils
 {

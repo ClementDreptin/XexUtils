@@ -1,5 +1,18 @@
-#include "pch.h"
+#include <xtl.h>
+#include <cstdint>
+#include <sstream>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include "Assert.h"
 #include "Http.h"
+#include "Internals.h"
+#include "Log.h"
+#include "Optional.h"
+#include "Socket.h"
+#include "Url.h"
 
 namespace XexUtils
 {

@@ -1,7 +1,7 @@
-#include "pch.h"
-#include "SMC.h"
+#include <cstdint>
 
 #include "Kernel.h"
+#include "SMC.h"
 
 namespace XexUtils
 {

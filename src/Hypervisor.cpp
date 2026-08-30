@@ -1,6 +1,8 @@
-#include "pch.h"
-#include "Hypervisor.h"
+#include <xtl.h>
+#include <cstdint>
 
+#include "Assert.h"
+#include "Hypervisor.h"
 #include "Kernel.h"
 
 // Most of this logic was inspired by this:

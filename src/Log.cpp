@@ -1,4 +1,10 @@
-#include "pch.h"
+#include <xtl.h>
+#include <algorithm>
+#include <cstdarg>
+#include <cstdio>
+#include <string>
+
+#include "Assert.h"
 #include "Log.h"
 
 namespace XexUtils

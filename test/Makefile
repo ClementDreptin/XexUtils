@@ -106,7 +106,9 @@ clean:
 
 copy_fixtures: $(FIXTURES_DIR)
 	@echo "Copying $< to $(OUT_DIR)..."
+	@mkdir -p "$(OUT_DIR)"
 	@cp -r "$<" "$(OUT_DIR)"
+	@find "$(FIXTURES_OUT_DIR)" -type f -name ".gitkeep" -delete
 
 
 # ================================================================
@@ -118,7 +120,7 @@ $(TARGET): $(OUT_DIR)/$(PROJECT_NAME).exe
 	@mkdir -p $(@D)
 	@$(WINDOWS_SHIM) $(IMAGEXEX) $(IMAGEXEX_FLAGS) -out:"$@" "$<"
 
-$(OUT_DIR)/$(PROJECT_NAME).exe: $(OBJS) $(XEXUTILS_TARGET)
+$(OUT_DIR)/$(PROJECT_NAME).exe: $(XEXUTILS_TARGET) $(OBJS)
 	@echo "Linking $(@)..."
 	@mkdir -p $(@D)
 	@LIB=$(XDK_LIB_DIR) $(WINDOWS_SHIM) $(LD) $(LD_FLAGS) -OUT:"$@" $^

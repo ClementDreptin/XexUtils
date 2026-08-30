@@ -1,4 +1,9 @@
-#include "pch.h"
+#include <xtl.h>
+#include <cstdint>
+#include <istream>
+#include <ostream>
+
+#include "Assert.h"
 #include "UInt24.h"
 
 namespace XexUtils

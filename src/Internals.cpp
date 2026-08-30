@@ -1,4 +1,7 @@
-#include "pch.h"
+#include <algorithm>
+#include <functional>
+#include <string>
+
 #include "Internals.h"
 
 namespace XexUtils

@@ -1,5 +1,11 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdint>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "Internals.h"
 #include "Optional.h"
 #include "Socket.h"

@@ -7,6 +7,10 @@
 // It is meant to be internal and only used by other XexUtils APIs, hence the lack of
 // Doxygen documentation.
 
+#include <xtl.h>
+#include <cstdint>
+#include <string>
+#include <vector>
 #include <bearssl.h>
 
 namespace XexUtils

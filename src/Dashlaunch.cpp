@@ -1,7 +1,9 @@
-#include "pch.h"
-#include "Dashlaunch.h"
+#include <xtl.h>
+#include <cstdint>
 
+#include "Dashlaunch.h"
 #include "General.h"
+#include "Log.h"
 
 #define LAUNCH_MODULE "launch.xex"
 

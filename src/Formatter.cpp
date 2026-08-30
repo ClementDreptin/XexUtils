@@ -1,4 +1,10 @@
-#include "pch.h"
+#include <xtl.h>
+#include <cstdarg>
+#include <cstdint>
+#include <memory>
+#include <string>
+
+#include "Assert.h"
 #include "Formatter.h"
 
 namespace XexUtils

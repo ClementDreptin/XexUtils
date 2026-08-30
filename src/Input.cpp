@@ -1,6 +1,8 @@
-#include "pch.h"
-#include "Input.h"
+#include <xtl.h>
+#include <cstdint>
 
+#include "Assert.h"
+#include "Input.h"
 #include "Memory.h"
 
 namespace XexUtils

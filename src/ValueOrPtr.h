@@ -1,5 +1,9 @@
 #pragma once
 
+#include <ostream>
+
+#include "Assert.h"
+
 namespace XexUtils
 {
 

@@ -1,5 +1,10 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdint>
+#include <string>
+#include <vector>
+
 namespace XexUtils
 {
 namespace Xam

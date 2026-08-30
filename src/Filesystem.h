@@ -1,5 +1,11 @@
 #pragma once
 
+#include <xtl.h>
+#include <cstdint>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "Kernel.h"
 #include "Optional.h"
 

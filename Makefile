@@ -27,20 +27,8 @@ BEARSSL_INC := $(BEARSSL_DIR)/inc
 # Source files
 # ================================================================
 
-ALL_SRCS := $(shell find src -name '*.cpp')
-
-# Precompiled header sources
-PCH_HEADER := pch.h
-PCH_SRC := src/pch.cpp
-PCH_OBJ := $(INT_DIR)/src/pch.obj
-PCH_FILE := $(INT_DIR)/$(TARGET_NAME).pch
-
-# Normal (non-PCH) sources
-NORMAL_SRCS := $(filter-out $(PCH_SRC),$(ALL_SRCS))
-NORMAL_OBJS := $(NORMAL_SRCS:%.cpp=$(INT_DIR)/%.obj)
-
-# All objects that make up the final library
-OBJS := $(NORMAL_OBJS) $(PCH_OBJ)
+SRCS := $(shell find src -name '*.cpp')
+OBJS := $(SRCS:%.cpp=$(INT_DIR)/%.obj)
 
 
 # ================================================================
@@ -70,7 +58,7 @@ else
 endif
 
 CXX_FLAGS := -c $(addprefix -I ,$(INCLUDES)) -Zi -nologo -W4 -MP -D _XBOX -Gm- -EHsc -GS \
-			 -fp:fast -fp:except- -Zc:wchar_t -Zc:forScope -GR- -openmp- -Fp"$(PCH_FILE)" \
+			 -fp:fast -fp:except- -Zc:wchar_t -Zc:forScope -GR- -openmp- \
 			 -Fd"$(INT_DIR)/vc100.pdb" -TP -FI"$(XDK_INC_DIR)/xbox_intellisense_platform.h"
 
 LD_FLAGS := -NOLOGO $(LIBS)
@@ -101,33 +89,19 @@ clean:
 # Final library
 # ================================================================
 
-$(TARGET): $(OBJS) $(BEARSSL_TARGET)
+$(TARGET): $(BEARSSL_TARGET) $(OBJS)
 	@echo "Linking $(@)..."
 	@mkdir -p $(@D)
 	@LIB=$(XDK_LIB_DIR) $(WINDOWS_SHIM) $(LD) $(LD_FLAGS) -OUT:"$@" $^
 
 
 # ================================================================
-# Precompiled header
+# Compilation
 # ================================================================
 
-# pch.obj CREATES the .pch file
-$(PCH_OBJ): $(PCH_SRC) src/$(PCH_HEADER)
+$(INT_DIR)/%.obj: %.cpp
 	@mkdir -p $(@D)
-	@INCLUDE=$(XDK_INC_DIR) $(WINDOWS_SHIM) $(CXX) $(CXX_FLAGS) -Yc"$(PCH_HEADER)" -Fo"$@" $<
-
-# Tell make that the .pch exists because pch.obj was built
-$(PCH_FILE): $(PCH_OBJ)
-	@:
-
-
-# ================================================================
-# Normal compilation (uses the PCH)
-# ================================================================
-
-$(INT_DIR)/%.obj: %.cpp $(PCH_FILE)
-	@mkdir -p $(@D)
-	@INCLUDE=$(XDK_INC_DIR) $(WINDOWS_SHIM) $(CXX) $(CXX_FLAGS) -Yu"$(PCH_HEADER)" -Fo"$@" $<
+	@INCLUDE=$(XDK_INC_DIR) $(WINDOWS_SHIM) $(CXX) $(CXX_FLAGS) -Fo"$@" $<
 
 
 # ================================================================

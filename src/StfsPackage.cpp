@@ -1,6 +1,14 @@
-#include "pch.h"
-#include "StfsPackage.h"
+#include <xtl.h>
+#include <cstdint>
+#include <fstream>
+#include <string>
 
+#include "Assert.h"
+#include "Filesystem.h"
+#include "Kernel.h"
+#include "Log.h"
+#include "Optional.h"
+#include "StfsPackage.h"
 #include "Xam.h"
 
 namespace XexUtils
@@ -10,12 +18,12 @@ StfsPackage::StfsPackage()
 {
 }
 
-StfsPackage::StfsPackage(const XexUtils::Fs::Path &filePath)
+StfsPackage::StfsPackage(const Fs::Path &filePath)
     : m_FilePath(filePath)
 {
 }
 
-StfsPackage::StfsPackage(XexUtils::Fs::Path &&filePath)
+StfsPackage::StfsPackage(Fs::Path &&filePath)
     : m_FilePath(std::move(filePath))
 {
 }

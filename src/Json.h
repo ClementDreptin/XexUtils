@@ -1,5 +1,11 @@
 #pragma once
 
+#include <xtl.h>
+#include <xjson.h>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 namespace XexUtils
 {
 namespace Json

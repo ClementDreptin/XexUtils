@@ -1,3 +1,4 @@
+#include <utility>
 #include <XexUtils.h>
 
 #include "../TestRunner.h"
@@ -191,6 +192,7 @@ void Detour()
         pDetour = new XexUtils::Detour(AllRegisters, AllRegistersHook);
         pDetour->Install();
 
+        doSync(AllRegisters);
         int value = AllRegisters(1, 2, 3, 4, 5, 6, 7, 8);
         delete pDetour;
 

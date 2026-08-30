@@ -3,6 +3,7 @@
 // characters declared in the code. If those tests stop passing, make sure the encoding
 // of this file is still correct.
 
+#include <string>
 #include <XexUtils.h>
 
 #include "../TestRunner.h"

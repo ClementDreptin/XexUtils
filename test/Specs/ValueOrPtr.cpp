@@ -1,3 +1,6 @@
+#include <sstream>
+#include <string>
+#include <utility>
 #include <XexUtils.h>
 
 #include "../TestRunner.h"
