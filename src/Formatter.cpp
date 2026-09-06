@@ -1,8 +1,8 @@
-#include <xtl.h>
 #include <cstdarg>
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "Formatter.h"

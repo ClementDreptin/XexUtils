@@ -1,7 +1,7 @@
-#include <xtl.h>
 #include <cstdint>
 #include <istream>
 #include <ostream>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "UInt24.h"

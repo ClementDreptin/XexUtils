@@ -1,6 +1,6 @@
+#include <XexUtils.h>
 #include <string>
 #include <utility>
-#include <XexUtils.h>
 
 #include "../TestRunner.h"
 

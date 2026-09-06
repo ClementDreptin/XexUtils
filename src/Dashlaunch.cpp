@@ -1,8 +1,9 @@
-#include <xtl.h>
 #include <cstdint>
+#include <xtl.h>
 
 #include "Dashlaunch.h"
 #include "General.h"
+#include "Kernel.h"
 #include "Log.h"
 
 #define LAUNCH_MODULE "launch.xex"

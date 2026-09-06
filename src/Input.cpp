@@ -1,5 +1,5 @@
-#include <xtl.h>
 #include <cstdint>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "Input.h"

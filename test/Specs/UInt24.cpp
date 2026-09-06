@@ -1,6 +1,6 @@
+#include <XexUtils.h>
 #include <cstdint>
 #include <sstream>
-#include <XexUtils.h>
 
 #include "../TestRunner.h"
 

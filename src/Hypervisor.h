@@ -1,7 +1,7 @@
 #pragma once
 
-#include <xtl.h>
 #include <cstdint>
+#include <xtl.h>
 
 namespace XexUtils
 {

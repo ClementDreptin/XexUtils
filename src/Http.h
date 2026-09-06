@@ -1,10 +1,10 @@
 #pragma once
 
-#include <xtl.h>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <xtl.h>
 
 #include "Internals.h"
 #include "Optional.h"

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <xtl.h>
 #include <cstdarg>
 #include <cstdint>
 #include <string>
+#include <xtl.h>
 
 namespace XexUtils
 {

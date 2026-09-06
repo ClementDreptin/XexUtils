@@ -1,10 +1,10 @@
 #pragma once
 
-#include <xtl.h>
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+#include <xtl.h>
 
 namespace XexUtils
 {

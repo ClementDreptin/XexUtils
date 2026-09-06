@@ -1,9 +1,9 @@
-#include <xtl.h>
 #include <cstdint>
 #include <cstdlib>
 #include <memory>
 #include <string>
 #include <vector>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "Formatter.h"

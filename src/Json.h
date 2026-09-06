@@ -1,10 +1,14 @@
 #pragma once
 
-#include <xtl.h>
-#include <xjson.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+// clang-format off
+// xjson.h requires xtl.h to be included before so we can't sort alphabetically.
+#include <xtl.h>
+#include <xjson.h>
+// clang-format on
 
 namespace XexUtils
 {

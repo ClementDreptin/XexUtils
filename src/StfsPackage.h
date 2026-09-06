@@ -1,8 +1,8 @@
 #pragma once
 
-#include <xtl.h>
 #include <cstdint>
 #include <string>
+#include <xtl.h>
 
 #include "Filesystem.h"
 #include "Kernel.h"

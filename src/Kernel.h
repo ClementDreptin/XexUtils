@@ -27,8 +27,8 @@
 /// the name Microsoft gave them, so that values can also be found from the official
 /// Microsoft documentation.
 
-#include <xtl.h>
 #include <cstdint>
+#include <xtl.h>
 
 // Found here:
 // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55

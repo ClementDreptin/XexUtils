@@ -1,9 +1,9 @@
+#include <XexUtils.h>
 #include <fstream>
 #include <set>
 #include <sstream>
 #include <string>
 #include <utility>
-#include <XexUtils.h>
 
 #include "../TestRunner.h"
 

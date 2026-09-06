@@ -1,10 +1,10 @@
-#include <xtl.h>
 #include <cstdint>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "Http.h"

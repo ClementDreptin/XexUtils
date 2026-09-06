@@ -1,6 +1,6 @@
-#include <xtl.h>
 #include <cmath>
 #include <cstdint>
+#include <xtl.h>
 
 #include "Math.h"
 

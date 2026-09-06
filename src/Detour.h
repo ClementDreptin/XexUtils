@@ -1,8 +1,8 @@
 #pragma once
 
-#include <xtl.h>
 #include <cstdint>
 #include <string>
+#include <xtl.h>
 
 #define MAX_DETOUR_COUNT 100
 #define MAX_INSTRUCTIONS_IN_STUB 20

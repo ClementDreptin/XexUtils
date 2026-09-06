@@ -1,9 +1,9 @@
-#include <xtl.h>
 #include <cstdint>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
+#include <xtl.h>
 
 #include "Filesystem.h"
 #include "Kernel.h"

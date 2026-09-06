@@ -1,7 +1,7 @@
-#include <xtl.h>
 #include <cstdint>
 #include <fstream>
 #include <string>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "Filesystem.h"

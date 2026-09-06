@@ -1,6 +1,6 @@
-#include <xtl.h>
 #include <cstdint>
 #include <string>
+#include <xtl.h>
 
 #include "General.h"
 #include "Kernel.h"

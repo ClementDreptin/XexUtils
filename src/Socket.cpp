@@ -1,9 +1,9 @@
-#include <xtl.h>
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "Log.h"

@@ -1,5 +1,5 @@
-#include <cstdint>
 #include <XexUtils.h>
+#include <cstdint>
 
 #include "../TestRunner.h"
 

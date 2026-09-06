@@ -1,5 +1,5 @@
-#include <utility>
 #include <XexUtils.h>
+#include <utility>
 
 #include "../TestRunner.h"
 

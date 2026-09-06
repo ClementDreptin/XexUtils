@@ -1,8 +1,8 @@
-#include <xtl.h>
 #include <algorithm>
 #include <cstdarg>
 #include <cstdio>
 #include <string>
+#include <xtl.h>
 
 #include "Assert.h"
 #include "Log.h"
