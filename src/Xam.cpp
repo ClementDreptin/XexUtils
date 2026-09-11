@@ -27,7 +27,7 @@ struct XNotifyThreadOptions
     XNOTIFYQUEUEUI_TYPE Type;
 };
 
-DWORD WINAPI XNotifyThread(void *pArgs)
+static DWORD WINAPI XNotifyThread(void *pArgs)
 {
     XNotifyThreadOptions *pOptions = static_cast<XNotifyThreadOptions *>(pArgs);
     XASSERT(pOptions != nullptr);
@@ -58,15 +58,14 @@ void XNotify(const std::string &text, XNOTIFYQUEUEUI_TYPE type)
 
 uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description, const std::wstring &defaultText, std::string &result, size_t maxLength, uint32_t keyboardType)
 {
-    // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string
+    // maxLength is the amount of characters the keyboard will allow, realMaxLength needs to include the \0 to terminate the string.
     size_t realMaxLength = maxLength + 1;
     XOVERLAPPED overlapped = {};
 
-    // Create the buffers
+    // Create the buffer.
     std::unique_ptr<wchar_t[]> wideBuffer(new wchar_t[realMaxLength]());
-    std::unique_ptr<char[]> buffer(new char[realMaxLength]());
 
-    // Open the keyboard
+    // Open the keyboard.
     XShowKeyboardUI(
         0,
         keyboardType,
@@ -78,19 +77,16 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
         &overlapped
     );
 
-    // Wait until the keyboard closes
+    // Wait until the keyboard closes.
     while (!XHasOverlappedIoCompleted(&overlapped))
         Sleep(100);
 
-    // Get how the keyboard was closed (success, canceled or internal error)
+    // Get how the keyboard was closed (success, canceled or internal error).
     uint32_t overlappedResult = XGetOverlappedResult(&overlapped, nullptr, TRUE);
     if (overlappedResult == ERROR_SUCCESS)
     {
-        // Convert the wide string to a narrow string
-        wcstombs_s(nullptr, buffer.get(), realMaxLength, wideBuffer.get(), realMaxLength * sizeof(wchar_t));
-
-        // Populate the out string with the narrow string
-        result = buffer.get();
+        // Convert the wide string to a narrow string.
+        result = Formatter::ToNarrow(wideBuffer.get());
     }
 
     return overlappedResult;
