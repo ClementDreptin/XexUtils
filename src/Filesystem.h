@@ -290,8 +290,8 @@ struct File
     /// @return
     bool operator<(const File &other) const;
 
-    /// @brief The file name.
-    Path Name;
+    /// @brief The full file path.
+    Path FullPath;
 
     /// @brief The file size in bytes.
     uint64_t Size;

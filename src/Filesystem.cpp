@@ -277,12 +277,12 @@ File::File()
 }
 
 File::File(const File &other)
-    : Name(other.Name), Size(other.Size), Attributes(other.Attributes), CreationTime(other.CreationTime), LastReadTime(other.LastReadTime), LastWriteTime(other.LastWriteTime)
+    : FullPath(other.FullPath), Size(other.Size), Attributes(other.Attributes), CreationTime(other.CreationTime), LastReadTime(other.LastReadTime), LastWriteTime(other.LastWriteTime)
 {
 }
 
 File::File(File &&other)
-    : Name(std::move(other.Name)), Size(other.Size), Attributes(other.Attributes), CreationTime(other.CreationTime), LastReadTime(other.LastReadTime), LastWriteTime(other.LastWriteTime)
+    : FullPath(std::move(other.FullPath)), Size(other.Size), Attributes(other.Attributes), CreationTime(other.CreationTime), LastReadTime(other.LastReadTime), LastWriteTime(other.LastWriteTime)
 {
     other.Size = 0;
     other.Attributes = 0;
@@ -296,7 +296,7 @@ File &File::operator=(const File &other)
     if (this == &other)
         return *this;
 
-    Name = other.Name;
+    FullPath = other.FullPath;
     Size = other.Size;
     Attributes = other.Attributes;
     CreationTime = other.CreationTime;
@@ -311,7 +311,7 @@ File &File::operator=(File &&other)
     if (this == &other)
         return *this;
 
-    Name = std::move(other.Name);
+    FullPath = std::move(other.FullPath);
     Size = other.Size;
     Attributes = other.Attributes;
     CreationTime = other.CreationTime;
@@ -335,11 +335,11 @@ bool File::operator<(const File &other) const
 {
     // Compare the file names and store the comparaisons as integers (which will be either
     // 0 or 1).
-    const std::string &thisName = Name.String();
-    const std::string &otherName = other.Name.String();
-    size_t comparisonLength = std::max<size_t>(thisName.size(), otherName.size()) + 1;
+    const std::string &thisFullPath = FullPath.String();
+    const std::string &otherFullPath = other.FullPath.String();
+    size_t comparisonLength = std::max<size_t>(thisFullPath.size(), otherFullPath.size()) + 1;
 
-    int nameComparison = _strnicmp(thisName.c_str(), otherName.c_str(), comparisonLength);
+    int nameComparison = _strnicmp(thisFullPath.c_str(), otherFullPath.c_str(), comparisonLength);
     int thisNameGreaterThanOtherName = static_cast<int>(nameComparison > 0);
     int otherNameGreaterThanThisName = static_cast<int>(nameComparison < 0);
 
@@ -410,7 +410,7 @@ Optional<std::vector<File>> ReadDirectory(const Path &directoryPath)
     do
     {
         File file;
-        file.Name = fileInfo.cFileName;
+        file.FullPath = directoryPath / fileInfo.cFileName;
         file.Size = static_cast<uint64_t>(fileInfo.nFileSizeHigh) << 32 | static_cast<uint64_t>(fileInfo.nFileSizeLow);
         file.Attributes = fileInfo.dwFileAttributes;
         file.CreationTime = FileTimeToTimet(fileInfo.ftCreationTime);

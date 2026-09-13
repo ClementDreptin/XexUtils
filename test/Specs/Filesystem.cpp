@@ -672,7 +672,7 @@ void Filesystem()
     It("creates an empty File", []() {
         auto file = Fs::File();
 
-        TEST_EQ(file.Name, "");
+        TEST_EQ(file.FullPath, "");
         TEST_EQ(file.Size, 0);
         TEST_EQ(file.Attributes, 0);
         TEST_EQ(file.CreationTime, 0);
@@ -684,7 +684,7 @@ void Filesystem()
 
     It("creates a File from another File", []() {
         Fs::File file;
-        file.Name = "file.txt";
+        file.FullPath = "file.txt";
         file.Size = 3;
         file.Attributes = FILE_ATTRIBUTE_NORMAL;
         file.CreationTime = 123;
@@ -692,7 +692,7 @@ void Filesystem()
         file.LastWriteTime = 789;
         Fs::File copy(file);
 
-        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.FullPath, "file.txt");
         TEST_EQ(copy.Size, 3);
         TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
         TEST_EQ(copy.CreationTime, 123);
@@ -704,7 +704,7 @@ void Filesystem()
 
     It("creates a File from another moved File", []() {
         Fs::File file;
-        file.Name = "file.txt";
+        file.FullPath = "file.txt";
         file.Size = 3;
         file.Attributes = FILE_ATTRIBUTE_NORMAL;
         file.CreationTime = 123;
@@ -712,14 +712,14 @@ void Filesystem()
         file.LastWriteTime = 789;
         Fs::File copy(std::move(file));
 
-        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.FullPath, "file.txt");
         TEST_EQ(copy.Size, 3);
         TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
         TEST_EQ(copy.CreationTime, 123);
         TEST_EQ(copy.LastReadTime, 456);
         TEST_EQ(copy.LastWriteTime, 789);
 
-        TEST_EQ(file.Name, "");
+        TEST_EQ(file.FullPath, "");
         TEST_EQ(file.Size, 0);
         TEST_EQ(file.Attributes, 0);
         TEST_EQ(file.CreationTime, 0);
@@ -731,7 +731,7 @@ void Filesystem()
 
     It("creates a File from another File", []() {
         Fs::File file;
-        file.Name = "file.txt";
+        file.FullPath = "file.txt";
         file.Size = 3;
         file.Attributes = FILE_ATTRIBUTE_NORMAL;
         file.CreationTime = 123;
@@ -739,7 +739,7 @@ void Filesystem()
         file.LastWriteTime = 789;
         Fs::File copy = file;
 
-        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.FullPath, "file.txt");
         TEST_EQ(copy.Size, 3);
         TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
         TEST_EQ(copy.CreationTime, 123);
@@ -751,7 +751,7 @@ void Filesystem()
 
     It("creates a File from another moved File", []() {
         Fs::File file;
-        file.Name = "file.txt";
+        file.FullPath = "file.txt";
         file.Size = 3;
         file.Attributes = FILE_ATTRIBUTE_NORMAL;
         file.CreationTime = 123;
@@ -759,14 +759,14 @@ void Filesystem()
         file.LastWriteTime = 789;
         Fs::File copy = std::move(file);
 
-        TEST_EQ(copy.Name, "file.txt");
+        TEST_EQ(copy.FullPath, "file.txt");
         TEST_EQ(copy.Size, 3);
         TEST_EQ(copy.Attributes, FILE_ATTRIBUTE_NORMAL);
         TEST_EQ(copy.CreationTime, 123);
         TEST_EQ(copy.LastReadTime, 456);
         TEST_EQ(copy.LastWriteTime, 789);
 
-        TEST_EQ(file.Name, "");
+        TEST_EQ(file.FullPath, "");
         TEST_EQ(file.Size, 0);
         TEST_EQ(file.Attributes, 0);
         TEST_EQ(file.CreationTime, 0);
@@ -778,31 +778,31 @@ void Filesystem()
 
     It("sorts Files in case-insensitive alphabetical order", []() {
         Fs::File first;
-        first.Name = "DirB";
+        first.FullPath = "DirB";
         Fs::File second;
-        second.Name = "dirA";
+        second.FullPath = "dirA";
 
         std::set<Fs::File> files;
         files.insert(first);
         files.insert(second);
 
         auto it = files.begin();
-        TEST_EQ(it->Name, "dirA");
-        TEST_EQ((++it)->Name, "DirB");
+        TEST_EQ(it->FullPath, "dirA");
+        TEST_EQ((++it)->FullPath, "DirB");
     });
 
     It("puts directories before normal files", []() {
         Fs::File first;
-        first.Name = "B.txt";
+        first.FullPath = "B.txt";
         first.Attributes = FILE_ATTRIBUTE_NORMAL;
         Fs::File second;
-        second.Name = "a.txt";
+        second.FullPath = "a.txt";
         second.Attributes = FILE_ATTRIBUTE_NORMAL;
         Fs::File third;
-        third.Name = "DirB";
+        third.FullPath = "DirB";
         third.Attributes = FILE_ATTRIBUTE_DIRECTORY;
         Fs::File fourth;
-        fourth.Name = "dirA";
+        fourth.FullPath = "dirA";
         fourth.Attributes = FILE_ATTRIBUTE_DIRECTORY;
 
         std::set<Fs::File> files;
@@ -812,25 +812,25 @@ void Filesystem()
         files.insert(fourth);
 
         auto it = files.begin();
-        TEST_EQ(it->Name, "dirA");
-        TEST_EQ((++it)->Name, "DirB");
-        TEST_EQ((++it)->Name, "a.txt");
-        TEST_EQ((++it)->Name, "B.txt");
+        TEST_EQ(it->FullPath, "dirA");
+        TEST_EQ((++it)->FullPath, "DirB");
+        TEST_EQ((++it)->FullPath, "a.txt");
+        TEST_EQ((++it)->FullPath, "B.txt");
     });
 
     It("sorts a name that is a prefix of another name before it", []() {
         Fs::File first;
-        first.Name = "file.txt";
+        first.FullPath = "file.txt";
         Fs::File second;
-        second.Name = "file";
+        second.FullPath = "file";
 
         std::set<Fs::File> files;
         files.insert(first);
         files.insert(second);
 
         auto it = files.begin();
-        TEST_EQ(it->Name, "file");
-        TEST_EQ((++it)->Name, "file.txt");
+        TEST_EQ(it->FullPath, "file");
+        TEST_EQ((++it)->FullPath, "file.txt");
     });
 
     Describe("Fs::ReadDirectory(const Fs::Path &)");
@@ -840,11 +840,11 @@ void Filesystem()
 
         TEST_EQ(files.HasValue(), true);
         TEST_EQ(files->size(), 5);
-        TEST_EQ((*files)[0].Name, "dirA");
-        TEST_EQ((*files)[1].Name, "DirB");
-        TEST_EQ((*files)[2].Name, "empty-dir");
-        TEST_EQ((*files)[3].Name, "a.txt");
-        TEST_EQ((*files)[4].Name, "B.txt");
+        TEST_EQ((*files)[0].FullPath, "game:\\fixtures\\filesystem\\dirA");
+        TEST_EQ((*files)[1].FullPath, "game:\\fixtures\\filesystem\\DirB");
+        TEST_EQ((*files)[2].FullPath, "game:\\fixtures\\filesystem\\empty-dir");
+        TEST_EQ((*files)[3].FullPath, "game:\\fixtures\\filesystem\\a.txt");
+        TEST_EQ((*files)[4].FullPath, "game:\\fixtures\\filesystem\\B.txt");
     });
 
     It("returns an empty vector when the directory is empty", []() {

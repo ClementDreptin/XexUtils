@@ -7,10 +7,10 @@ void Init()
 {
     XexUtils::Fs::Path path("hdd:\\path\\to\\file.txt");
     XexUtils::Fs::Path drive = path.Drive(); // hdd:
-    XexUtils::Fs::Path drive = path.Basename(); // file
-    XexUtils::Fs::Path drive = path.Extension(); // .txt
-    XexUtils::Fs::Path drive = path.Filename(); // file.txt
-    XexUtils::Fs::Path drive = path.Parent(); // hdd:\path\to
+    XexUtils::Fs::Path basename = path.Basename(); // file
+    XexUtils::Fs::Path extension = path.Extension(); // .txt
+    XexUtils::Fs::Path filename = path.Filename(); // file.txt
+    XexUtils::Fs::Path parent = path.Parent(); // hdd:\path\to
 }
 ```
 
@@ -87,7 +87,7 @@ List all the files within a directory:
 ```C++
 void Init()
 {
-    XexUtils::Optional<std::vector<WIN32_FIND_DATA>> files = XexUtils::Fs::ReadDirectory(
+    XexUtils::Optional<std::vector<XexUtils::Fs::File>> files = XexUtils::Fs::ReadDirectory(
         "hdd:\\path\\to\\dir"
     );
     if (!files)
@@ -98,9 +98,12 @@ void Init()
 
     for (size_t i = 0; i < files->size(); i++)
     {
-        // Check the Microsoft documentation for the list of all available fields:
-        // https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-win32_find_dataa
-        XexUtils::Log::Print("filename: %s", (*files)[i].cFileName);
+        XexUtils::Log::Print("path: %s", (*files)[i].FullPath);
+        XexUtils::Log::Print("size: %llu", (*files)[i].Size);
+        XexUtils::Log::Print("attributes: %X", (*files)[i].Attributes);
+        XexUtils::Log::Print("creation time: %llu", (*files)[i].CreationTime);
+        XexUtils::Log::Print("last read time: %llu", (*files)[i].LastReadTime);
+        XexUtils::Log::Print("last write time: %llu", (*files)[i].LastWriteTime);
     }
 }
 ```
