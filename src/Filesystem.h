@@ -311,8 +311,9 @@ struct File
 
 /// @brief Returns a list of files present in a directory.
 /// @param directoryPath The path to the directory.
+/// @param filter The filter to apply on the file names ("*" by default).
 /// @return A valid `Optional<std::vector<File>>` on success, an empty `Optional` on error.
-Optional<std::vector<File>> ReadDirectory(const Path &directoryPath);
+Optional<std::vector<File>> ReadDirectory(const Path &directoryPath, const std::string &filter = "*");
 
 }
 }

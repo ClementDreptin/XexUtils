@@ -107,3 +107,30 @@ void Init()
     }
 }
 ```
+
+List the files within a directory that match a specific filter:
+
+```C++
+void Init()
+{
+    XexUtils::Optional<std::vector<XexUtils::Fs::File>> files = XexUtils::Fs::ReadDirectory(
+        "hdd:\\path\\to\\dir",
+        "*.txt"
+    );
+    if (!files)
+    {
+        XexUtils::Log::Print("Could not list the files.");
+        return;
+    }
+
+    for (size_t i = 0; i < files->size(); i++)
+    {
+        XexUtils::Log::Print("path: %s", (*files)[i].FullPath);
+        XexUtils::Log::Print("size: %llu", (*files)[i].Size);
+        XexUtils::Log::Print("attributes: %X", (*files)[i].Attributes);
+        XexUtils::Log::Print("creation time: %llu", (*files)[i].CreationTime);
+        XexUtils::Log::Print("last read time: %llu", (*files)[i].LastReadTime);
+        XexUtils::Log::Print("last write time: %llu", (*files)[i].LastWriteTime);
+    }
+}
+```

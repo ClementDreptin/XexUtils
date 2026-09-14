@@ -363,7 +363,7 @@ static time_t FileTimeToTimet(const FILETIME &fileTime)
     return static_cast<time_t>(fileTimeAsUint64 / 10000000ULL - 11644473600ULL);
 }
 
-Optional<std::vector<File>> ReadDirectory(const Path &directoryPath)
+Optional<std::vector<File>> ReadDirectory(const Path &directoryPath, const std::string &filter)
 {
     // We temporarily store the files in an std::set so that they are automatically sorted.
     // It starts with the directories in case-insensitive alphabetical order, than the
@@ -385,7 +385,7 @@ Optional<std::vector<File>> ReadDirectory(const Path &directoryPath)
     }
 
     // Initialize the search.
-    Path searchPattern = directoryPath / "*";
+    Path searchPattern = directoryPath / filter;
     WIN32_FIND_DATA fileInfo = {};
     HANDLE handle = FindFirstFile(searchPattern.c_str(), &fileInfo);
     if (handle == nullptr || handle == INVALID_HANDLE_VALUE)

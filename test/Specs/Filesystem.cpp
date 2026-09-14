@@ -847,6 +847,15 @@ void Filesystem()
         TEST_EQ((*files)[4].FullPath, "game:\\fixtures\\filesystem\\B.txt");
     });
 
+    It("only returns the Files that match the filter", []() {
+        auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem", "*.txt");
+
+        TEST_EQ(files.HasValue(), true);
+        TEST_EQ(files->size(), 2);
+        TEST_EQ((*files)[0].FullPath, "game:\\fixtures\\filesystem\\a.txt");
+        TEST_EQ((*files)[1].FullPath, "game:\\fixtures\\filesystem\\B.txt");
+    });
+
     It("returns an empty vector when the directory is empty", []() {
         auto files = Fs::ReadDirectory("game:\\fixtures\\filesystem\\empty-dir");
 
