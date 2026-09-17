@@ -23,3 +23,15 @@ void Init()
     );
 }
 ```
+
+Get the temperature of different hardware components:
+
+```C++
+void Init()
+{
+    float cpuTemperatureInCelsius = XexUtils::SMC::GetCpuTemperature();
+    float gpuTemperatureInCelsius = XexUtils::SMC::GetGpuTemperature();
+    float ramTemperatureInCelsius = XexUtils::SMC::GetRamTemperature();
+    float boardTemperatureInCelsius = XexUtils::SMC::GetBoardTemperature();
+}
+```

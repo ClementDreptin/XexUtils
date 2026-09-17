@@ -33,5 +33,21 @@ void SetPowerLED(PowerLEDMode mode, bool animate);
 /// @param bottomRight The color of the bottom right segment.
 void SetLEDColors(LEDColor topLeft, LEDColor topRight, LEDColor bottomLeft, LEDColor bottomRight);
 
+/// @brief Gets the temperature of the CPU.
+/// @return The temperature of the CPU in Celsius degrees.
+float GetCpuTemperature();
+
+/// @brief Gets the temperature of the GPU.
+/// @return The temperature of the GPU in Celsius degrees.
+float GetGpuTemperature();
+
+/// @brief Gets the temperature of the eDRAM.
+/// @return The temperature of the eDRAM in Celsius degrees.
+float GetRamTemperature();
+
+/// @brief Gets the temperature of the motherboard.
+/// @return The temperature of the motherboard in Celsius degrees.
+float GetBoardTemperature();
+
 }
 }
