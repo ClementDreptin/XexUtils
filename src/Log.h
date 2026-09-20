@@ -16,7 +16,7 @@ void Print(const char *format, ...);
 /// @brief Equivalent to `printf` but with a final new line character (`\n`).
 /// @param format The printf-like format.
 /// @param args The list of arguments.
-void Print(const char *format, va_list args);
+void PrintV(const char *format, va_list args);
 
 /// @brief Writes `message` to `stdout` followed by a final new line character (`\n`).
 /// @param message The message.
@@ -30,7 +30,7 @@ void Print(const wchar_t *format, ...);
 /// @brief Equivalent to `wprintf` but with a final new line character (`\n`).
 /// @param format The wprintf-like format.
 /// @param args The list of arguments.
-void Print(const wchar_t *format, va_list args);
+void PrintV(const wchar_t *format, va_list args);
 
 /// @brief Writes `message` to `stdout` followed by a final new line character (`\n`).
 /// @param message The message.

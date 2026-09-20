@@ -20,7 +20,7 @@ void Init(const char *format, ...)
     va_list args;
     va_start(args, format);
 
-    XexUtils::Log::Print(format, args);
+    XexUtils::Log::PrintV(format, args);
 
     va_end(args);
 }

@@ -19,12 +19,12 @@ void Print(const char *format, ...)
     va_list args;
     va_start(args, format);
 
-    Print(format, args);
+    PrintV(format, args);
 
     va_end(args);
 }
 
-void Print(const char *format, va_list args)
+void PrintV(const char *format, va_list args)
 {
     XASSERT(format != nullptr);
 
@@ -79,12 +79,12 @@ void Print(const wchar_t *format, ...)
     va_list args;
     va_start(args, format);
 
-    Print(format, args);
+    PrintV(format, args);
 
     va_end(args);
 }
 
-void Print(const wchar_t *format, va_list args)
+void PrintV(const wchar_t *format, va_list args)
 {
     XASSERT(format != nullptr);
 
