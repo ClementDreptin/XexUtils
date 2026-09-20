@@ -28,8 +28,15 @@ void PrintV(const char *format, va_list args)
 {
     XASSERT(format != nullptr);
 
-    // Determine the required buffer size.
-    size_t requiredBufferSize = vsnprintf(nullptr, 0, format, args) + 1; // +1 for '\n'.
+    // Determine the length of the formatted string (excluding null terminator).
+    int stringLength = vsnprintf(nullptr, 0, format, args);
+    XASSERT(stringLength >= 0);
+
+    // The final string will have a '\n' at the end, so one extra character.
+    size_t finalStringLength = static_cast<size_t>(stringLength) + 1;
+
+    // We need room for the null terminator.
+    size_t requiredBufferSize = finalStringLength + 1;
 
     // By default, we use a fixed size buffer to perform the printf formatting.
     char fixedBuffer[2048] = {};
@@ -47,7 +54,7 @@ void PrintV(const char *format, va_list args)
     vsnprintf_s(bufferToUse, requiredBufferSize, _TRUNCATE, format, args);
 
     // Append a newline.
-    bufferToUse[requiredBufferSize - 1] = '\n';
+    bufferToUse[finalStringLength - 1] = '\n';
 
     // Write the content of the buffer to stdout in chunks. This is needed because, when
     // connected to a remote debugger, there a limit in how much text can be sent over the
@@ -56,9 +63,9 @@ void PrintV(const char *format, va_list args)
     // all seem to have a different limit. A chunk size of 128 bytes seems to be small
     // enough when using fwrite.
     const size_t chunkSize = 128;
-    for (size_t i = 0; i < requiredBufferSize; i += chunkSize)
+    for (size_t i = 0; i < finalStringLength; i += chunkSize)
     {
-        size_t currentChunkSize = std::min<size_t>(chunkSize, requiredBufferSize - i);
+        size_t currentChunkSize = std::min<size_t>(chunkSize, finalStringLength - i);
         fwrite(bufferToUse + i, 1, currentChunkSize, stdout);
     }
 
@@ -88,8 +95,15 @@ void PrintV(const wchar_t *format, va_list args)
 {
     XASSERT(format != nullptr);
 
-    // Determine the required buffer size.
-    size_t requiredBufferSize = _vsnwprintf(nullptr, 0, format, args) + 1; // +1 for L'\n'.
+    // Determine the length of the formatted string (excluding null terminator).
+    int stringLength = _vsnwprintf(nullptr, 0, format, args);
+    XASSERT(stringLength >= 0);
+
+    // The final string will have a L'\n' at the end, so one extra character.
+    size_t finalStringLength = static_cast<size_t>(stringLength) + 1;
+
+    // We need room for the null terminator.
+    size_t requiredBufferSize = finalStringLength + 1;
 
     // By default, we use a fixed size buffer to perform the printf formatting.
     wchar_t fixedBuffer[2048] = {};
@@ -107,7 +121,7 @@ void PrintV(const wchar_t *format, va_list args)
     _vsnwprintf_s(bufferToUse, requiredBufferSize, _TRUNCATE, format, args);
 
     // Append a newline.
-    bufferToUse[requiredBufferSize - 1] = L'\n';
+    bufferToUse[finalStringLength - 1] = L'\n';
 
     // Write the content of the buffer to stdout in chunks. This is needed because, when
     // connected to a remote debugger, there a limit in how much text can be sent over the
@@ -116,9 +130,9 @@ void PrintV(const wchar_t *format, va_list args)
     // all seem to have a different limit. A chunk size of 128 bytes seems to be small
     // enough when using fwrite.
     const size_t chunkSize = 128;
-    for (size_t i = 0; i < requiredBufferSize; i += chunkSize)
+    for (size_t i = 0; i < finalStringLength; i += chunkSize)
     {
-        size_t currentChunkSize = std::min<size_t>(chunkSize, requiredBufferSize - i);
+        size_t currentChunkSize = std::min<size_t>(chunkSize, finalStringLength - i);
 
         // It's not ideal to go through the printf formatting again but I couldn't find
         // a way to write a wchar_t buffer to stdout without converting to chars first.
