@@ -7,6 +7,17 @@
 #include "Log.h"
 #include "Memory.h"
 
+extern "C"
+{
+    // This function is not exported by xboxkrnl.exe, it's part of xapilib.lib but not
+    // present in the SDK headers.
+    void XapiThreadStartup(
+        void (*startRoutine)(void *),
+        void *startContext,
+        uint32_t exitCode
+    );
+}
+
 namespace XexUtils
 {
 
@@ -30,7 +41,7 @@ HANDLE Thread(PTHREAD_START_ROUTINE pStartAddress, void *pArgs)
 HANDLE ThreadEx(PTHREAD_START_ROUTINE pStartAddress, void *pArgs, EXCREATETHREAD_FLAG creationFlags, uint32_t *pThreadId)
 {
     HANDLE handle = nullptr;
-    ExCreateThread(&handle, 0, pThreadId, nullptr, pStartAddress, pArgs, creationFlags);
+    ExCreateThread(&handle, 0, pThreadId, XapiThreadStartup, pStartAddress, pArgs, creationFlags);
 
     return handle;
 }
