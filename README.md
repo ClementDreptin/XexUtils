@@ -22,7 +22,7 @@ XexUtils is a library to make Xbox 360 applications and/or libraries.
 | [Math](./src/Math.h)               | Utility math functions and classes to manipulate vectors.                                     | [Math.md](./examples/Math.md)               |
 | [Memory](./src/Memory.h)           | Read and write arbitrary data from and to arbritrary locations with safeguards.               | [Memory.md](./examples/Memory.md)           |
 | [Optional](./src/Optional.h)       | Partial clone of `std::optional` from C++17.                                                  | [Optional.md](./examples/Optional.md)       |
-| [SMC](./src/SMC.h)                 | Interact with the power LED.                                                                  | [SMC.md](./examples/SMC.md)                 |
+| [SMC](./src/SMC.h)                 | Interact with hardware components like the power LED or the temperature sensors.              | [SMC.md](./examples/SMC.md)                 |
 | [Socket](./src/Socket.h)           | Open TCP connections with TLS support.                                                        | [Socket.md](./examples/Socket.md)           |
 | [StfsPackage](./src/StfsPackage.h) | Parse STFS files metadata and mount them to disk.                                             | [StfsPackage.md](./examples/StfsPackage.md) |
 | [UInt24](./src/UInt24.h)           | A 24-bit unsigned integer.                                                                    | [UInt24.md](./examples/UInt24.md)           |
