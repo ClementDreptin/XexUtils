@@ -17,7 +17,7 @@ void Init(const char *format, ...)
     va_list args;
     va_start(args, format);
 
-    std::string formattedString = XexUtils::Formatter::Format(format, args);
+    std::string formattedString = XexUtils::Formatter::FormatV(format, args);
 
     va_end(args);
 }
@@ -40,7 +40,7 @@ void Init(const wchar_t *format, ...)
     va_list args;
     va_start(args, format);
 
-    std::wstring formattedWideString = XexUtils::Formatter::Format(format, args);
+    std::wstring formattedWideString = XexUtils::Formatter::FormatV(format, args);
 
     va_end(args);
 }

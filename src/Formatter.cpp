@@ -19,14 +19,14 @@ std::string Format(const char *format, ...)
     va_list args;
     va_start(args, format);
 
-    std::string buffer = Format(format, args);
+    std::string buffer = FormatV(format, args);
 
     va_end(args);
 
     return buffer;
 }
 
-std::string Format(const char *format, va_list args)
+std::string FormatV(const char *format, va_list args)
 {
     XASSERT(format != nullptr);
 
@@ -51,14 +51,14 @@ std::wstring Format(const wchar_t *format, ...)
     va_list args;
     va_start(args, format);
 
-    std::wstring buffer = Format(format, args);
+    std::wstring buffer = FormatV(format, args);
 
     va_end(args);
 
     return buffer;
 }
 
-std::wstring Format(const wchar_t *format, va_list args)
+std::wstring FormatV(const wchar_t *format, va_list args)
 {
     XASSERT(format != nullptr);
 

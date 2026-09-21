@@ -20,7 +20,7 @@ std::string Format(const char *format, ...);
 /// @param format The printf-like format.
 /// @param args The list of arguments.
 /// @return An `std::string`.
-std::string Format(const char *format, va_list args);
+std::string FormatV(const char *format, va_list args);
 
 /// @brief Creates an `std::wstring` from a wprintf-like format.
 /// @param format The wprintf-like format.
@@ -32,7 +32,7 @@ std::wstring Format(const wchar_t *format, ...);
 /// @param format The wprintf-like format.
 /// @param args The list of arguments.
 /// @return An `std::wstring`.
-std::wstring Format(const wchar_t *format, va_list args);
+std::wstring FormatV(const wchar_t *format, va_list args);
 
 /// @brief Converts an `std::string` into an `std::wstring`.
 /// @param narrowString The `std::string`.
