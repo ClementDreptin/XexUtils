@@ -58,6 +58,6 @@ Get the name of the console:
 ```C++
 void Init()
 {
-    XexUtils::Xam::GetConsole(); // "John's Xbox 360"
+    XexUtils::Xam::GetConsoleName(); // "John's Xbox 360"
 }
 ```
