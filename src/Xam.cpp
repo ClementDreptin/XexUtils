@@ -16,10 +16,13 @@ namespace XexUtils
 namespace Xam
 {
 
-// Create a pointer to XNotifyQueueUI in xam.xex
+// Resolve the xam.xex exports that are not part of xapilib.lib.
 
 typedef void (*XNOTIFYQUEUEUI)(XNOTIFYQUEUEUI_TYPE type, uint32_t userIndex, uint64_t areas, const wchar_t *displayText, void *pContextData);
 static XNOTIFYQUEUEUI XNotifyQueueUI = static_cast<XNOTIFYQUEUEUI>(ResolveExport("xam.xex", 656));
+
+typedef void (*XAMGETCONSOLEFRIENDLYNAME)(wchar_t *pConsoleName);
+static XAMGETCONSOLEFRIENDLYNAME XamGetConsoleFriendlyName = static_cast<XAMGETCONSOLEFRIENDLYNAME>(ResolveExport("xam.xex", 1291));
 
 struct XNotifyThreadOptions
 {
@@ -129,6 +132,14 @@ uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, con
         *pPressedButtonIndex = messageBoxResult.dwButtonPressed;
 
     return overlappedResult;
+}
+
+std::string GetConsoleName()
+{
+    wchar_t consoleName[128] = {};
+    XamGetConsoleFriendlyName(consoleName);
+
+    return Formatter::ToNarrow(consoleName);
 }
 
 }

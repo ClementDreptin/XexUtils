@@ -119,6 +119,10 @@ uint32_t ShowKeyboard(const std::wstring &title, const std::wstring &description
 /// @return How the message box was closed.
 uint32_t ShowMessageBox(const std::wstring &title, const std::wstring &text, const std::vector<std::wstring> &buttonLabels, uint32_t messageBoxType = XMB_NOICON, uint32_t *pPressedButtonIndex = nullptr, uint32_t focusedButtonIndex = 0);
 
+/// @brief Returns the name of the console.
+/// @return The name of the console.
+std::string GetConsoleName();
+
 }
 }
 

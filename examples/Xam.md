@@ -52,3 +52,12 @@ void Init()
         XexUtils::Log::Print(L"User pressed %s\n", buttonLabels[buttonPressedIndex].c_str());
 }
 ```
+
+Get the name of the console:
+
+```C++
+void Init()
+{
+    XexUtils::Xam::GetConsole(); // "John's Xbox 360"
+}
+```
