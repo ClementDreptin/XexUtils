@@ -508,6 +508,11 @@ extern "C"
         void
     );
 
+    EXPORTNUM(132)
+    NTSTATUS KeQuerySystemTime(
+        LARGE_INTEGER *pCurrentTime
+    );
+
     EXPORTNUM(190)
     void *MmGetPhysicalAddress(
         void *pAddress
