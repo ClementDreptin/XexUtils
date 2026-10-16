@@ -62,10 +62,13 @@ typedef enum _NTSTATUS
 
 typedef uint32_t XBOX_HARDWARE_FLAG;
 
+// Taken from here:
+// https://codeberg.org/hax360/ExShadowBoot/src/branch/main/DevShadowBoot/Kernel.h
 enum XBOX_HARDWARE_FLAG_
 {
     XBOX_HARDWARE_FLAG_NOT_RETAIL = 1 << 4,
     XBOX_HARDWARE_FLAG_HDD = 1 << 5,
+    XBOX_HARDWARE_FLAG_1GB = 1 << 16,
     XBOX_HARDWARE_FLAG_TESTKIT = 1 << 25,
 };
 
