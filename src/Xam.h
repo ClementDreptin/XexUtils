@@ -144,20 +144,17 @@ typedef enum _XNCALLER_TYPE
 
 extern "C"
 {
-    EXPORTNUM(14)
-    SOCKET NetDll_accept(
-        XNCALLER_TYPE xnCaller,
-        SOCKET s,
-        sockaddr *addr,
-        int *addrlen
+    EXPORTNUM(2)
+    int NetDll_WSACleanup(
+        XNCALLER_TYPE xnCaller
     );
 
-    EXPORTNUM(11)
-    int NetDll_bind(
+    EXPORTNUM(3)
+    SOCKET NetDll_socket(
         XNCALLER_TYPE xnCaller,
-        SOCKET s,
-        const sockaddr *name,
-        int namelen
+        int af,
+        int type,
+        int protocol
     );
 
     EXPORTNUM(4)
@@ -166,28 +163,29 @@ extern "C"
         SOCKET s
     );
 
-    EXPORTNUM(12)
-    int NetDll_connect(
+    EXPORTNUM(5)
+    int NetDll_shutdown(
         XNCALLER_TYPE xnCaller,
         SOCKET s,
-        const sockaddr *name,
-        int namelen
+        int how
     );
 
-    EXPORTNUM(10)
-    int NetDll_getpeername(
-        XNCALLER_TYPE xnc,
-        SOCKET s,
-        sockaddr *name,
-        int *namelen
-    );
-
-    EXPORTNUM(9)
-    int NetDll_getsockname(
+    EXPORTNUM(6)
+    int NetDll_ioctlsocket(
         XNCALLER_TYPE xnCaller,
         SOCKET s,
-        sockaddr *name,
-        int *namelen
+        int cmd,
+        uint32_t *argp
+    );
+
+    EXPORTNUM(7)
+    int NetDll_setsockopt(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        int level,
+        int optname,
+        const char *optval,
+        int optlen
     );
 
     EXPORTNUM(8)
@@ -200,17 +198,36 @@ extern "C"
         int *optlen
     );
 
-    EXPORTNUM(26)
-    uint32_t NetDll_inet_addr(
-        const char *cp
-    );
-
-    EXPORTNUM(6)
-    int NetDll_ioctlsocket(
+    EXPORTNUM(9)
+    int NetDll_getsockname(
         XNCALLER_TYPE xnCaller,
         SOCKET s,
-        int cmd,
-        uint32_t *argp
+        sockaddr *name,
+        int *namelen
+    );
+
+    EXPORTNUM(10)
+    int NetDll_getpeername(
+        XNCALLER_TYPE xnc,
+        SOCKET s,
+        sockaddr *name,
+        int *namelen
+    );
+
+    EXPORTNUM(11)
+    int NetDll_bind(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const sockaddr *name,
+        int namelen
+    );
+
+    EXPORTNUM(12)
+    int NetDll_connect(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        const sockaddr *name,
+        int namelen
     );
 
     EXPORTNUM(13)
@@ -218,6 +235,24 @@ extern "C"
         XNCALLER_TYPE xnCaller,
         SOCKET s,
         int backlog
+    );
+
+    EXPORTNUM(14)
+    SOCKET NetDll_accept(
+        XNCALLER_TYPE xnCaller,
+        SOCKET s,
+        sockaddr *addr,
+        int *addrlen
+    );
+
+    EXPORTNUM(15)
+    int NetDll_select(
+        IN XNCALLER_TYPE xnCaller,
+        int nfds,
+        fd_set *readfds,
+        fd_set *writefds,
+        fd_set *exceptfds,
+        const timeval *timeout
     );
 
     EXPORTNUM(18)
@@ -240,16 +275,6 @@ extern "C"
         int *fromlen
     );
 
-    EXPORTNUM(15)
-    int NetDll_select(
-        IN XNCALLER_TYPE xnCaller,
-        int nfds,
-        fd_set *readfds,
-        fd_set *writefds,
-        fd_set *exceptfds,
-        const timeval *timeout
-    );
-
     EXPORTNUM(22)
     int NetDll_send(
         XNCALLER_TYPE xnCaller,
@@ -270,34 +295,9 @@ extern "C"
         int tolen
     );
 
-    EXPORTNUM(7)
-    int NetDll_setsockopt(
-        XNCALLER_TYPE xnCaller,
-        SOCKET s,
-        int level,
-        int optname,
-        const char *optval,
-        int optlen
-    );
-
-    EXPORTNUM(5)
-    int NetDll_shutdown(
-        XNCALLER_TYPE xnCaller,
-        SOCKET s,
-        int how
-    );
-
-    EXPORTNUM(3)
-    SOCKET NetDll_socket(
-        XNCALLER_TYPE xnCaller,
-        int af,
-        int type,
-        int protocol
-    );
-
-    EXPORTNUM(2)
-    int NetDll_WSACleanup(
-        XNCALLER_TYPE xnCaller
+    EXPORTNUM(26)
+    uint32_t NetDll_inet_addr(
+        const char *cp
     );
 
     EXPORTNUM(36)
@@ -306,6 +306,12 @@ extern "C"
         uint16_t versionRequested,
         WSAData *pWSAData,
         uint32_t versionReq
+    );
+
+    EXPORTNUM(51)
+    int NetDll_XNetStartup(
+        XNCALLER_TYPE xnCaller,
+        const XNetStartupParams *pxnsp
     );
 
     EXPORTNUM(52)
@@ -325,12 +331,6 @@ extern "C"
     int NetDll_XNetDnsRelease(
         XNCALLER_TYPE xnCaller,
         XNDNS *pxndns
-    );
-
-    EXPORTNUM(51)
-    int NetDll_XNetStartup(
-        XNCALLER_TYPE xnCaller,
-        const XNetStartupParams *pxnsp
     );
 
     EXPORTNUM(463)
