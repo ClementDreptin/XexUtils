@@ -33,3 +33,4 @@
 #define XNetDnsLookup(pszHost, hEvent, ppxndns) NetDll_XNetDnsLookup((XNCALLER_TYPE)KeGetCurrentProcessType(), pszHost, hEvent, ppxndns)
 #define XNetDnsRelease(pxndns) NetDll_XNetDnsRelease((XNCALLER_TYPE)KeGetCurrentProcessType(), pxndns)
 #define XNetStartup(pxnsp) NetDll_XNetStartup((XNCALLER_TYPE)KeGetCurrentProcessType(), pxnsp)
+#define XnpNoteSystemTime() NetDll_XnpNoteSystemTime((XNCALLER_TYPE)KeGetCurrentProcessType())

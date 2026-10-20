@@ -333,6 +333,11 @@ extern "C"
         XNDNS *pxndns
     );
 
+    EXPORTNUM(123)
+    void NetDll_XnpNoteSystemTime(
+        XNCALLER_TYPE xnCaller
+    );
+
     EXPORTNUM(463)
     uint32_t XamGetCurrentTitleId(
         void
