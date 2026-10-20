@@ -655,6 +655,12 @@ extern "C"
         FILE_INFORMATION_CLASS fileInformationClass
     );
 
+    EXPORTNUM(249)
+    NTSTATUS NtSetSystemTime(
+        ULARGE_INTEGER *pSystemTime,
+        ULARGE_INTEGER *pPreviousTime
+    );
+
     EXPORTNUM(255)
     NTSTATUS NtWriteFile(
         HANDLE handle,
