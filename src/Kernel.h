@@ -358,6 +358,15 @@ struct FILE_DIRECTORY_INFORMATION
     char FileName[1];
 };
 
+struct FILE_BASIC_INFORMATION
+{
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    uint32_t FileAttributes;
+};
+
 struct FILE_RENAME_INFORMATION
 {
     bool ReplaceIfExists;
