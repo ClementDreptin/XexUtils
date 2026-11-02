@@ -464,6 +464,43 @@ struct KEXCEPTION_FRAME
 
 typedef BOOL (*TRAPHANDLER)(void *pUnknown, KEXCEPTION_FRAME *pExceptionFrame, CONTEXT *pContext, BOOL secondChance);
 
+struct D3DFILTER_PARAMETERS
+{
+    float Nyquist;
+    float FlickerFilter;
+    float Beta;
+};
+
+struct D3DPRIVATE_SCALER_PARAMETERS
+{
+    D3DRECT ScalerSourceRect;
+    int32_t ScaledOutputWidth;
+    int32_t ScaledOutputHeight;
+    uint32_t VerticalFilterType;
+    D3DFILTER_PARAMETERS VerticalFilterParameters;
+    uint32_t HorizontalFilterType;
+    D3DFILTER_PARAMETERS HorizontalFilterParameters;
+};
+
+struct DISPLAY_INFORMATION
+{
+    uint16_t FrontBufferWidth;
+    uint16_t FrontBufferHeight;
+    uint8_t FrontBufferColorFormat;
+    uint8_t FrontBufferPixelFormat;
+    D3DPRIVATE_SCALER_PARAMETERS ScalerParameters;
+    uint16_t DisplayWindowOverscanLeft;
+    uint16_t DisplayWindowOverscanTop;
+    uint16_t DisplayWindowOverscanRight;
+    uint16_t DisplayWindowOverscanBottom;
+    uint16_t DisplayWidth;
+    uint16_t DisplayHeight;
+    float DisplayRefreshRate;
+    uint32_t DisplayInterlaced;
+    uint8_t DisplayColorFormat;
+    uint16_t ActualDisplayWidth;
+};
+
 #pragma warning(pop) // Disable C4201
 
 #define __isync() __emit(0x4C00012C)
@@ -713,5 +750,10 @@ extern "C"
     EXPORTNUM(417)
     NTSTATUS XexUnloadImage(
         HANDLE handle
+    );
+
+    EXPORTNUM(442)
+    void VdGetCurrentDisplayInformation(
+        DISPLAY_INFORMATION *pDisplayInfo
     );
 }
